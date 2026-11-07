@@ -503,3 +503,56 @@ if ("IntersectionObserver" in window) {
 
 renderGuide();
 restoreViewFromLocation();
+
+
+// Custom Valhalla podcast deck: accessible playback, seek, volume, repeat, and sharing.
+(() => {
+  const audio = document.querySelector("#podcast-audio");
+  if (!audio) return;
+  const playButton = document.querySelector("#audio-play-toggle");
+  const progress = document.querySelector("#audio-progress");
+  const current = document.querySelector("#audio-current-time");
+  const duration = document.querySelector("#audio-duration");
+  const mute = document.querySelector("#audio-mute");
+  const volume = document.querySelector("#audio-volume");
+  const repeat = document.querySelector("#audio-repeat");
+  const share = document.querySelector("#audio-share");
+  audio.volume = Number(volume.value);
+  const format = (seconds) => {
+    if (!Number.isFinite(seconds)) return "00:00";
+    const value = Math.max(0, Math.floor(seconds));
+    return `${String(Math.floor(value / 60)).padStart(2, "0")}:${String(value % 60).padStart(2, "0")}`;
+  };
+  const sync = () => {
+    current.textContent = format(audio.currentTime);
+    duration.textContent = Number.isFinite(audio.duration) ? format(audio.duration) : "15:10";
+    progress.value = Number.isFinite(audio.duration) && audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
+    progress.style.setProperty("--progress", `${progress.value}%`);
+    playButton.setAttribute("aria-label", audio.paused ? "پخش پادکست" : "مکث پادکست");
+    playButton.classList.toggle("is-playing", !audio.paused);
+    mute.setAttribute("aria-label", audio.muted || audio.volume === 0 ? "فعال‌کردن صدا" : "بی‌صدا کردن");
+  };
+  playButton.addEventListener("click", async () => {
+    if (audio.paused) { try { await audio.play(); } catch { document.querySelector(".audio-fallback")?.classList.add("is-visible"); } }
+    else audio.pause();
+  });
+  progress.addEventListener("input", () => {
+    if (Number.isFinite(audio.duration)) audio.currentTime = (Number(progress.value) / 100) * audio.duration;
+  });
+  mute.addEventListener("click", () => { audio.muted = !audio.muted; sync(); });
+  volume.addEventListener("input", () => { audio.volume = Number(volume.value); audio.muted = audio.volume === 0; sync(); });
+  repeat.addEventListener("click", () => {
+    audio.loop = !audio.loop;
+    repeat.setAttribute("aria-pressed", String(audio.loop));
+    repeat.setAttribute("aria-label", audio.loop ? "تکرار روشن" : "تکرار خاموش");
+  });
+  share.addEventListener("click", async () => {
+    const shareData = { title: "پادکست والهالا · آموزش پرامپت‌نویسی", url: "https://t.me/valhala_tw/64" };
+    try {
+      if (navigator.share) await navigator.share(shareData);
+      else if (navigator.clipboard) { await navigator.clipboard.writeText(shareData.url); share.setAttribute("aria-label", "پیوند پادکست کپی شد"); }
+    } catch {}
+  });
+  ["loadedmetadata", "durationchange", "timeupdate", "play", "pause", "volumechange", "ended"].forEach((event) => audio.addEventListener(event, sync));
+  sync();
+})();
