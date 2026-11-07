@@ -54,6 +54,7 @@
     <main id="top" class="shell">
       <div class="home-view" data-page-view="home">
       <section class="hero panel" aria-labelledby="page-title">
+        <div class="snowfall" aria-hidden="true"></div>
         <div class="hero-copy">
           <p class="eyebrow" lang="fa"><span class="eyebrow-dot"></span> دروازهٔ اتصال · قلمرو والهالا</p>
           <h1 id="page-title" lang="fa">راهت را در <span>شفقِ نورس</span> پیدا کن.</h1>
@@ -160,6 +161,35 @@
         <span class="privacy-icon" aria-hidden="true">⌑</span>
         <p><strong>لینک اشتراک، خصوصی است.</strong> آن را در اختیار دیگران نگذار و فقط داخل برنامهٔ معتبر وارد کن.</p>
       </section>
+      <section class="help-section" id="help" aria-labelledby="help-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow"><span class="rune-mark">ᛉ</span> سوالات متداول · راهنمای اتصال <span class="heading-line"></span></p>
+            <h2 id="help-title">سوالات متداول</h2>
+          </div>
+          <span class="help-spark" aria-hidden="true">✳</span>
+        </div>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary><span>لینک اشتراک اضافه نمی‌شود</span><span class="faq-plus" aria-hidden="true">+</span></summary>
+            <p>مطمئن شو کل لینک را بدون فاصلهٔ اضافه کپی کرده‌ای. در برنامه گزینهٔ به‌روزرسانی یا Refresh را بزن؛ اگر خطا باقی ماند، لینک را دوباره از پیام سرویس بردار.</p>
+          </details>
+          <details class="faq-item">
+            <summary><span>فایل <bdi lang="en">WireGuard</bdi> در برنامه دیده نمی‌شود</span><span class="faq-plus" aria-hidden="true">+</span></summary>
+            <p>فایل <bdi lang="en">ZIP</bdi> را از پیام سرویس دوباره دریافت کن و در <bdi lang="en">WireGuard</bdi> گزینهٔ <bdi lang="en">Import from file or archive</bdi> را انتخاب کن. اگر فایلی اضافه نشد، از پشتیبانی سرویس دربارهٔ فایل دریافتی راهنمایی بگیر.</p>
+          </details>
+          <details class="faq-item">
+            <summary><span>برنامه وصل است اما اینترنت ندارم</span><span class="faq-plus" aria-hidden="true">+</span></summary>
+            <p>اتصال اینترنت دستگاه را بررسی کن، یک سرور دیگر را انتخاب و اتصال را یک بار خاموش و روشن کن. در صورت تداوم مشکل، نام برنامه و متن خطا را برای پشتیبانی سرویس بفرست؛ خود لینک اشتراک را ارسال نکن.</p>
+          </details>
+          <details class="faq-item">
+            <summary><span>برای فعال شدن VPN از من اجازه خواسته شد</span><span class="faq-plus" aria-hidden="true">+</span></summary>
+            <p>برنامه برای ساخت تونل محلی ممکن است اجازهٔ اتصال <bdi lang="en">VPN</bdi> دستگاه را بخواهد. درخواست را فقط برای برنامه‌ای که خودت از منبع رسمی نصب کرده‌ای بررسی و تأیید کن.</p>
+          </details>
+        </div>
+        <p class="support-note">هنوز نیاز به راهنمایی داری؟ از همان مسیر پشتیبانی که سرویس را از آن دریافت کرده‌ای کمک بگیر.</p>
+      </section>
+
       </section>
 
       <div class="home-view" data-page-view="home">
@@ -291,9 +321,12 @@
           <a class="academy-card academy-card-ai" data-category="ai" href="https://t.me/valhala_tw/64" target="_blank" rel="noopener noreferrer">
             <span class="academy-number">18</span><span class="academy-type">CHATGPT · AUDIO</span><h3>قسمت اول آموزش پرامپت</h3><p>قسمت صوتی آموزش پرامپت‌نویسی و معرفی PDF رایگان همراه آن.</p><span class="academy-arrow" aria-hidden="true">↗</span>
           </a>
-          <a class="academy-card academy-card-ai" data-category="ai" href="https://t.me/valhala_tw/65" target="_blank" rel="noopener noreferrer">
-            <span class="academy-number">19</span><span class="academy-type">CHATGPT · FREE PDF</span><h3>دریافت فایل ۲۰ دستور اصلی</h3><p>فایل PDF رایگان همراه مجموعهٔ صوتی پرامپت‌نویسی را از کانال باز کن.</p><span class="academy-arrow" aria-hidden="true">↗</span>
-          </a>
+          <article class="academy-card academy-card-ai prompt-article" data-category="ai">
+            <span class="academy-number">19</span><span class="academy-type">CHATGPT · PROMPT GUIDE</span><h3>۲۰ دستور اصلی برای پرامپت‌نویسی</h3>
+            <p>قسمت اول این مجموعه با مفاهیم پایهٔ پرامپت‌نویسی در ChatGPT شروع می‌شود؛ فایل همراه، ۲۰ دستور اصلی را یک‌جا گرد آورده است. برای نزدیک‌شدن پاسخ به خواسته‌ات، مسئله را روشن و زمینهٔ لازم را همراه قالب خروجی بنویس.</p>
+            <p>اگر پاسخ کامل نبود، درخواست را به گام‌های کوچک‌تر تقسیم کن و دقیق بگو چه چیزی باید اصلاح شود. این پیش‌نمایش کوتاه است؛ فایل کامل و ادامهٔ آموزش را در پست کانال ببین.</p>
+            <a class="prompt-source-link" href="https://t.me/valhala_tw/65" target="_blank" rel="noopener noreferrer">ادامهٔ مطالعه و دریافت PDF در تلگرام <span aria-hidden="true">↗</span></a>
+          </article>
           <a class="academy-card" data-category="windows" href="https://t.me/valhala_tw/8" target="_blank" rel="noopener noreferrer">
             <span class="academy-number">20</span><span class="academy-type">WINDOWS · SHORTCUTS</span><h3>میانبرهای کاربردی ویندوز</h3><p>مجموعه‌ای از میانبرهای صفحه‌کلید و دسترسی سریع به ابزارهای ویندوز.</p><span class="academy-arrow" aria-hidden="true">↗</span>
           </a>
@@ -321,44 +354,22 @@
           <div class="podcast-copy">
             <span class="podcast-label"><span class="podcast-live-dot" aria-hidden="true"></span> قسمت صوتی · <bdi lang="en">ChatGPT</bdi></span>
             <h3>آموزش پرامپت‌نویسی با <bdi lang="en">ChatGPT</bdi></h3>
-            <p>قسمت اول مجموعهٔ صوتی آموزش پرامپت‌نویسی والهالا را از پست اصلی کانال پخش کن. فایل همراه این آموزش را هم در پست بعدی کانال پیدا می‌کنی.</p>
+            <p>قسمت اول مجموعهٔ صوتی والهالا؛ فایل کامل را همین‌جا پخش کن و برای دریافت PDF همراه به پست کانال برو.</p>
             <a class="podcast-link" href="https://t.me/valhala_tw/64" target="_blank" rel="noopener noreferrer">باز کردن پادکست در تلگرام <span aria-hidden="true">↗</span></a>
           </div>
-          <div class="telegram-embed">
-            <iframe src="https://t.me/valhala_tw/64?embed=1" title="پادکست آموزش پرامپت‌نویسی با ChatGPT در کانال Valhalla Tech World" loading="lazy" allow="clipboard-write; encrypted-media" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-            <p>اگر پخش‌کننده نمایش داده نشد، <a href="https://t.me/valhala_tw/64" target="_blank" rel="noopener noreferrer">پست را در تلگرام باز کن</a>.</p>
+          <div class="audio-player-wrap">
+            <div class="audio-player-topline"><span>VALHALLA PODCAST · PART 01</span><span>15:10</span></div>
+            <audio class="podcast-audio" controls preload="none" aria-label="پخش قسمت اول آموزش پرامپت‌نویسی با ChatGPT">
+              <source src="https://github.com/JohnHGN/valhalla-tech-world-guide/releases/download/podcast-part-1/valhalla-chatgpt-prompting-part-1.m4a" type="audio/mp4" />
+              <source src="assets/valhalla-chatgpt-prompting-part-1.m4a" type="audio/mp4" />
+              مرورگر شما پخش صوت را پشتیبانی نمی‌کند؛ <a href="https://t.me/valhala_tw/64" target="_blank" rel="noopener noreferrer">پادکست را در تلگرام باز کن</a>.
+            </audio>
+            <p>اگر پخش‌کننده در مرورگرت فعال نیست، <a href="https://t.me/valhala_tw/64" target="_blank" rel="noopener noreferrer">نسخهٔ تلگرام را باز کن</a>.</p>
           </div>
         </article>
       </section>
 
-      <section class="help-section" id="help" aria-labelledby="help-title">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow"><span class="rune-mark">ᛉ</span> اگر اتصال برقرار نشد <span class="heading-line"></span></p>
-            <h2 id="help-title">چند بررسی سریع</h2>
-          </div>
-          <span class="help-spark" aria-hidden="true">✳</span>
-        </div>
-        <div class="faq-list">
-          <details class="faq-item">
-            <summary><span>لینک اشتراک اضافه نمی‌شود</span><span class="faq-plus" aria-hidden="true">+</span></summary>
-            <p>مطمئن شو کل لینک را بدون فاصلهٔ اضافه کپی کرده‌ای. در برنامه گزینهٔ به‌روزرسانی یا Refresh را بزن؛ اگر خطا باقی ماند، لینک را دوباره از پیام سرویس بردار.</p>
-          </details>
-          <details class="faq-item">
-            <summary><span>فایل <bdi lang="en">WireGuard</bdi> در برنامه دیده نمی‌شود</span><span class="faq-plus" aria-hidden="true">+</span></summary>
-            <p>فایل <bdi lang="en">ZIP</bdi> را از پیام سرویس دوباره دریافت کن و در <bdi lang="en">WireGuard</bdi> گزینهٔ <bdi lang="en">Import from file or archive</bdi> را انتخاب کن. اگر فایلی اضافه نشد، از پشتیبانی سرویس دربارهٔ فایل دریافتی راهنمایی بگیر.</p>
-          </details>
-          <details class="faq-item">
-            <summary><span>برنامه وصل است اما اینترنت ندارم</span><span class="faq-plus" aria-hidden="true">+</span></summary>
-            <p>اتصال اینترنت دستگاه را بررسی کن، یک سرور دیگر را انتخاب و اتصال را یک بار خاموش و روشن کن. در صورت تداوم مشکل، نام برنامه و متن خطا را برای پشتیبانی سرویس بفرست؛ خود لینک اشتراک را ارسال نکن.</p>
-          </details>
-          <details class="faq-item">
-            <summary><span>برای فعال شدن VPN از من اجازه خواسته شد</span><span class="faq-plus" aria-hidden="true">+</span></summary>
-            <p>برنامه برای ساخت تونل محلی ممکن است اجازهٔ اتصال <bdi lang="en">VPN</bdi> دستگاه را بخواهد. درخواست را فقط برای برنامه‌ای که خودت از منبع رسمی نصب کرده‌ای بررسی و تأیید کن.</p>
-          </details>
-        </div>
-        <p class="support-note">هنوز نیاز به راهنمایی داری؟ از همان مسیر پشتیبانی که سرویس را از آن دریافت کرده‌ای کمک بگیر.</p>
-      </section>
+
 
       <section class="contact-section" id="contact" aria-labelledby="contact-title">
         <div class="contact-heading">

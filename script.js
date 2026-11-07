@@ -369,12 +369,13 @@ function activateSearchResult(record) {
     setPageView("guide");
     record.target.click();
     destination = panel;
+  } else if (record.kind === "faq") {
+    setPageView("guide");
+    record.target.open = true;
   } else {
     setPageView("home");
     if (record.kind === "academy" && record.target.hidden) {
       academyFilters.find((button) => button.dataset.filter === "all")?.click();
-    } else if (record.kind === "faq") {
-      record.target.open = true;
     }
   }
   closeQuickSearch(true);
@@ -450,9 +451,13 @@ function navigateWithinSite(view, hash, target) {
 }
 
 function restoreViewFromLocation() {
-  const showGuide = window.location.hash === "#vpn-guide";
+  const hash = window.location.hash;
+  const showGuide = hash === "#vpn-guide" || hash === "#help";
   setPageView(showGuide ? "guide" : "home");
-  if (showGuide) requestAnimationFrame(() => guideView.scrollIntoView({ block: "start" }));
+  if (showGuide) {
+    const destination = hash === "#help" ? document.querySelector("#help") : guideView;
+    requestAnimationFrame(() => destination?.scrollIntoView({ block: "start" }));
+  }
 }
 
 vpnTabLinks.forEach((link) => {
@@ -467,7 +472,8 @@ document.querySelectorAll(".top-nav a[href^='#']:not([data-vpn-tab]), .brand[hre
     const hash = link.getAttribute("href");
     const target = hash === "#top" ? document.querySelector("#top") : document.querySelector(hash);
     event.preventDefault();
-    navigateWithinSite("home", hash, target);
+    const view = target?.closest("#vpn-guide") ? "guide" : "home";
+    navigateWithinSite(view, hash, target);
   });
 });
 

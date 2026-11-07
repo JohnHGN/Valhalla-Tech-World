@@ -15,8 +15,8 @@
   --ice: #bbebff;
   --violet: #9f8fff;
   --radius: 23px;
-  --font-fa-body: "B Nazanin", "BNazanin", "Nazanin", "B Nazanin Regular", "Amiri", "Vazirmatn", Tahoma, serif;
-  --font-fa-heading: "B Nazanin", "BNazanin", "Nazanin", "B Nazanin Bold", "Amiri", "Vazirmatn", Tahoma, serif;
+  --font-fa-body: "Yas", "B Yas", "Yas Regular", "Vazirmatn", Tahoma, sans-serif;
+  --font-fa-heading: "B Nazanin", "BNazanin", "Nazanin", "Amiri", "Vazirmatn", Tahoma, serif;
   --font-en-body: "Arial Rounded MT", "Arial Rounded MT Bold", "Arial Rounded", "Arial Round", "Nunito", Arial, sans-serif;
   --font-en-heading: "Orbitron", "Arial Rounded MT Bold", "Nunito", Arial, sans-serif;
   font-family: var(--font-fa-body);
@@ -501,4 +501,116 @@ html.motion-ready .motion-in:not(.is-visible) { opacity: 0; transform: translate
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}
+
+
+/* Requested Persian font families, atmospheric hero snowfall, and pointer-led card motion. */
+h1, h2, h3, h4 { font-family: var(--font-fa-heading); }
+body, button, input, select, textarea { font-family: var(--font-fa-body); }
+.hero.panel {
+  border: 0;
+  border-radius: 42px;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.hero::before {
+  inset: -1.5%;
+  border-radius: inherit;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 48%, rgba(0,0,0,.96) 76%, rgba(0,0,0,.56) 94%, transparent 108%);
+  mask-image: radial-gradient(ellipse at center, #000 48%, rgba(0,0,0,.96) 76%, rgba(0,0,0,.56) 94%, transparent 108%);
+}
+.hero::after { border-radius: inherit; }
+.snowfall {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  opacity: .42;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 18px 26px, rgba(240,255,255,.88) 98%, transparent),
+    radial-gradient(1.3px 1.3px at 78px 116px, rgba(221,250,255,.72) 98%, transparent),
+    radial-gradient(1px 1px at 128px 62px, rgba(255,255,255,.74) 98%, transparent);
+  background-size: 170px 170px, 240px 240px, 310px 310px;
+  background-position: 0 0, 70px 35px, 15px 100px;
+  animation: snow-drift 28s linear infinite;
+}
+.snowfall::before {
+  position: absolute;
+  inset: -60% -20%;
+  content: "";
+  opacity: .48;
+  background-image:
+    radial-gradient(1.5px 1.5px at 22px 43px, rgba(234,255,255,.8) 98%, transparent),
+    radial-gradient(1px 1px at 154px 98px, rgba(255,255,255,.78) 98%, transparent);
+  background-size: 265px 265px, 355px 355px;
+  animation: snow-drift 38s linear infinite reverse;
+}
+@keyframes snow-drift {
+  from { background-position: 0 -180px, 70px -240px, 15px -310px; transform: translateX(-5px); }
+  to { background-position: 0 170px, 70px 240px, 15px 310px; transform: translateX(12px); }
+}
+
+.prompt-article {
+  grid-column: span 2;
+  min-height: 0;
+  padding: clamp(18px, 2.6vw, 28px);
+  border-radius: 20px 20px 20px 6px;
+  cursor: default;
+}
+.prompt-article .academy-type { margin-bottom: 10px; }
+.prompt-article h3 { max-width: 720px; margin-bottom: 7px; font-size: clamp(17px, 2.1vw, 23px); line-height: 1.5; }
+.prompt-article p { max-width: 840px; margin: 0 0 8px; font-size: 13px; line-height: 2; }
+.prompt-source-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  width: fit-content;
+  margin-top: 8px;
+  color: var(--aurora-soft);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.prompt-source-link span { color: var(--aurora); font: 700 13px/1 var(--font-en-heading); transition: transform .22s ease; }
+.prompt-source-link:hover span { transform: translate(-2px,-2px); }
+.audio-player-wrap {
+  align-self: center;
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid rgba(166,151,255,.23);
+  border-radius: 18px 18px 18px 6px;
+  background: radial-gradient(ellipse at 50% 0, rgba(115,92,190,.14), transparent 72%), rgba(3,9,19,.68);
+  box-shadow: inset 0 1px rgba(255,255,255,.04), 0 18px 44px rgba(0,0,0,.2);
+}
+.audio-player-topline { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 13px; color: #a99bf0; font: 600 8px/1.3 var(--font-en-heading); letter-spacing: 1px; direction: ltr; }
+.podcast-audio { display: block; width: 100%; min-height: 48px; accent-color: var(--aurora); }
+.podcast-audio::-webkit-media-controls-panel { background: linear-gradient(100deg, #e9edf5, #dfe6f4); }
+.audio-player-wrap p { margin: 12px 0 0; color: #9eafc1; font-size: 10px; line-height: 1.9; }
+.audio-player-wrap p a { color: var(--aurora-soft); text-decoration-color: rgba(166,255,233,.35); text-underline-offset: 3px; }
+
+:where(.service-card, .platform-tab, .academy-filter, .academy-card, .offer-card, .contact-card, .faq-item, .download-link, .podcast-feature, .search-result):is(:hover, :focus-visible) {
+  outline: 1px solid rgba(99,243,213,.34);
+  outline-offset: 1px;
+  animation: selectable-orbit 2s ease-in-out infinite;
+}
+@keyframes selectable-orbit {
+  0%, 100% { outline-color: rgba(99,243,213,.3); outline-offset: 1px; translate: 0 0; }
+  50% { outline-color: rgba(166,255,233,.88); outline-offset: 3px; translate: 0 -2px; }
+}
+
+@media (max-width: 680px) {
+  .hero.panel { border-radius: 30px; }
+  .prompt-article { grid-column: 1 / -1; padding: 17px; }
+  .prompt-article p { font-size: 12px; }
+  .audio-player-wrap { padding: 14px; }
+}
+@media (max-width: 390px) {
+  .prompt-article { grid-column: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .snowfall, .snowfall::before { animation: none !important; }
+  :where(.service-card, .platform-tab, .academy-filter, .academy-card, .offer-card, .contact-card, .faq-item, .download-link, .podcast-feature, .search-result):is(:hover, :focus-visible) { animation: none !important; }
 }
