@@ -267,11 +267,12 @@ function buildSearchIndex() {
     }
   }
 
-  const targets = document.querySelectorAll(".offer-card, .academy-card, .faq-item, .contact-card, [data-service], [data-platform]");
+  const targets = document.querySelectorAll(".offer-card, .academy-card, .podcast-feature, .faq-item, .contact-card, [data-service], [data-platform]");
   for (const target of targets) {
     const title = target.querySelector("h3, summary, .contact-card strong, .service-text strong")?.textContent.trim() || target.textContent.trim();
-    const detail = target.querySelector(".offer-description, .academy-card p, .faq-item p, .contact-card small, .service-text span")?.textContent.trim() || "";
+    const detail = target.querySelector(".offer-description, .academy-card p, .podcast-copy p, .faq-item p, .contact-card small, .service-text span")?.textContent.trim() || "";
     const kind = target.matches(".academy-card") ? "academy"
+      : target.matches(".podcast-feature") ? "podcast"
       : target.matches(".faq-item") ? "faq"
       : target.matches("[data-service]") ? "service"
       : target.matches("[data-platform]") ? "platform"
@@ -356,19 +357,25 @@ function closeQuickSearch(restoreFocus = false) {
 function activateSearchResult(record) {
   let destination = record.target;
   if (record.kind === "guide") {
+    setPageView("guide");
     serviceButtons.find((button) => button.dataset.service === record.service)?.click();
     platformButtons.find((button) => button.dataset.platform === record.platform)?.click();
     destination = panel;
   } else if (record.kind === "service") {
+    setPageView("guide");
     record.target.click();
     destination = panel;
   } else if (record.kind === "platform") {
+    setPageView("guide");
     record.target.click();
     destination = panel;
-  } else if (record.kind === "academy" && record.target.hidden) {
-    academyFilters.find((button) => button.dataset.filter === "all")?.click();
-  } else if (record.kind === "faq") {
-    record.target.open = true;
+  } else {
+    setPageView("home");
+    if (record.kind === "academy" && record.target.hidden) {
+      academyFilters.find((button) => button.dataset.filter === "all")?.click();
+    } else if (record.kind === "faq") {
+      record.target.open = true;
+    }
   }
   closeQuickSearch(true);
   destination?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -421,4 +428,72 @@ function selectPlatform(button) {
   renderGuide();
 }
 
+const guideView = document.querySelector("#vpn-guide");
+const homeViews = [...document.querySelectorAll(".home-view")];
+const vpnTabLinks = [...document.querySelectorAll("[data-vpn-tab]")];
+
+function setPageView(view) {
+  const showGuide = view === "guide";
+  guideView.hidden = !showGuide;
+  homeViews.forEach((homeView) => { homeView.hidden = showGuide; });
+  vpnTabLinks.forEach((link) => link.setAttribute("aria-current", String(showGuide ? "page" : "false")));
+  document.body.dataset.currentView = showGuide ? "guide" : "home";
+}
+
+function navigateWithinSite(view, hash, target) {
+  if (window.location.hash !== hash) window.history.pushState(null, "", hash);
+  setPageView(view);
+  requestAnimationFrame(() => {
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    else window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
+
+function restoreViewFromLocation() {
+  const showGuide = window.location.hash === "#vpn-guide";
+  setPageView(showGuide ? "guide" : "home");
+  if (showGuide) requestAnimationFrame(() => guideView.scrollIntoView({ block: "start" }));
+}
+
+vpnTabLinks.forEach((link) => {
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+    navigateWithinSite("guide", "#vpn-guide", guideView);
+  });
+});
+
+document.querySelectorAll(".top-nav a[href^='#']:not([data-vpn-tab]), .brand[href='#top'], .footer-brand[href='#top']").forEach((link) => {
+  link.addEventListener("click", (event) => {
+    const hash = link.getAttribute("href");
+    const target = hash === "#top" ? document.querySelector("#top") : document.querySelector(hash);
+    event.preventDefault();
+    navigateWithinSite("home", hash, target);
+  });
+});
+
+window.addEventListener("popstate", restoreViewFromLocation);
+window.addEventListener("hashchange", restoreViewFromLocation);
+
+const motionTargets = [...document.querySelectorAll(".section-heading, .service-card, .step-item, .offer-card, .academy-card, .podcast-feature, .faq-item, .contact-card, .privacy-strip")];
+motionTargets.forEach((element) => {
+  const siblings = [...element.parentElement.children].filter((sibling) => sibling.matches(".service-card, .step-item, .offer-card, .academy-card, .faq-item, .contact-card"));
+  const siblingIndex = Math.max(0, siblings.indexOf(element));
+  element.style.setProperty("--motion-delay", `${Math.min(siblingIndex * 45, 180)}ms`);
+  element.classList.add("motion-in");
+});
+document.documentElement.classList.add("motion-ready");
+if ("IntersectionObserver" in window) {
+  const motionObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add("is-visible");
+      observer.unobserve(entry.target);
+    });
+  }, { threshold: 0.1, rootMargin: "0px 0px -5% 0px" });
+  motionTargets.forEach((element) => motionObserver.observe(element));
+} else {
+  motionTargets.forEach((element) => element.classList.add("is-visible"));
+}
+
 renderGuide();
+restoreViewFromLocation();
