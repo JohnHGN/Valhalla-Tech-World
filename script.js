@@ -506,193 +506,120 @@ restoreViewFromLocation();
 
 
 
-// Valhalla glass podcast player
+// Valhalla Audio player — functional controls + per-episode metadata
 (() => {
-  const audio = document.querySelector("#podcast-audio");
   const root = document.querySelector("#valhalla-audio-player");
-  if (!audio || !root) return;
-
+  const audio = root?.querySelector("#podcast-audio");
+  if (!root || !audio) return;
   const $ = (selector) => root.querySelector(selector);
-  const playButton = $("#audio-play-toggle");
-  const progress = $("#audio-progress");
-  const current = $("#audio-current-time");
-  const durationEl = $("#audio-duration");
-  const mute = $("#audio-mute");
-  const volume = $("#audio-volume");
-  const repeat = $("#audio-repeat");
-  const share = $("#audio-share");
-  const skipBack = $("#audio-skip-back");
-  const skipForward = $("#audio-skip-forward");
-  const prevMarker = $("#audio-prev-marker");
-  const nextMarker = $("#audio-next-marker");
-  const speed = $("#audio-speed");
-  const sleep = $("#audio-sleep");
-  const statusLabel = $("#audio-status-label span");
-  const cover = $(".va-cover");
-  const coverImage = cover?.querySelector("img");
-
+  const playButton = $("#audio-play-toggle"), progress = $("#audio-progress");
+  const current = $("#audio-current-time"), durationEl = $("#audio-duration");
+  const mute = $("#audio-mute"), volume = $("#audio-volume"), repeat = $("#audio-repeat");
+  const share = $("#audio-share"), skipBack = $("#audio-skip-back"), skipForward = $("#audio-skip-forward");
+  const prevMarker = $("#audio-prev-marker"), nextMarker = $("#audio-next-marker");
+  const speed = $("#audio-speed"), sleep = $("#audio-sleep");
+  const statusLabel = $("#audio-status-label span"), titleEl = $("#audio-title");
+  const categoryEl = $("#audio-category"), subtitleEl = $("#audio-subtitle");
+  const coverImg = $("#audio-cover-image");
   let sleepTimer = null;
-  let lastVolume = Number(volume?.value ?? 0.8) || 0.8;
-  audio.volume = lastVolume;
+  let activeShareUrl = location.href.split("#")[0] + "#podcasts";
 
+  audio.volume = Number(volume?.value ?? 0.8);
   const format = (seconds) => {
     if (!Number.isFinite(seconds)) return "--:--";
     const value = Math.max(0, Math.floor(seconds));
-    return `${String(Math.floor(value / 60)).padStart(2, "0")}:${String(value % 60).padStart(2, "0")}`;
+    return `${String(Math.floor(value / 60)).padStart(2,"0")}:${String(value % 60).padStart(2,"0")}`;
   };
-  const setStatus = (text) => { if (statusLabel) statusLabel.textContent = text; };
-  const setRangeFill = (element, value) => {
-    if (element) element.style.setProperty("--progress", `${value}%`);
-  };
+  const setStatus = (value) => { if (statusLabel) statusLabel.textContent = value; };
   const sync = () => {
-    const hasDuration = Number.isFinite(audio.duration) && audio.duration > 0;
-    const pct = hasDuration ? (audio.currentTime / audio.duration) * 100 : 0;
-    if (current) current.textContent = format(audio.currentTime);
-    if (durationEl) durationEl.textContent = hasDuration ? format(audio.duration) : "--:--";
-    if (progress) {
-      progress.value = String(pct);
-      setRangeFill(progress, pct);
-      progress.disabled = !hasDuration;
-    }
-    const playing = !audio.paused && !audio.ended;
-    playButton?.classList.toggle("is-playing", playing);
+    if (!current || !durationEl || !progress || !playButton) return;
+    current.textContent = format(audio.currentTime);
+    durationEl.textContent = format(audio.duration);
+    const pct = Number.isFinite(audio.duration) && audio.duration > 0 ? audio.currentTime / audio.duration * 100 : 0;
+    progress.value = String(pct);
+    progress.style.setProperty("--progress", `${pct}%`);
+    const playing = !audio.paused;
+    playButton.classList.toggle("is-playing", playing);
     root.classList.toggle("is-playing", playing);
-    playButton?.setAttribute("aria-label", playing ? "مکث پادکست" : "پخش پادکست");
-    mute?.setAttribute("aria-label", audio.muted || audio.volume === 0 ? "فعال‌کردن صدا" : "بی‌صدا کردن");
-    if (volume) {
-      volume.value = String(audio.muted ? 0 : audio.volume);
-      setRangeFill(volume, (audio.muted ? 0 : audio.volume) * 100);
-    }
-    repeat?.setAttribute("aria-pressed", String(audio.loop));
-    repeat?.setAttribute("aria-label", audio.loop ? "تکرار روشن" : "تکرار خاموش");
+    playButton.setAttribute("aria-label", playing ? "مکث" : "پخش پادکست");
+    if (mute) mute.setAttribute("aria-label", audio.muted || audio.volume === 0 ? "فعال‌کردن صدا" : "بی‌صدا کردن");
+    if (playing) setStatus("در حال پخش");
+    else if (audio.ended) setStatus("پایان پخش");
+    else if (audio.currentTime > 0.35) setStatus("متوقف");
+    else setStatus("آمادهٔ پخش");
   };
+  const updateEpisode = (episode = {}) => {
+    if (episode.title && titleEl) titleEl.textContent = episode.title;
+    if (episode.category && categoryEl) categoryEl.textContent = episode.category;
+    if (episode.subtitle && subtitleEl) subtitleEl.textContent = episode.subtitle;
+    if (coverImg) {
+      const cover = episode.cover || "";
+      if (cover) { coverImg.src = cover; coverImg.hidden = false; }
+      else { coverImg.removeAttribute("src"); coverImg.hidden = true; }
+      coverImg.alt = episode.title ? `لوگوی ${episode.title}` : "لوگوی پادکست";
+    }
+    if (episode.audio) {
+      audio.pause(); audio.src = episode.audio; audio.load();
+      if (progress) progress.value = "0";
+    }
+    if (episode.shareUrl) activeShareUrl = episode.shareUrl;
+    else activeShareUrl = location.href.split("#")[0] + "#podcasts";
+    if (episode.title) root.dataset.podcastTitle = episode.title;
+    if (episode.category) root.dataset.podcastCategory = episode.category;
+    if (episode.subtitle) root.dataset.podcastSubtitle = episode.subtitle;
+    if (episode.cover !== undefined) root.dataset.podcastCover = episode.cover;
+    sync();
+  };
+  // Public hook for a future episode list: window.ValhallaAudio.setPodcast({...})
+  window.ValhallaAudio = Object.assign(window.ValhallaAudio || {}, { setPodcast: updateEpisode });
+  updateEpisode({
+    title: root.dataset.podcastTitle,
+    category: root.dataset.podcastCategory,
+    subtitle: root.dataset.podcastSubtitle,
+    cover: root.dataset.podcastCover || ""
+  });
 
   playButton?.addEventListener("click", async () => {
     if (audio.paused) {
       setStatus("در حال بارگذاری…");
-      try {
-        await audio.play();
-      } catch (error) {
-        setStatus("پخش انجام نشد");
-        $(".audio-fallback")?.classList.add("is-visible");
-      }
-    } else {
-      audio.pause();
-    }
+      try { await audio.play(); }
+      catch { $(".audio-fallback")?.classList.add("is-visible"); setStatus("خطا در پخش"); }
+    } else audio.pause();
   });
-
   progress?.addEventListener("input", () => {
-    if (Number.isFinite(audio.duration) && audio.duration > 0) {
-      audio.currentTime = (Number(progress.value) / 100) * audio.duration;
-      sync();
+    if (Number.isFinite(audio.duration)) {
+      audio.currentTime = Number(progress.value) / 100 * audio.duration;
+      progress.style.setProperty("--progress", `${progress.value}%`);
     }
   });
-  const skip = (seconds) => {
+  const skip = (delta) => {
     if (!Number.isFinite(audio.duration)) return;
-    audio.currentTime = Math.max(0, Math.min(audio.duration, audio.currentTime + seconds));
-    sync();
+    audio.currentTime = Math.max(0, Math.min(audio.duration, audio.currentTime + delta)); sync();
   };
   skipBack?.addEventListener("click", () => skip(-15));
   skipForward?.addEventListener("click", () => skip(30));
-  // These two controls are chapter-boundary controls for this single-episode player.
-  prevMarker?.addEventListener("click", () => {
-    audio.currentTime = 0;
-    sync();
-  });
-  nextMarker?.addEventListener("click", () => {
-    if (Number.isFinite(audio.duration)) {
-      audio.currentTime = Math.max(0, audio.duration - 0.05);
-      sync();
-    }
-  });
-
-  mute?.addEventListener("click", () => {
-    if (audio.muted || audio.volume === 0) {
-      audio.muted = false;
-      audio.volume = lastVolume || 0.8;
-    } else {
-      lastVolume = audio.volume;
-      audio.muted = true;
-    }
-    sync();
-  });
-  volume?.addEventListener("input", () => {
-    const nextVolume = Math.max(0, Math.min(1, Number(volume.value)));
-    audio.volume = nextVolume;
-    audio.muted = nextVolume === 0;
-    if (nextVolume > 0) lastVolume = nextVolume;
-    sync();
-  });
-  repeat?.addEventListener("click", () => {
-    audio.loop = !audio.loop;
-    sync();
-    setStatus(audio.loop ? "تکرار روشن" : "تکرار خاموش");
-  });
-  speed?.addEventListener("change", () => {
-    const rate = Number(speed.value);
-    if (Number.isFinite(rate) && rate >= 0.5 && rate <= 3) {
-      audio.playbackRate = rate;
-      setStatus(`سرعت پخش ${rate.toLocaleString("fa-IR")}×`);
-    }
-  });
-  const clearSleepTimer = () => {
-    if (sleepTimer) window.clearTimeout(sleepTimer);
-    sleepTimer = null;
-  };
+  prevMarker?.addEventListener("click", () => { audio.currentTime = 0; sync(); });
+  nextMarker?.addEventListener("click", () => { if (Number.isFinite(audio.duration)) audio.currentTime = audio.duration; sync(); });
+  mute?.addEventListener("click", () => { audio.muted = !audio.muted; sync(); });
+  volume?.addEventListener("input", () => { audio.volume = Number(volume.value); audio.muted = audio.volume === 0; sync(); });
+  repeat?.addEventListener("click", () => { audio.loop = !audio.loop; repeat.setAttribute("aria-pressed", String(audio.loop)); repeat.setAttribute("aria-label", audio.loop ? "تکرار روشن" : "تکرار خاموش"); });
+  speed?.addEventListener("change", () => { audio.playbackRate = Number(speed.value) || 1; });
   sleep?.addEventListener("change", () => {
-    clearSleepTimer();
+    if (sleepTimer) clearTimeout(sleepTimer); sleepTimer = null;
     const minutes = Number(sleep.value);
-    if (minutes > 0) {
-      setStatus(`توقف خودکار: ${minutes} دقیقه`);
-      sleepTimer = window.setTimeout(() => {
-        audio.pause();
-        sleep.value = "0";
-        sleepTimer = null;
-        setStatus("توقف خودکار انجام شد");
-        sync();
-      }, minutes * 60 * 1000);
-    } else {
-      setStatus(audio.paused ? "آمادهٔ پخش" : "در حال پخش");
-    }
+    if (minutes > 0) sleepTimer = setTimeout(() => { audio.pause(); sleep.value = "0"; setStatus("توقف خودکار"); sync(); }, minutes * 60000);
   });
   share?.addEventListener("click", async () => {
-    const title = $(".va-title")?.textContent.trim() || "پادکست والهالا";
-    const url = "https://t.me/valhala_tw/64";
+    const data = { title: titleEl?.textContent || "پادکست والهالا", text: subtitleEl?.textContent || "", url: activeShareUrl };
     try {
-      if (navigator.share) {
-        await navigator.share({ title, text: "گوش‌دادن به پادکست والهالا", url });
-        setStatus("اشتراک‌گذاری انجام شد");
-      } else if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(url);
-        setStatus("پیوند کپی شد");
-      } else {
-        window.prompt("پیوند پادکست را کپی کن:", url);
-      }
-    } catch (error) {
-      if (error?.name !== "AbortError") setStatus("اشتراک‌گذاری در دسترس نیست");
-    }
+      if (navigator.share) await navigator.share(data);
+      else if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(data.url); setStatus("پیوند کپی شد"); }
+    } catch (error) { if (error?.name !== "AbortError") setStatus("اشتراک‌گذاری در دسترس نیست"); }
   });
-
-  coverImage?.addEventListener("error", () => {
-    cover?.classList.add("is-empty");
-    coverImage.hidden = true;
-  });
-  coverImage?.addEventListener("load", () => {
-    cover?.classList.remove("is-empty");
-    coverImage.hidden = false;
-  });
-
-  ["loadedmetadata", "durationchange", "timeupdate", "play", "pause", "volumechange", "ended", "waiting", "playing", "error"].forEach((eventName) => {
+  ["loadedmetadata","durationchange","timeupdate","play","pause","volumechange","ended","waiting","playing","error"].forEach((eventName) => {
     audio.addEventListener(eventName, () => {
       if (eventName === "waiting") setStatus("در حال بارگذاری…");
-      else if (eventName === "playing") setStatus("در حال پخش");
-      else if (eventName === "ended") {
-        setStatus(audio.loop ? "در حال تکرار" : "پایان پخش");
-        if (!audio.loop) clearSleepTimer();
-      } else if (eventName === "error") {
-        setStatus("خطا در بارگذاری فایل صوتی");
-        $(".audio-fallback")?.classList.add("is-visible");
-      }
+      if (eventName === "error") { $(".audio-fallback")?.classList.add("is-visible"); setStatus("خطا در دریافت فایل صوتی"); }
       sync();
     });
   });

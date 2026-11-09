@@ -396,7 +396,7 @@
           </div>
           <span class="section-caption">صدا و آموزش از کانال والهالا</span>
         </div>
-        <article class="podcast-feature hall-of-echoes" id="valhalla-audio-player">
+        <article class="podcast-feature hall-of-echoes" id="valhalla-audio-player" data-podcast-title="آموزش پرامپت‌نویسی با ChatGPT" data-podcast-category="01 · CHATGPT PROMPTING" data-podcast-subtitle="فصل اول · دنیای بی‌پایان هوش مصنوعی" data-podcast-cover="">
           <div class="audio-player-wrap rune-deck">
             <div class="va-topline">
               <span class="va-brand">VALHALLA AUDIO</span>
@@ -404,15 +404,15 @@
             </div>
 
             <div class="va-body">
-              <div class="va-cover">
-                <img src="assets/chatgpt-podcast-cover.png" alt="کاور پادکست ChatGPT" loading="lazy" />
+              <div class="va-cover" id="audio-cover-frame" aria-label="جایگاه لوگوی پادکست">
+                <img id="audio-cover-image" alt="لوگوی پادکست" hidden />
               </div>
 
               <div class="va-main">
                 <div class="va-meta">
-                  <span class="va-chapter" dir="ltr">01 · CHATGPT PROMPTING</span>
-                  <h3 class="va-title">آموزش پرامپت‌نویسی با <bdi lang="en">ChatGPT</bdi></h3>
-                  <p class="va-sub">فصل اول · دنیای بی‌پایان هوش مصنوعی</p>
+                  <span class="va-chapter" id="audio-category" dir="ltr">01 · CHATGPT PROMPTING</span>
+                  <h3 class="va-title" id="audio-title">آموزش پرامپت‌نویسی با <bdi lang="en">ChatGPT</bdi></h3>
+                  <p class="va-sub" id="audio-subtitle">فصل اول · دنیای بی‌پایان هوش مصنوعی</p>
                 </div>
 
                 <div class="va-wave" aria-hidden="true">
@@ -425,7 +425,7 @@
                 <div class="va-progress">
                   <span id="audio-current-time">00:00</span>
                   <input id="audio-progress" type="range" min="0" max="100" value="0" step="0.1" aria-label="موقعیت پخش" />
-                  <span id="audio-duration">15:10</span>
+                  <span id="audio-duration">--:--</span>
                 </div>
 
                 <div class="va-transport">
