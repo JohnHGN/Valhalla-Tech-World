@@ -95,11 +95,20 @@ button { color: inherit; cursor: pointer; }
   filter:drop-shadow(0 0 5px rgba(0,220,255,.25));
 }
 .track-title {
-  position:absolute; left:32%; right:8%; top:27%;
-  color:#c9faff; text-align:center; direction:rtl;
-  font-size:clamp(9px,1.15cqw,17px); letter-spacing:.04em;
-  text-shadow:0 0 9px #00dfff,0 1px 4px #000;
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  position: absolute;
+  left: 32%;
+  right: 8%;
+  top: 26%;
+  color: #c9faff;
+  text-align: center;
+  direction: rtl;
+  font-size: clamp(15px, 2cqw, 29px);
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-shadow: 0 0 12px #00dfff, 0 1px 5px #000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .playing-status.is-playing {
   border-color:#ffd27a; color:#ffe0a2;
