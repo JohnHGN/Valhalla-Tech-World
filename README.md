@@ -48,6 +48,16 @@ python3 -m http.server 8000
 هیچ لینک اشتراک، فایل کانفیگ، آدرس سرور، نام کاربری یا رمز ساختگی در سایت قرار داده نشده است. کاربر باید اطلاعات سرویس خودش را از پیام یا پنل اصلی دریافت کند. لینک‌های دریافت برنامه به صفحهٔ رسمی WireGuard، Hiddify و مخزن‌های رسمی v2rayNG/v2rayN اشاره می‌کنند.
 
 
-## Glass Audio Player v2 installation
-This package includes the `player-theme.css` stylesheet and the dedicated ChatGPT podcast cover.
-Upload/replace `index.html`, `styles.css`, `script.js`, and `player-theme.css` in the repository root. Upload `chatgpt-podcast-cover.png` into the existing `assets/` folder (do not delete or replace the other assets). The updated `index.html` already loads `player-theme.css` after `styles.css`.
+## نصب پوستهٔ مستقل Valhalla Glass Audio Player
+فایل `valhalla-glass-player.css` باید داخل پوشهٔ `assets/` قرار بگیرد. فایل `index.html` آن را از همین مسیر بارگذاری می‌کند. فایل‌های `index.html`، `styles.css` و `script.js` در ریشهٔ مخزن جایگزین شوند؛ سایر دارایی‌های موجود را حذف نکنید.
+
+کاور قسمت اول از مسیر `assets/chatgpt-podcast-cover.png` بارگذاری می‌شود. اگر این فایل موجود نباشد، قاب دایره‌ای خالی باقی می‌ماند و می‌توانید کاور هر قسمت را در همین محل قرار دهید.
+
+
+## پوستهٔ مستقل پلیر پادکست (Valhalla Glass Audio Player)
+
+فایل پوسته را با نام `valhalla-glass-player.css` در پوشهٔ `assets/` قرار بده. فایل `index.html` به همین مسیر ارجاع می‌دهد. در این نسخه استایل پلیر از `styles.css` جدا شده و کنترل‌های پخش در `script.js` به عنصر صوتی HTML متصل‌اند.
+
+برای انتشار این تغییرات، فایل‌های `index.html`، `styles.css` و `script.js` را در ریشهٔ مخزن جایگزین کن و `valhalla-glass-player.css` را در `assets/` بارگذاری کن. فایل صوتی فعلی و سایر دارایی‌های سایت را حذف نکن. کاور قسمت اول در مسیر `assets/chatgpt-podcast-cover.png` خوانده می‌شود؛ اگر این فایل وجود نداشته باشد، قاب دایره‌ای خالی می‌ماند تا لوگوی هر قسمت را بعداً در آن قرار دهی.
+
+کنترل‌های موجود: پخش/مکث، نوار جابه‌جایی، ابتدا/انتها، عقب‌گرد ۱۵ ثانیه، جلو رفتن ۳۰ ثانیه، سرعت، توقف خودکار، بی‌صدا/تنظیم صدا، تکرار و اشتراک‌گذاری. اکولایزر با وضعیت پخش فعال و متوقف می‌شود؛ میله‌ها انیمیشن بصری هستند و تحلیل‌گر فرکانس زندهٔ فایل صوتی نیستند.
