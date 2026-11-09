@@ -1,0 +1,6 @@
+--- a/script.js
++++ b/script.js
+@@
+-  glyph.innerHTML = document.querySelector(`#tab-${activePlatform} .platform-icon`).innerHTML;
++  const platformIcon = document.querySelector(`#tab-${activePlatform} .platform-icon`);
++  glyph.replaceChildren(platformIcon?.cloneNode(true) ?? document.createTextNode("▣"));
