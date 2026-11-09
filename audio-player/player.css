@@ -190,3 +190,22 @@ button { color: inherit; cursor: pointer; }
 .volume-icon {
   filter: drop-shadow(0 0 5px rgba(0,225,255,.65));
 }
+/* ROG Gaming Font */
+@font-face {
+  font-family: "ROG";
+  src: url("assets/fonts/EA-Font-v15-by-Ghettoshark.ttf.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Podcast title */
+.track-title {
+  font-family: "ROG", Tahoma, sans-serif;
+  font-weight: normal;
+  letter-spacing: .06em;
+  text-shadow:
+    0 0 8px #00eaff,
+    0 0 16px #00cfff,
+    0 2px 5px #000;
+}
