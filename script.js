@@ -505,7 +505,7 @@ renderGuide();
 restoreViewFromLocation();
 
 
-// Custom Valhalla podcast deck: accessible playback, seek, volume, repeat, and sharing.
+// Custom Valhalla podcast deck: Hall of Echoes — playback, skip, volume, repeat, share.
 (() => {
   const audio = document.querySelector("#podcast-audio");
   if (!audio) return;
@@ -517,42 +517,91 @@ restoreViewFromLocation();
   const volume = document.querySelector("#audio-volume");
   const repeat = document.querySelector("#audio-repeat");
   const share = document.querySelector("#audio-share");
-  audio.volume = Number(volume.value);
+  const skipBack = document.querySelector("#audio-skip-back");
+  const skipForward = document.querySelector("#audio-skip-forward");
+  const deck = document.querySelector(".rune-deck");
+  const statusLabel = document.querySelector("#audio-status-label span");
+  audio.volume = Number(volume?.value ?? 0.8);
+
   const format = (seconds) => {
     if (!Number.isFinite(seconds)) return "00:00";
     const value = Math.max(0, Math.floor(seconds));
     return `${String(Math.floor(value / 60)).padStart(2, "0")}:${String(value % 60).padStart(2, "0")}`;
   };
+
+  const setStatus = (text) => {
+    if (statusLabel) statusLabel.textContent = text;
+  };
+
   const sync = () => {
+    if (!current || !duration || !progress || !playButton) return;
     current.textContent = format(audio.currentTime);
     duration.textContent = Number.isFinite(audio.duration) ? format(audio.duration) : "15:10";
     progress.value = Number.isFinite(audio.duration) && audio.duration ? (audio.currentTime / audio.duration) * 100 : 0;
     progress.style.setProperty("--progress", `${progress.value}%`);
     playButton.setAttribute("aria-label", audio.paused ? "پخش پادکست" : "مکث پادکست");
     playButton.classList.toggle("is-playing", !audio.paused);
-    mute.setAttribute("aria-label", audio.muted || audio.volume === 0 ? "فعال‌کردن صدا" : "بی‌صدا کردن");
+    deck?.classList.toggle("is-playing", !audio.paused);
+    if (mute) mute.setAttribute("aria-label", audio.muted || audio.volume === 0 ? "فعال‌کردن صدا" : "بی‌صدا کردن");
+    if (!audio.paused) setStatus("TRANSMISSION LIVE");
+    else if (audio.currentTime > 0.4) setStatus("SIGNAL PAUSED");
+    else setStatus("AWAITING SIGNAL");
   };
-  playButton.addEventListener("click", async () => {
-    if (audio.paused) { try { await audio.play(); } catch { document.querySelector(".audio-fallback")?.classList.add("is-visible"); } }
-    else audio.pause();
+
+  playButton?.addEventListener("click", async () => {
+    if (audio.paused) {
+      setStatus("CONNECTING…");
+      try {
+        await audio.play();
+      } catch {
+        document.querySelector(".audio-fallback")?.classList.add("is-visible");
+        setStatus("SIGNAL FAILED");
+      }
+    } else {
+      audio.pause();
+    }
   });
-  progress.addEventListener("input", () => {
+
+  progress?.addEventListener("input", () => {
     if (Number.isFinite(audio.duration)) audio.currentTime = (Number(progress.value) / 100) * audio.duration;
   });
-  mute.addEventListener("click", () => { audio.muted = !audio.muted; sync(); });
-  volume.addEventListener("input", () => { audio.volume = Number(volume.value); audio.muted = audio.volume === 0; sync(); });
-  repeat.addEventListener("click", () => {
+
+  const skip = (delta) => {
+    if (!Number.isFinite(audio.duration)) return;
+    audio.currentTime = Math.max(0, Math.min(audio.duration, audio.currentTime + delta));
+    sync();
+  };
+  skipBack?.addEventListener("click", () => skip(-15));
+  skipForward?.addEventListener("click", () => skip(15));
+
+  mute?.addEventListener("click", () => { audio.muted = !audio.muted; sync(); });
+  volume?.addEventListener("input", () => {
+    audio.volume = Number(volume.value);
+    audio.muted = audio.volume === 0;
+    sync();
+  });
+  repeat?.addEventListener("click", () => {
     audio.loop = !audio.loop;
     repeat.setAttribute("aria-pressed", String(audio.loop));
     repeat.setAttribute("aria-label", audio.loop ? "تکرار روشن" : "تکرار خاموش");
   });
-  share.addEventListener("click", async () => {
+  share?.addEventListener("click", async () => {
     const shareData = { title: "پادکست والهالا · آموزش پرامپت‌نویسی", url: "https://t.me/valhala_tw/64" };
     try {
       if (navigator.share) await navigator.share(shareData);
-      else if (navigator.clipboard) { await navigator.clipboard.writeText(shareData.url); share.setAttribute("aria-label", "پیوند پادکست کپی شد"); }
+      else if (navigator.clipboard) {
+        await navigator.clipboard.writeText(shareData.url);
+        share.setAttribute("aria-label", "پیوند پادکست کپی شد");
+      }
     } catch {}
   });
-  ["loadedmetadata", "durationchange", "timeupdate", "play", "pause", "volumechange", "ended"].forEach((event) => audio.addEventListener(event, sync));
+
+  ["loadedmetadata", "durationchange", "timeupdate", "play", "pause", "volumechange", "ended", "waiting", "playing"].forEach((event) => {
+    audio.addEventListener(event, () => {
+      if (event === "waiting") setStatus("BUFFERING…");
+      if (event === "ended") setStatus("TRANSMISSION COMPLETE");
+      sync();
+    });
+  });
   sync();
 })();

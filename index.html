@@ -395,35 +395,90 @@
           </div>
           <span class="section-caption">صدا و آموزش از کانال والهالا</span>
         </div>
-        <article class="podcast-feature">
+        <article class="podcast-feature hall-of-echoes">
           <div class="podcast-copy">
-            <span class="podcast-label"><span class="podcast-live-dot" aria-hidden="true"></span> قسمت صوتی · <bdi lang="en">ChatGPT</bdi></span>
+            <span class="podcast-label"><span class="podcast-live-dot" aria-hidden="true"></span> سیگنال صوتی · <bdi lang="en">ChatGPT</bdi></span>
             <h3>آموزش پرامپت‌نویسی با <bdi lang="en">ChatGPT</bdi></h3>
             <p>قسمت اول مجموعهٔ صوتی والهالا؛ فایل کامل را همین‌جا پخش کن و برای دریافت PDF همراه به پست کانال برو.</p>
             <a class="podcast-link" href="https://t.me/valhala_tw/64" target="_blank" rel="noopener noreferrer">باز کردن پادکست در تلگرام <span aria-hidden="true">↗</span></a>
           </div>
-          <div class="audio-player-wrap">
-            <div class="audio-player-topline"><span>VALHALLA PODCAST · PART 01</span><span class="audio-status"><i></i> READY TO CONNECT</span></div>
+
+          <div class="audio-player-wrap rune-deck">
+            <div class="deck-ornament deck-ornament-left" aria-hidden="true">
+              <span>ᚠ</span><span>ᚢ</span><span>ᚦ</span><span>ᚨ</span><span>ᚱ</span>
+            </div>
+            <div class="deck-ornament deck-ornament-right" aria-hidden="true">
+              <span>ᚲ</span><span>ᚷ</span><span>ᚹ</span><span>ᚺ</span><span>ᚾ</span>
+            </div>
+
+            <div class="audio-player-topline">
+              <span class="deck-brand"><span class="deck-sigil" aria-hidden="true">ᛉ</span> VALHALLA TRANSMISSION</span>
+              <span class="audio-status" id="audio-status-label"><i></i> <span>AWAITING SIGNAL</span></span>
+            </div>
+
             <div class="audio-deck">
-              <div class="audio-cover"><img src="assets/podcast-player-reference.jpg" alt="کاور پادکست والهالا با شفق فیروزه‌ای" loading="lazy" /><span class="cover-rune" aria-hidden="true">ᛟ</span></div>
+              <div class="audio-cover">
+                <div class="cover-ring" aria-hidden="true"></div>
+                <div class="cover-ring cover-ring-2" aria-hidden="true"></div>
+                <img src="assets/podcast-player-reference.jpg" alt="کاور پادکست والهالا با شفق فیروزه‌ای" loading="lazy" />
+                <span class="cover-rune" aria-hidden="true">ᛟ</span>
+                <span class="cover-badge" aria-hidden="true">PART 01</span>
+              </div>
+
               <div class="audio-controls">
                 <span class="audio-chapter">01 <i>·</i> CHATGPT PROMPTING</span>
                 <h4>آموزش پرامپت‌نویسی</h4>
-                <button class="audio-play-button" id="audio-play-toggle" type="button" aria-label="پخش پادکست"><svg class="play-glyph" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.8c0-.8.9-1.3 1.6-.9l9.1 5.2c.7.4.7 1.4 0 1.8l-9.1 5.2c-.7.4-1.6-.1-1.6-.9V5.8Z"/></svg><svg class="pause-glyph" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM15 5h4v14h-4z"/></svg></button>
-                <p class="audio-subtitle">قسمت اول · Valhalla Tech World</p>
+                <p class="audio-subtitle">سالن پژواک · Valhalla Tech World</p>
+
+                <div class="transport-row">
+                  <button class="audio-icon-button transport-skip" id="audio-skip-back" type="button" aria-label="۱۵ ثانیه عقب">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 7.5 5 12l6 4.5V7.5Zm8 0-6 4.5 6 4.5V7.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                  </button>
+                  <button class="audio-play-button" id="audio-play-toggle" type="button" aria-label="پخش پادکست">
+                    <span class="play-ring" aria-hidden="true"></span>
+                    <svg class="play-glyph" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.8c0-.8.9-1.3 1.6-.9l9.1 5.2c.7.4.7 1.4 0 1.8l-9.1 5.2c-.7.4-1.6-.1-1.6-.9V5.8Z"/></svg>
+                    <svg class="pause-glyph" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM15 5h4v14h-4z"/></svg>
+                  </button>
+                  <button class="audio-icon-button transport-skip" id="audio-skip-forward" type="button" aria-label="۱۵ ثانیه جلو">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13 7.5 19 12l-6 4.5V7.5ZM5 7.5l6 4.5-6 4.5V7.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                  </button>
+                </div>
+
                 <audio id="podcast-audio" class="podcast-audio" preload="metadata" aria-label="پخش قسمت اول آموزش پرامپت‌نویسی با ChatGPT">
                   <source src="assets/valhalla-chatgpt-prompting-part-1.m4a" type="audio/mp4" />
                   <source src="https://github.com/JohnHGN/valhalla-tech-world-guide/releases/download/podcast-part-1/valhalla-chatgpt-prompting-part-1.m4a" type="audio/mp4" />
                   مرورگر شما پخش صوت را پشتیبانی نمی‌کند؛ <a href="https://t.me/valhala_tw/64" target="_blank" rel="noopener noreferrer">پادکست را در تلگرام باز کن</a>.
                 </audio>
-                <div class="audio-progress-row"><span id="audio-current-time">00:00</span><input id="audio-progress" type="range" min="0" max="100" value="0" step="0.1" aria-label="موقعیت پخش" /><span id="audio-duration">15:10</span></div>
+
+                <div class="audio-progress-row">
+                  <span id="audio-current-time">00:00</span>
+                  <div class="progress-track-wrap">
+                    <input id="audio-progress" type="range" min="0" max="100" value="0" step="0.1" aria-label="موقعیت پخش" />
+                    <div class="progress-glow" aria-hidden="true"></div>
+                  </div>
+                  <span id="audio-duration">15:10</span>
+                </div>
+
                 <div class="audio-control-row">
-                  <button class="audio-icon-button" id="audio-mute" type="button" aria-label="بی‌صدا کردن"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 9a5 5 0 0 1 0 6m2.5-8.5a8.5 8.5 0 0 1 0 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button>
-                  <input id="audio-volume" class="audio-volume" type="range" min="0" max="1" value="0.8" step="0.01" aria-label="میزان صدا" /><div class="audio-control-spacer"></div>
-                  <button class="audio-icon-button" id="audio-share" type="button" aria-label="اشتراک‌گذاری پادکست"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="18" cy="5" r="2.2" stroke="currentColor" stroke-width="1.7"/><circle cx="6" cy="12" r="2.2" stroke="currentColor" stroke-width="1.7"/><circle cx="18" cy="19" r="2.2" stroke="currentColor" stroke-width="1.7"/><path d="m8 11 7.8-4.6M8 13l7.8 4.6" stroke="currentColor" stroke-width="1.7"/></svg></button>
-                  <button class="audio-icon-button" id="audio-repeat" type="button" aria-label="تکرار خاموش" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4m14-1v2a3 3 0 0 1-3 3H3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                  <button class="audio-icon-button" id="audio-mute" type="button" aria-label="بی‌صدا کردن">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 9a5 5 0 0 1 0 6m2.5-8.5a8.5 8.5 0 0 1 0 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                  </button>
+                  <input id="audio-volume" class="audio-volume" type="range" min="0" max="1" value="0.8" step="0.01" aria-label="میزان صدا" />
+                  <div class="audio-control-spacer"></div>
+                  <button class="audio-icon-button" id="audio-share" type="button" aria-label="اشتراک‌گذاری پادکست">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="18" cy="5" r="2.2" stroke="currentColor" stroke-width="1.7"/><circle cx="6" cy="12" r="2.2" stroke="currentColor" stroke-width="1.7"/><circle cx="18" cy="19" r="2.2" stroke="currentColor" stroke-width="1.7"/><path d="m8 11 7.8-4.6M8 13l7.8 4.6" stroke="currentColor" stroke-width="1.7"/></svg>
+                  </button>
+                  <button class="audio-icon-button" id="audio-repeat" type="button" aria-label="تکرار خاموش" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4m14-1v2a3 3 0 0 1-3 3H3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
                 </div>
               </div>
+            </div>
+
+            <div class="deck-footer" aria-hidden="true">
+              <span>ᛟ HALL OF ECHOES</span>
+              <span class="deck-footer-line"></span>
+              <span>BEYOND TECHNOLOGY</span>
             </div>
             <p class="audio-fallback">در صورت اجرا نشدن پخش‌کننده، <a href="https://t.me/valhala_tw/64" target="_blank" rel="noopener noreferrer">پادکست را در تلگرام باز کن</a>.</p>
           </div>
