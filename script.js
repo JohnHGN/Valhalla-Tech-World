@@ -519,7 +519,10 @@ restoreViewFromLocation();
   const share = document.querySelector("#audio-share");
   const skipBack = document.querySelector("#audio-skip-back");
   const skipForward = document.querySelector("#audio-skip-forward");
+  const speed = document.querySelector("#audio-speed");
+  const sleep = document.querySelector("#audio-sleep");
   const deck = document.querySelector(".rune-deck");
+  let sleepTimer = null;
   const statusLabel = document.querySelector("#audio-status-label span");
   audio.volume = Number(volume?.value ?? 0.8);
 
@@ -584,6 +587,24 @@ restoreViewFromLocation();
     audio.loop = !audio.loop;
     repeat.setAttribute("aria-pressed", String(audio.loop));
     repeat.setAttribute("aria-label", audio.loop ? "تکرار روشن" : "تکرار خاموش");
+  });
+
+  speed?.addEventListener("change", () => {
+    audio.playbackRate = Number(speed.value) || 1;
+  });
+
+  sleep?.addEventListener("change", () => {
+    if (sleepTimer) window.clearTimeout(sleepTimer);
+    sleepTimer = null;
+    const minutes = Number(sleep.value);
+    if (minutes > 0) {
+      sleepTimer = window.setTimeout(() => {
+        audio.pause();
+        if (sleep) sleep.value = "0";
+        setStatus("SLEEP TIMER COMPLETE");
+        sync();
+      }, minutes * 60 * 1000);
+    }
   });
   share?.addEventListener("click", async () => {
     const shareData = { title: "پادکست والهالا · آموزش پرامپت‌نویسی", url: "https://t.me/valhala_tw/64" };

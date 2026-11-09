@@ -1261,3 +1261,222 @@ body, button, input, select, textarea { font-family: var(--font-fa-body); }
     animation: none !important;
   }
 }
+
+
+/* =========================================================
+   VALHALLA AUDIO CORE — redesigned podcast console
+   ========================================================= */
+.podcast-feature.hall-of-echoes {
+  display: block;
+  padding: clamp(16px, 3vw, 30px);
+  border: 1px solid rgba(93, 225, 224, .25);
+  border-radius: 26px;
+  background:
+    radial-gradient(ellipse at 12% 8%, rgba(37, 192, 190, .12), transparent 36%),
+    radial-gradient(ellipse at 88% 92%, rgba(194, 153, 84, .09), transparent 34%),
+    linear-gradient(145deg, #080f18 0%, #0b1420 52%, #080d16 100%);
+  box-shadow: 0 28px 80px rgba(0,0,0,.42), inset 0 1px rgba(255,255,255,.055);
+}
+.podcast-feature.hall-of-echoes::before {
+  inset: 0 0 auto;
+  width: auto;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #4ce4d2 22%, #d2ad6b 52%, #4ce4d2 78%, transparent);
+}
+.podcast-feature.hall-of-echoes::after { opacity: .2; }
+.hall-of-echoes .podcast-copy {
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  align-items: center;
+  gap: 4px 24px;
+  padding: 0 2px 22px;
+  border-bottom: 1px solid rgba(150,190,195,.13);
+}
+.hall-of-echoes .podcast-label { grid-column: 1; color: #69e7d7; }
+.hall-of-echoes .podcast-copy h3 {
+  grid-column: 1;
+  margin: 3px 0 0;
+  font-size: clamp(21px, 2.5vw, 29px);
+  letter-spacing: -.4px;
+}
+.hall-of-echoes .podcast-copy p {
+  grid-column: 1;
+  margin: 0;
+  max-width: 58ch;
+  color: #91a7b3;
+  font-size: 12px;
+}
+.hall-of-echoes .podcast-link {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  margin: 0;
+  border-color: rgba(199,166,103,.3);
+  background: rgba(185,143,72,.08);
+  color: #e6ca91;
+  white-space: nowrap;
+}
+.hall-of-echoes .podcast-link:hover { border-color: #d6b675; box-shadow: 0 8px 25px rgba(190,145,65,.12); }
+
+.rune-deck {
+  margin-top: 20px;
+  padding: clamp(17px, 2.6vw, 28px);
+  border: 1px solid rgba(119,188,194,.22);
+  border-radius: 20px;
+  background:
+    linear-gradient(135deg, rgba(13,25,37,.97), rgba(7,14,23,.99)),
+    #08111b;
+  box-shadow: inset 0 1px rgba(255,255,255,.045), 0 16px 44px rgba(0,0,0,.25);
+}
+.rune-deck::before {
+  inset: 7px;
+  border: 1px solid rgba(203,169,104,.12);
+  border-radius: 14px;
+}
+.deck-ornament { opacity: .42; }
+.rune-deck .audio-player-topline { margin: 0 4px 20px; }
+.deck-brand { color: #c7d8dc; }
+.deck-sigil {
+  border-color: rgba(205,172,111,.45);
+  color: #d9b978;
+  box-shadow: 0 0 15px rgba(205,172,111,.12);
+}
+.rune-deck .audio-status { color: #9db4bd; letter-spacing: .8px; }
+.rune-deck .audio-deck {
+  grid-template-columns: minmax(150px, .78fr) minmax(0, 1.5fr);
+  gap: clamp(20px, 4vw, 42px);
+}
+.rune-deck .audio-cover {
+  min-height: 280px;
+  aspect-ratio: .9;
+  border: 1px solid rgba(202,171,111,.5);
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0,0,0,.38), 0 0 28px rgba(46,194,190,.08);
+}
+.rune-deck .audio-cover::after {
+  position: absolute; inset: 0; content: "";
+  background: linear-gradient(180deg, rgba(3,9,15,.03), rgba(3,9,15,.2) 58%, rgba(3,9,15,.65));
+  pointer-events: none;
+}
+.rune-deck .cover-rune {
+  border-color: rgba(216,183,119,.7);
+  background: rgba(4,12,19,.8);
+  color: #e7c786;
+}
+.rune-deck .cover-badge {
+  border-color: rgba(216,183,119,.5);
+  color: #efd49c;
+}
+.rune-deck .audio-controls h4 { font-size: clamp(19px, 2.2vw, 25px); }
+.rune-deck .audio-subtitle { margin-bottom: 10px; color: #91a8b3; }
+.signal-visualizer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  height: 35px;
+  margin: 5px 0 14px;
+  direction: ltr;
+  opacity: .8;
+}
+.signal-visualizer span {
+  width: 3px;
+  height: var(--bar, 10px);
+  border-radius: 5px;
+  background: linear-gradient(180deg, #d7b878, #48d8cf);
+  transform-origin: center;
+  opacity: .62;
+}
+.rune-deck.is-playing .signal-visualizer span {
+  animation: signal-bounce var(--speed, .8s) ease-in-out infinite alternate;
+  animation-delay: calc(var(--i, 0) * -70ms);
+  opacity: 1;
+}
+.signal-visualizer span:nth-child(5n+1) { --bar: 12px; --i: 1; }
+.signal-visualizer span:nth-child(5n+2) { --bar: 26px; --i: 2; }
+.signal-visualizer span:nth-child(5n+3) { --bar: 17px; --i: 3; }
+.signal-visualizer span:nth-child(5n+4) { --bar: 30px; --i: 4; }
+.signal-visualizer span:nth-child(5n) { --bar: 9px; --i: 5; }
+@keyframes signal-bounce { to { transform: scaleY(.28); filter: brightness(.7); } }
+
+.transport-row { justify-content: flex-start; gap: 18px; margin: 2px 0 20px; }
+.transport-skip {
+  border-color: rgba(153,183,190,.24);
+  background: rgba(255,255,255,.035);
+  color: #b7cbd0;
+}
+.rune-deck .audio-play-button {
+  width: 72px; height: 72px;
+  border: 1px solid rgba(221,190,127,.85);
+  background: radial-gradient(circle at 35% 25%, rgba(76,221,210,.23), transparent 48%), #0a1d27;
+  color: #f0d49a;
+  box-shadow: 0 0 0 5px rgba(80,211,203,.06), 0 0 28px rgba(62,205,197,.18), inset 0 0 20px rgba(67,219,208,.08);
+}
+.rune-deck .audio-play-button .play-ring { border: 1px solid rgba(211,179,112,.35); }
+.rune-deck .audio-progress-row { gap: 13px; color: #d2b779; }
+.rune-deck .audio-progress-row input, .rune-deck .audio-volume {
+  background: linear-gradient(90deg, #55dcd0 0%, #55dcd0 var(--progress,0%), rgba(205,174,113,.22) var(--progress,0%), rgba(205,174,113,.22) 100%);
+}
+.rune-deck .audio-progress-row input { height: 5px; }
+.rune-deck .audio-control-row {
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 17px;
+}
+.rune-deck .audio-icon-button {
+  border-color: rgba(139,181,187,.22);
+  background: rgba(255,255,255,.035);
+  color: #a9c7ca;
+}
+.rune-deck .audio-icon-button:hover,
+.rune-deck .audio-icon-button[aria-pressed="true"] {
+  border-color: rgba(218,184,116,.65);
+  color: #e7c887;
+  box-shadow: 0 0 15px rgba(206,170,103,.1);
+}
+.audio-setting {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #8fa7b0;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.audio-setting select {
+  min-height: 32px;
+  padding: 4px 8px;
+  border: 1px solid rgba(139,181,187,.22);
+  border-radius: 8px;
+  background: #0b1822;
+  color: #d9e6e6;
+  font: inherit;
+  cursor: pointer;
+}
+.audio-setting select:focus-visible { outline: 2px solid #55dcd0; outline-offset: 2px; }
+.deck-footer { margin-top: 19px; color: rgba(175,198,199,.48); }
+.deck-footer-line { background: linear-gradient(90deg, transparent, rgba(204,173,112,.38), transparent); }
+
+@media (max-width: 760px) {
+  .hall-of-echoes .podcast-copy { grid-template-columns: 1fr; gap: 7px; }
+  .hall-of-echoes .podcast-link { grid-column: 1; grid-row: auto; margin-top: 7px; }
+  .rune-deck .audio-deck { grid-template-columns: 112px minmax(0,1fr); gap: 15px; }
+  .rune-deck .audio-cover { min-height: 165px; }
+  .signal-visualizer { height: 25px; gap: 3px; }
+  .signal-visualizer span:nth-child(n+23) { display: none; }
+  .audio-setting { font-size: 9px; }
+}
+@media (max-width: 480px) {
+  .podcast-feature.hall-of-echoes { padding: 13px; border-radius: 18px; }
+  .rune-deck { padding: 15px 13px; }
+  .rune-deck .audio-deck { grid-template-columns: 1fr; }
+  .rune-deck .audio-cover { width: min(100%, 230px); min-height: 0; aspect-ratio: 1 / .82; margin-inline: auto; }
+  .rune-deck .audio-controls { padding: 8px 2px 0; }
+  .rune-deck .audio-player-topline { margin-inline: 1px; font-size: 8px; }
+  .transport-row { justify-content: center; }
+  .signal-visualizer { justify-content: center; }
+  .rune-deck .audio-control-row { justify-content: center; }
+  .audio-control-spacer { display: none; }
+  .sleep-setting { flex-basis: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .signal-visualizer span, .rune-deck.is-playing .audio-play-button .play-ring { animation: none !important; }
+}
