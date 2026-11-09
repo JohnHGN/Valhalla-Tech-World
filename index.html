@@ -396,102 +396,98 @@
           </div>
           <span class="section-caption">صدا و آموزش از کانال والهالا</span>
         </div>
-        <article class="podcast-feature hall-of-echoes">
-          <div class="audio-player-wrap rune-deck" data-player="valhalla-audio">
-            <div class="audio-player-topline">
-              <span class="deck-brand">VALHALLA AUDIO</span>
-              <span class="audio-status" id="audio-status-label"><i></i> <span>آمادهٔ پخش</span></span>
+        <article class="podcast-feature hall-of-echoes" id="valhalla-audio-player">
+          <div class="audio-player-wrap rune-deck">
+            <div class="va-topline">
+              <span class="va-brand">VALHALLA AUDIO</span>
+              <span class="va-status" id="audio-status-label"><i></i> <span>آمادهٔ پخش</span></span>
             </div>
 
-            <div class="audio-deck">
-              <div class="audio-cover">
-                <div class="cover-ring" aria-hidden="true"></div>
-                <div class="cover-ring cover-ring-2" aria-hidden="true"></div>
-                <img src="assets/chatgpt-podcast-cover.png" alt="کاور پادکست آموزش پرامپت‌نویسی ChatGPT" loading="lazy" />
+            <div class="va-body">
+              <div class="va-cover">
+                <img src="assets/chatgpt-podcast-cover.png" alt="کاور پادکست ChatGPT" loading="lazy"
+                     onerror="this.src='assets/podcast-player-reference.jpg'" />
               </div>
 
-              <div class="audio-controls">
-                <span class="audio-chapter" dir="ltr">01 · CHATGPT PROMPTING</span>
-                <h4>آموزش پرامپت‌نویسی با <bdi lang="en">ChatGPT</bdi></h4>
-                <p class="audio-subtitle">فصل اول · دنیای بی‌پایان هوش مصنوعی</p>
+              <div class="va-main">
+                <div class="va-meta">
+                  <span class="va-chapter" dir="ltr">01 · CHATGPT PROMPTING</span>
+                  <h3 class="va-title">آموزش پرامپت‌نویسی با <bdi lang="en">ChatGPT</bdi></h3>
+                  <p class="va-sub">فصل اول · دنیای بی‌پایان هوش مصنوعی</p>
+                </div>
 
-                <div class="signal-visualizer" aria-hidden="true">
+                <div class="va-wave" aria-hidden="true">
                   <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
                   <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
                   <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
                   <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
                 </div>
 
-                <div class="audio-progress-row">
+                <div class="va-progress">
                   <span id="audio-current-time">00:00</span>
                   <input id="audio-progress" type="range" min="0" max="100" value="0" step="0.1" aria-label="موقعیت پخش" />
                   <span id="audio-duration">15:10</span>
                 </div>
 
-                <div class="transport-row">
-                  <button class="audio-icon-button transport-skip" id="audio-skip-back" type="button" aria-label="۱۵ ثانیه عقب">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12.5 8v3.5L15 13.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M19.2 12a7.2 7.2 0 1 1-1.6-4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M17.2 5.8 19.4 7.4 17.8 9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    <small class="skip-label">15</small>
+                <div class="va-transport">
+                  <button type="button" class="va-btn" id="audio-skip-back" aria-label="۱۵ ثانیه عقب">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12.2 8.2v3.2L14.4 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M19 12a7 7 0 1 1-2-4.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="m16.8 5.7 2.2 1.5-1.5 2.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <em>15</em>
                   </button>
-                  <button class="audio-icon-button" id="audio-prev-marker" type="button" aria-label="شروع قطعه" title="بازگشت به ابتدا">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 7.2 5.2 12 11 16.8V7.2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M18 7v10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                  <button type="button" class="va-btn" id="audio-prev-marker" aria-label="ابتدا">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 7.2 5.4 12 11 16.8V7.2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M18 7v10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
                   </button>
-                  <button class="audio-play-button" id="audio-play-toggle" type="button" aria-label="پخش پادکست">
-                    <span class="play-ring" aria-hidden="true"></span>
+                  <button type="button" class="va-play" id="audio-play-toggle" aria-label="پخش پادکست">
                     <svg class="play-glyph" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.8c0-.8.9-1.3 1.6-.9l9.1 5.2c.7.4.7 1.4 0 1.8l-9.1 5.2c-.7.4-1.6-.1-1.6-.9V5.8Z"/></svg>
                     <svg class="pause-glyph" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM15 5h4v14h-4z"/></svg>
                   </button>
-                  <button class="audio-icon-button" id="audio-next-marker" type="button" aria-label="انتهای قطعه" title="پرش به انتها">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13 7.2 18.8 12 13 16.8V7.2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6 7v10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                  <button type="button" class="va-btn" id="audio-next-marker" aria-label="انتها">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13 7.2 18.6 12 13 16.8V7.2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6 7v10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
                   </button>
-                  <button class="audio-icon-button transport-skip" id="audio-skip-forward" type="button" aria-label="۳۰ ثانیه جلو">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11.5 8v3.5L9 13.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4.8 12a7.2 7.2 0 1 0 1.6-4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M6.8 5.8 4.6 7.4 6.2 9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    <small class="skip-label">30</small>
+                  <button type="button" class="va-btn" id="audio-skip-forward" aria-label="۳۰ ثانیه جلو">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11.8 8.2v3.2L9.6 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M5 12a7 7 0 1 0 2-4.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="m7.2 5.7-2.2 1.5 1.5 2.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <em>30</em>
                   </button>
                 </div>
 
-                <div class="audio-control-row">
-                  <label class="audio-setting">
-                    <span>سرعت</span>
+                <div class="va-tools">
+                  <label class="va-select">سرعت
                     <select id="audio-speed" aria-label="سرعت پخش">
                       <option value="0.75">۰٫۷۵×</option>
                       <option value="1" selected>۱٫۰×</option>
                       <option value="1.25">۱٫۲۵×</option>
                       <option value="1.5">۱٫۵×</option>
-                      <option value="1.75">۱٫۷۵×</option>
                       <option value="2">۲٫۰×</option>
                     </select>
                   </label>
-                  <label class="audio-setting sleep-setting">
-                    <span>توقف خودکار</span>
-                    <select id="audio-sleep" aria-label="زمان توقف خودکار">
+                  <label class="va-select">توقف خودکار
+                    <select id="audio-sleep" aria-label="توقف خودکار">
                       <option value="0">خاموش</option>
                       <option value="5">۵ دقیقه</option>
                       <option value="10">۱۰ دقیقه</option>
                       <option value="15">۱۵ دقیقه</option>
                       <option value="30">۳۰ دقیقه</option>
-                      <option value="45">۴۵ دقیقه</option>
                       <option value="60">۶۰ دقیقه</option>
                     </select>
                   </label>
-                  <button class="audio-icon-button" id="audio-mute" type="button" aria-label="بی‌صدا کردن">
+                  <button type="button" class="va-btn" id="audio-mute" aria-label="بی‌صدا کردن">
                     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 9a5 5 0 0 1 0 6m2.5-8.5a8.5 8.5 0 0 1 0 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
                   </button>
-                  <input id="audio-volume" class="audio-volume" type="range" min="0" max="1" value="0.8" step="0.01" aria-label="میزان صدا" />
-                  <div class="audio-control-spacer"></div>
-                  <button class="audio-icon-button" id="audio-repeat" type="button" aria-label="تکرار خاموش" aria-pressed="false">
+                  <input id="audio-volume" class="va-volume" type="range" min="0" max="1" value="0.8" step="0.01" aria-label="صدا" />
+                  <span class="va-spacer"></span>
+                  <button type="button" class="va-btn" id="audio-repeat" aria-label="تکرار خاموش" aria-pressed="false">
                     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4m14-1v2a3 3 0 0 1-3 3H3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   </button>
-                  <button class="audio-icon-button" id="audio-share" type="button" aria-label="اشتراک‌گذاری پادکست">
+                  <button type="button" class="va-btn" id="audio-share" aria-label="اشتراک">
                     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="18" cy="5" r="2.2" stroke="currentColor" stroke-width="1.7"/><circle cx="6" cy="12" r="2.2" stroke="currentColor" stroke-width="1.7"/><circle cx="18" cy="19" r="2.2" stroke="currentColor" stroke-width="1.7"/><path d="m8 11 7.8-4.6M8 13l7.8 4.6" stroke="currentColor" stroke-width="1.7"/></svg>
                   </button>
                 </div>
 
-                <audio id="podcast-audio" class="podcast-audio" preload="metadata" aria-label="پخش قسمت اول آموزش پرامپت‌نویسی با ChatGPT">
+                <audio id="podcast-audio" preload="metadata" aria-label="پادکست والهالا">
                   <source src="assets/valhalla-chatgpt-prompting-part-1.m4a" type="audio/mp4" />
                   <source src="https://github.com/JohnHGN/valhalla-tech-world-guide/releases/download/podcast-part-1/valhalla-chatgpt-prompting-part-1.m4a" type="audio/mp4" />
                 </audio>
-                <p class="audio-fallback">اگر پخش‌کننده کار نکرد، <a href="https://t.me/valhala_tw/64" target="_blank" rel="noopener noreferrer">نسخهٔ تلگرام</a> را باز کن.</p>
+                <p class="audio-fallback">اگر پخش نشد، <a href="https://t.me/valhala_tw/64" target="_blank" rel="noopener noreferrer">تلگرام</a> را باز کن.</p>
               </div>
             </div>
           </div>
