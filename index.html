@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Nunito:wght@400;500;600;700;800&family=Orbitron:wght@400;500;600;700;800&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="icon" href="assets/valhalla-logo.jpg" type="image/jpeg" />
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="assets/valhalla-glass-player.css" />
+
     <script src="script.js" defer></script>
   </head>
   <body>
@@ -33,7 +33,6 @@
       <nav class="top-nav" aria-label="میانبرهای صفحه">
         <a href="#services">خدمات</a>
         <a href="#articles">مقالات</a>
-        <a href="#podcasts">پادکست‌ها</a>
         <a href="#help">راهنما</a>
         <a class="vpn-tab" href="#vpn-guide" data-vpn-tab aria-current="false"><span aria-hidden="true">ᛉ</span> راهنمای اتصال به <bdi lang="en">VPN</bdi></a>
         <button class="search-toggle" id="search-toggle" type="button" aria-controls="site-search" aria-expanded="false" aria-label="جست‌وجوی سریع در سایت">
@@ -339,7 +338,7 @@
             <span class="academy-number">17</span><span class="academy-type">AI · CHATGPT</span><h3>آموزش کاربردی ChatGPT</h3><p>برای گرفتن پاسخ مفید، هدف و زمینهٔ کار را روشن و خروجی مورد انتظار را مشخص کن. نمونه، محدودیت‌ها و مخاطب پاسخ را نیز در درخواست بنویس تا نتیجه دقیق‌تر شود. اگر پاسخ با نیازت هماهنگ نبود، بازخورد مشخص بده و درخواست را مرحله‌به‌مرحله اصلاح کن. این آموزش نقطهٔ شروع مجموعهٔ پرامپت‌نویسی کانال است.</p><span class="academy-arrow" aria-hidden="true">↗</span>
           </a>
           <a class="academy-card academy-card-ai" data-category="ai" href="https://t.me/valhala_tw/64" target="_blank" rel="noopener noreferrer">
-            <span class="academy-number">18</span><span class="academy-type">CHATGPT · AUDIO</span><h3>قسمت اول آموزش پرامپت</h3><p>در قسمت اول مجموعه، موضوع پرامپت‌نویسی با ChatGPT به‌صورت صوتی معرفی می‌شود. هنگام شنیدن، به روشن‌کردن هدف، افزودن زمینه و تعیین قالب پاسخ توجه کن. فایل صوتی کامل را می‌توانی همین‌جا پخش کنی. متن و PDF همراه این آموزش نیز در بخش مقاله در دسترس است.</p><span class="academy-arrow" aria-hidden="true">↗</span>
+            <span class="academy-number">18</span><span class="academy-type">CHATGPT · AUDIO</span><h3>قسمت اول آموزش پرامپت</h3><p>در قسمت اول مجموعه، موضوع پرامپت‌نویسی با ChatGPT به‌صورت صوتی معرفی می‌شود. هنگام شنیدن، به روشن‌کردن هدف، افزودن زمینه و تعیین قالب پاسخ توجه کن. نسخهٔ صوتی کامل این آموزش نیز از طریق کانال تلگرام در دسترس است. متن و PDF همراه این آموزش در بخش مقاله قرار دارد.</p><span class="academy-arrow" aria-hidden="true">↗</span>
           </a>
           <article class="academy-card academy-card-ai prompt-article" data-category="ai">
             <span class="academy-number">19</span><span class="academy-type">CHATGPT · PROMPT GUIDE</span><h3>۲۰ دستور اصلی برای پرامپت‌نویسی</h3>
@@ -388,114 +387,7 @@
         </div>
       </section>
 
-      <section class="podcasts-section" id="podcasts" aria-labelledby="podcasts-title">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow"><span class="rune-mark">ᚠ</span> <bdi class="en-display" lang="en">VALHALLA AUDIO</bdi> <span class="heading-line"></span></p>
-            <h2 id="podcasts-title">پادکست‌ها</h2>
-          </div>
-          <span class="section-caption">صدا و آموزش از کانال والهالا</span>
-        </div>
-        <article class="podcast-feature hall-of-echoes" id="valhalla-audio-player" data-podcast-title="آموزش پرامپت‌نویسی با ChatGPT" data-podcast-category="01 · CHATGPT PROMPTING" data-podcast-subtitle="فصل اول · دنیای بی‌پایان هوش مصنوعی" data-podcast-cover="">
-          <div class="audio-player-wrap rune-deck">
-            <div class="va-topline">
-              <span class="va-brand">VALHALLA AUDIO</span>
-              <span class="va-status" id="audio-status-label"><i></i> <span>آمادهٔ پخش</span></span>
-            </div>
-
-            <div class="va-body">
-              <div class="va-cover" id="audio-cover-frame" aria-label="جایگاه لوگوی پادکست">
-                <img id="audio-cover-image" alt="لوگوی پادکست" hidden />
-              </div>
-
-              <div class="va-main">
-                <div class="va-meta">
-                  <span class="va-chapter" id="audio-category" dir="ltr">01 · CHATGPT PROMPTING</span>
-                  <h3 class="va-title" id="audio-title">آموزش پرامپت‌نویسی با <bdi lang="en">ChatGPT</bdi></h3>
-                  <p class="va-sub" id="audio-subtitle">فصل اول · دنیای بی‌پایان هوش مصنوعی</p>
-                </div>
-
-                <div class="va-wave" aria-hidden="true">
-                  <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                  <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                  <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                  <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-                </div>
-
-                <div class="va-progress">
-                  <span id="audio-current-time">00:00</span>
-                  <input id="audio-progress" type="range" min="0" max="100" value="0" step="0.1" aria-label="موقعیت پخش" />
-                  <span id="audio-duration">--:--</span>
-                </div>
-
-                <div class="va-transport">
-                  <button type="button" class="va-btn" id="audio-skip-back" aria-label="۱۵ ثانیه عقب">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12.2 8.2v3.2L14.4 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M19 12a7 7 0 1 1-2-4.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="m16.8 5.7 2.2 1.5-1.5 2.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    <em>15</em>
-                  </button>
-                  <button type="button" class="va-btn" id="audio-prev-marker" aria-label="ابتدا">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 7.2 5.4 12 11 16.8V7.2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M18 7v10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-                  </button>
-                  <button type="button" class="va-play" id="audio-play-toggle" aria-label="پخش پادکست">
-                    <svg class="play-glyph" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.8c0-.8.9-1.3 1.6-.9l9.1 5.2c.7.4.7 1.4 0 1.8l-9.1 5.2c-.7.4-1.6-.1-1.6-.9V5.8Z"/></svg>
-                    <svg class="pause-glyph" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zM15 5h4v14h-4z"/></svg>
-                  </button>
-                  <button type="button" class="va-btn" id="audio-next-marker" aria-label="انتها">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13 7.2 18.6 12 13 16.8V7.2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M6 7v10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-                  </button>
-                  <button type="button" class="va-btn" id="audio-skip-forward" aria-label="۳۰ ثانیه جلو">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11.8 8.2v3.2L9.6 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M5 12a7 7 0 1 0 2-4.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="m7.2 5.7-2.2 1.5 1.5 2.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    <em>30</em>
-                  </button>
-                </div>
-
-                <div class="va-tools">
-                  <label class="va-select">سرعت
-                    <select id="audio-speed" aria-label="سرعت پخش">
-                      <option value="0.75">۰٫۷۵×</option>
-                      <option value="1" selected>۱٫۰×</option>
-                      <option value="1.25">۱٫۲۵×</option>
-                      <option value="1.5">۱٫۵×</option>
-                      <option value="2">۲٫۰×</option>
-                    </select>
-                  </label>
-                  <label class="va-select">توقف خودکار
-                    <select id="audio-sleep" aria-label="توقف خودکار">
-                      <option value="0">خاموش</option>
-                      <option value="5">۵ دقیقه</option>
-                      <option value="10">۱۰ دقیقه</option>
-                      <option value="15">۱۵ دقیقه</option>
-                      <option value="30">۳۰ دقیقه</option>
-                      <option value="60">۶۰ دقیقه</option>
-                    </select>
-                  </label>
-                  <button type="button" class="va-btn" id="audio-mute" aria-label="بی‌صدا کردن">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10v4h4l5 4V6l-5 4H4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M16 9a5 5 0 0 1 0 6m2.5-8.5a8.5 8.5 0 0 1 0 11" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
-                  </button>
-                  <input id="audio-volume" class="va-volume" type="range" min="0" max="1" value="0.8" step="0.01" aria-label="صدا" />
-                  <span class="va-spacer"></span>
-                  <button type="button" class="va-btn" id="audio-repeat" aria-label="تکرار خاموش" aria-pressed="false">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4m14-1v2a3 3 0 0 1-3 3H3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  </button>
-                  <button type="button" class="va-btn" id="audio-share" aria-label="اشتراک">
-                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="18" cy="5" r="2.2" stroke="currentColor" stroke-width="1.7"/><circle cx="6" cy="12" r="2.2" stroke="currentColor" stroke-width="1.7"/><circle cx="18" cy="19" r="2.2" stroke="currentColor" stroke-width="1.7"/><path d="m8 11 7.8-4.6M8 13l7.8 4.6" stroke="currentColor" stroke-width="1.7"/></svg>
-                  </button>
-                </div>
-
-                <audio id="podcast-audio" preload="metadata" aria-label="پادکست والهالا">
-                  <source src="assets/valhalla-chatgpt-prompting-part-1.m4a" type="audio/mp4" />
-                  <source src="https://github.com/JohnHGN/valhalla-tech-world-guide/releases/download/podcast-part-1/valhalla-chatgpt-prompting-part-1.m4a" type="audio/mp4" />
-                </audio>
-                <p class="audio-fallback">اگر پخش نشد، <a href="https://t.me/valhala_tw/64" target="_blank" rel="noopener noreferrer">تلگرام</a> را باز کن.</p>
-              </div>
-            </div>
-          </div>
-        </article>
-      </section>
-
-
-
-      <section class="contact-section" id="contact" aria-labelledby="contact-title">
+<section class="contact-section" id="contact" aria-labelledby="contact-title">
         <div class="contact-heading">
           <p class="eyebrow" lang="en"><span class="rune-mark">ᛉ</span> ENTER THE NETWORK</p>
           <h2 id="contact-title">از دروازه‌های والهالا وارد شو</h2>

@@ -1,32 +1,22 @@
-# Valhalla Audio Player — Final skin
+# Valhalla Tech World — نسخه بدون پلیر
 
-## فایل پوسته
-`assets/valhalla-glass-player.css`
+در این نسخه تمام اجزای مربوط به پلیر پادکست از فایل‌های سایت حذف شده‌اند تا بتوان پلیر را بعداً از ابتدا و به‌صورت مستقل اضافه کرد.
+
+## فایل‌ها
+- `index.html` — ساختار صفحه؛ بخش پلیر و پیوند ناوبری پادکست حذف شده است.
+- `styles.css` — استایل‌های عمومی سایت؛ استایل‌های پلیر و پادکست حذف شده‌اند.
+- `script.js` — منطق عمومی سایت؛ کد کنترل پلیر و ارجاع‌های آن حذف شده‌اند.
 
 ## نصب
-1. از نسخه فعلی سایت backup بگیر.
-2. فایل‌های `index.html`، `styles.css` و `script.js` این بسته را در ریشه پروژه جایگزین کن.
-3. فایل `assets/valhalla-glass-player.css` را در پوشه `assets` قرار بده.
-4. فایل صوتی فعلی را در مسیر `assets/valhalla-chatgpt-prompting-part-1.m4a` نگه دار.
-5. تغییرات را commit و روی GitHub Pages منتشر کن.
-
-## اطلاعات هر پادکست
-برای تغییر لوگو، عنوان و موضوع، ویژگی‌های `data-podcast-title`، `data-podcast-category`، `data-podcast-subtitle` و `data-podcast-cover` روی عنصر `#valhalla-audio-player` را تغییر بده. مقدار `data-podcast-cover` باید مسیر فایل لوگوی همان قسمت باشد. خالی گذاشتن آن، قاب دایره‌ای را بدون لوگو نگه می‌دارد.
-
-برای تغییر پادکست در زمان اجرا (مثلاً با کلیک روی یک آیتم فهرست):
-
-```js
-window.ValhallaAudio.setPodcast({
-  title: 'عنوان پادکست',
-  category: '02 · AI & TECHNOLOGY',
-  subtitle: 'موضوع یا توضیح کوتاه',
-  cover: 'assets/podcast-02-logo.png',
-  audio: 'assets/podcast-02.m4a',
-  shareUrl: 'https://example.com/podcast-02'
-});
-```
-
-فیلدهای `title`، `category`، `subtitle`، `cover`، `audio` و `shareUrl` اختیاری‌اند. برای خالی‌کردن جای لوگو مقدار `cover: ''` بده.
+این سه فایل را در ریشه مخزن جایگزین نسخه فعلی کن. از فایل‌های دیگر و پوشه `assets` نسخه پشتیبان بگیر و آن‌ها را حذف نکن؛ این بسته فقط فایل‌های کد سایت را شامل می‌شود.
 
 ## نکته
-پوسته بیرونی صفحه/کارت پادکست شفاف و بدون قاب اضافی است؛ قاب شیشه‌ای نورانی خود پلیر بخشی از طراحی است. اکولایزر فعلاً انیمیشن بصری همگام با وضعیت پخش است و تحلیل طیف فرکانسی زنده نیست.
+بخش آموزشی «مقالات» و محتوای آموزشی سایت حفظ شده است. فقط بخش مستقل پادکست/پلیر حذف شده تا در مرحله بعد پوسته جدید بدون تداخل پیاده‌سازی شود.
+
+## فایل‌های جانبی قدیمی
+اگر این فایل‌ها در مخزن وجود دارند و جای دیگری استفاده نمی‌شوند، آن‌ها را نیز حذف کن:
+- `assets/valhalla-glass-player.css`
+- `assets/chatgpt-podcast-cover.png`
+- `assets/podcast-player-reference.jpg`
+- `assets/valhalla-chatgpt-prompting-part-1.m4a`
+- `player-theme.css` (اگر در ریشهٔ مخزن وجود دارد)
