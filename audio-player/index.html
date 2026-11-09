@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#03131b">
+  <title>Valhalla Audio Player</title>
+  <link rel="stylesheet" href="player.css">
+</head>
+<body>
+  <main class="player-shell" id="valhallaPlayer" aria-label="پخش‌کننده صوتی وال‌هالا"
+        data-audio-src="assets/audio.mp3">
+    <img class="player-skin" src="assets/valhalla-player-base.png" alt="" draggable="false">
+
+    <div class="brand">VALHALLA AUDIO</div>
+    <button class="playing-status" id="statusButton" type="button" aria-label="تغییر وضعیت پخش">
+      <span class="status-dot"></span><span id="statusText">در حال پخش</span>
+    </button>
+
+    <div class="track-title" id="trackTitle" aria-live="polite">آماده پخش</div>
+    <canvas class="equalizer" id="equalizer" aria-label="اکولایزر زنده"></canvas>
+
+    <div class="timeline">
+      <input id="seekBar" class="seek" type="range" min="0" max="1000" value="0"
+             aria-label="موقعیت پخش">
+      <div class="time-row">
+        <span id="currentTime">00:00</span>
+        <span id="duration">00:00</span>
+      </div>
+    </div>
+
+    <div class="controls" aria-label="کنترل‌های پخش">
+      <label class="control speed-control" title="سرعت پخش">
+        <span class="control-icon speed-icon" aria-hidden="true">◴</span>
+        <select id="speedSelect" aria-label="سرعت پخش">
+          <option value="0.5">0.5x</option>
+          <option value="0.75">0.75x</option>
+          <option value="1" selected>1.0x</option>
+          <option value="1.25">1.25x</option>
+          <option value="1.5">1.5x</option>
+          <option value="1.75">1.75x</option>
+          <option value="2">2.0x</option>
+        </select>
+        <span class="chevron">⌄</span>
+      </label>
+
+      <button class="control sleep-control" id="sleepButton" type="button" title="توقف خودکار">
+        <span class="control-icon" aria-hidden="true">◷</span>
+        <span class="sleep-label"><span>توقف خودکار</span><small id="sleepValue">خاموش</small></span>
+        <span class="chevron">⌄</span>
+      </button>
+
+      <button class="control skip-control rewind" id="rewindButton" type="button" aria-label="۱۵ ثانیه عقب">
+        <span class="skip-arrow">↶</span><strong>15</strong>
+      </button>
+      <button class="control round-control previous" id="previousButton" type="button" aria-label="قطعه قبلی">
+        <span class="transport-icon">|◀</span>
+      </button>
+      <button class="control play-control" id="playButton" type="button" aria-label="پخش">
+        <span class="play-symbol" id="playSymbol">▶</span>
+      </button>
+      <button class="control round-control next" id="nextButton" type="button" aria-label="قطعه بعدی">
+        <span class="transport-icon">▶|</span>
+      </button>
+      <button class="control skip-control forward" id="forwardButton" type="button" aria-label="۳۰ ثانیه جلو">
+        <span class="skip-arrow">↷</span><strong>30</strong>
+      </button>
+
+      <label class="control volume-control" title="بلندی صدا">
+        <span class="volume-icon" aria-hidden="true">◖))</span>
+        <input id="volumeBar" type="range" min="0" max="1" step="0.01" value="0.85"
+               aria-label="بلندی صدا">
+      </label>
+
+      <div class="control utility-control">
+        <button id="repeatButton" type="button" aria-label="تکرار خاموش" title="تکرار">
+          <span>⟳</span>
+        </button>
+        <i></i>
+        <button id="shareButton" type="button" aria-label="اشتراک‌گذاری" title="اشتراک‌گذاری">
+          <span class="share-icon">•</span>
+        </button>
+      </div>
+    </div>
+
+    <audio id="audioElement" preload="metadata"></audio>
+    <div class="player-message" id="playerMessage" role="status" aria-live="polite"></div>
+  </main>
+  <script src="player.js"></script>
+  <script src="playlist.js"></script>
+</body>
+</html>

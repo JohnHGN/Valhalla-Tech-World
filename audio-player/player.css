@@ -1,0 +1,111 @@
+* { box-sizing: border-box; }
+:root { color-scheme: dark; font-family: Tahoma, Arial, sans-serif; }
+body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 18px; background: #02070b; }
+.player-shell {
+  position: relative; width: min(100%, 1500px); aspect-ratio: 2048 / 768;
+  overflow: hidden; isolation: isolate; color: #f4fbff;
+  container-type: inline-size;
+}
+.player-skin { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: -1; user-select: none; }
+button, select, input { font: inherit; }
+button { color: inherit; cursor: pointer; }
+.brand {
+  position: absolute; left: 32.4%; top: 17.1%; direction: ltr;
+  letter-spacing: .42em; font: 500 clamp(9px, 1.05cqw, 16px)/1 Arial, sans-serif;
+  white-space: nowrap; text-shadow: 0 0 12px #b9f7ff;
+}
+.playing-status {
+  position: absolute; right: 6.8%; top: 16%; width: 11.5%; height: 10.5%;
+  border: 1px solid #13efff; border-radius: 999px;
+  background: linear-gradient(150deg, #071c25dd, #06131bdc);
+  box-shadow: inset 0 0 12px #03dffb55, 0 0 13px #00dfff66;
+  display: flex; align-items: center; justify-content: center; gap: .6em;
+  color: #00efff; font-size: clamp(8px, 1.45cqw, 20px); white-space: nowrap;
+}
+.status-dot { width: .55em; height: .55em; border-radius: 50%; background: #00f5ff; box-shadow: 0 0 7px 3px #00eaff; }
+.timeline { position: absolute; left: 28.7%; right: 7.2%; top: 61.2%; height: 9%; direction: ltr; }
+.seek { display: block; width: 100%; height: 13%; margin: 0; accent-color: #00eaff; cursor: pointer; }
+.time-row { display: flex; justify-content: space-between; margin-top: .35%; font: 600 clamp(8px, 1.35cqw, 19px) Arial, sans-serif; text-shadow: 0 1px 5px #000; }
+.controls { position: absolute; left: 8.2%; right: 2.8%; top: 73.1%; height: 13.4%; direction: ltr; }
+.control {
+  position: absolute; top: 0; height: 88%; border: 1px solid #7ab9ca99;
+  border-radius: 999px; background: linear-gradient(145deg, #061c27ee, #07131beF 65%, #071f2aee);
+  box-shadow: inset 0 0 9px #62d9ef35, 0 2px 9px #000b, 0 0 7px #1ddff044;
+  display: flex; align-items: center; justify-content: center; gap: .5em;
+  padding: 0 1%; color: #f6fbff; white-space: nowrap;
+}
+.control:focus-visible, .playing-status:focus-visible, .utility-control button:focus-visible {
+  outline: 2px solid #fff; outline-offset: 3px;
+}
+.control-icon { font-size: clamp(15px, 2.4cqw, 34px); color: #00efff; line-height: 1; }
+.speed-control { left: 0; width: 12.4%; border-color: #0dddf5; }
+.speed-control select { appearance: none; border: 0; outline: 0; background: transparent; color: white; font: 600 clamp(10px, 1.45cqw, 21px) Arial; width: 43%; cursor: pointer; }
+.speed-control option { color: #fff; background: #071923; }
+.chevron { color: #00edff; font-size: clamp(14px, 2cqw, 27px); line-height: 1; }
+.sleep-control { left: 13.5%; width: 17%; gap: 1.1em; }
+.sleep-control .control-icon { color: white; }
+.sleep-label { display: flex; flex-direction: column; gap: .25em; font-size: clamp(8px, 1.05cqw, 15px); line-height: 1.2; direction: rtl; }
+.sleep-label small { font-size: .9em; }
+.skip-control { width: 5.2%; border: 0; background: transparent; box-shadow: none; flex-direction: column; gap: 0; }
+.skip-control strong { font: 600 clamp(12px, 1.7cqw, 24px) Arial; }
+.skip-arrow { color: #ffbf63; font-size: clamp(22px, 3.4cqw, 48px); line-height: .8; text-shadow: 0 0 9px #ff9e26; }
+.rewind { left: 32.5%; }
+.previous { left: 40%; width: 5.8%; }
+.round-control { border-radius: 50%; font-size: clamp(17px, 2.5cqw, 36px); }
+.transport-icon { direction: ltr; font-weight: 700; }
+.play-control {
+  left: 48.1%; width: 9.5%; height: 112%; top: -12%;
+  border: 2px solid #ffd27a; border-radius: 50%;
+  background: radial-gradient(circle, #092d3b 15%, #03121a 68%);
+  box-shadow: inset 0 0 13px #00dfff88, 0 0 0 3px #03dffb55, 0 0 18px #00dfff88, 0 0 12px #ffb84d;
+}
+.play-symbol { font-size: clamp(23px, 3.1cqw, 44px); color: #b9faff; text-shadow: 0 0 12px #00efff; }
+.next { left: 59.5%; width: 5.8%; }
+.forward { left: 66.2%; }
+.volume-control { left: 73.2%; width: 15.4%; gap: 8%; }
+.volume-icon { font-size: clamp(17px, 2.4cqw, 34px); }
+.volume-control input { width: 58%; accent-color: #00efff; cursor: pointer; }
+.utility-control { left: 89.3%; width: 10.7%; padding: 0; gap: 0; }
+.utility-control button { flex: 1; height: 100%; border: 0; background: transparent; font-size: clamp(22px, 3cqw, 43px); color: #f5fbff; }
+.utility-control i { width: 1px; height: 55%; background: #c9faff88; }
+.share-icon { display: inline-block; position: relative; font-size: 0; width: 1em; height: 1em; }
+.share-icon::before, .share-icon::after { content: ""; position: absolute; width: .24em; height: .24em; border: 2px solid currentColor; border-radius: 50%; }
+.share-icon::before { left: .05em; top: .38em; box-shadow: .62em -.35em 0 -.02em #07131b, .62em .35em 0 -.02em #07131b; }
+.share-icon::after { width: .63em; height: .5em; left: .18em; top: .22em; border-width: 0; border-top: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: skewY(-28deg); }
+.player-message {
+  position: absolute; left: 50%; bottom: 2%; transform: translateX(-50%);
+  padding: .45em 1em; border-radius: 999px; background: #03151fee; color: #bffaff;
+  font-size: clamp(9px, 1cqw, 14px); opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.player-message.show { opacity: 1; }
+@media (max-width: 620px) {
+  body { padding: 4px; }
+  .player-shell { width: 100%; }
+  .brand { letter-spacing: .28em; }
+  .sleep-control { gap: .25em; }
+  .sleep-label { font-size: clamp(6px, 1.05cqw, 9px); }
+  .control { padding: 0 .3%; }
+  .volume-control { gap: 3%; }
+}
+
+/* اکولایزر زنده در فضای مرکزی تصویر پایه */
+.equalizer {
+  position:absolute; left:31.5%; top:34%; width:60.7%; height:20%;
+  overflow:visible; pointer-events:none;
+  filter:drop-shadow(0 0 5px rgba(0,220,255,.25));
+}
+.track-title {
+  position:absolute; left:32%; right:8%; top:27%;
+  color:#c9faff; text-align:center; direction:rtl;
+  font-size:clamp(9px,1.15cqw,17px); letter-spacing:.04em;
+  text-shadow:0 0 9px #00dfff,0 1px 4px #000;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.playing-status.is-playing {
+  border-color:#ffd27a; color:#ffe0a2;
+  box-shadow:inset 0 0 12px #03dffb55,0 0 15px #ffb84d66;
+}
+@media (max-width:620px) {
+  .equalizer { top:34%; height:18%; }
+  .track-title { top:27%; }
+}
