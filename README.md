@@ -48,11 +48,6 @@ python3 -m http.server 8000
 هیچ لینک اشتراک، فایل کانفیگ، آدرس سرور، نام کاربری یا رمز ساختگی در سایت قرار داده نشده است. کاربر باید اطلاعات سرویس خودش را از پیام یا پنل اصلی دریافت کند. لینک‌های دریافت برنامه به صفحهٔ رسمی WireGuard، Hiddify و مخزن‌های رسمی v2rayNG/v2rayN اشاره می‌کنند.
 
 
-## پوستهٔ شیشه‌ای پلیر پادکست (نسخهٔ جدید)
-
-- `player-theme.css` پوستهٔ مستقل شیشه‌ای و واکنش‌گرای پلیر است؛ فایل `styles.css` پایه را بازنویسی نمی‌کند.
-- `assets/chatgpt-podcast-cover.png` کاور دایره‌ای اختصاصی قسمت ChatGPT است.
-- `index.html` به فایل پوسته و کاور جدید متصل شده است.
-- کنترل‌های پخش، نوار زمان، صدا، تکرار، سرعت و توقف خودکار در `script.js` باقی مانده‌اند.
-
-برای نصب، فایل‌های ریشه را در ریشهٔ مخزن جایگزین کنید و فقط فایل جدید کاور را داخل پوشهٔ موجود `assets/` قرار دهید؛ سایر فایل‌های `assets/` را حذف یا جایگزین نکنید.
+## Glass Audio Player v2 installation
+This package includes the `player-theme.css` stylesheet and the dedicated ChatGPT podcast cover.
+Upload/replace `index.html`, `styles.css`, `script.js`, and `player-theme.css` in the repository root. Upload `chatgpt-podcast-cover.png` into the existing `assets/` folder (do not delete or replace the other assets). The updated `index.html` already loads `player-theme.css` after `styles.css`.
