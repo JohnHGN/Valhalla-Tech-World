@@ -22,7 +22,27 @@ function draw(){
 }
 function track(item){return typeof item==="string"?{src:item,title:item.split("/").pop().replace(/\.[^.]+$/,"")}:(item&&item.src?{src:item.src,title:item.title||item.src.split("/").pop()}:null)}
 function selectTrack(n,autoplay=false){if(!playlist.length)return false;index=(n+playlist.length)%playlist.length;let t=playlist[index];audio.src=t.src;audio.load();$("trackTitle").textContent=t.title;$("currentTime").textContent=$("duration").textContent="00:00";seek.value=0;if(autoplay){setupAudioGraph();audio.play().then(state).catch(()=>notify(`پخش «${t.title}» ممکن نشد؛ فایل را بررسی کنید.`))}return true}
-async function play(){if(!audio.src){notify("ابتدا فایل‌های صوتی را در پوشه assets/tracks قرار دهید.");return}try{setupAudioGraph();await audio.play()}catch(e){notify("پخش ممکن نشد؛ مسیر فایل صوتی را بررسی کنید.")}state()}
+async function play(){
+  if(!audio.src){
+    notify("ابتدا فایل صوتی را انتخاب کنید.");
+    return;
+  }
+
+  if(!audio.paused){
+    audio.pause();
+    state();
+    return;
+  }
+
+  try{
+    setupAudioGraph();
+    await audio.play();
+  }catch(e){
+    notify("پخش ممکن نشد؛ مسیر فایل صوتی را بررسی کنید.");
+  }
+
+  state();
+}
 if(root.dataset.audioSrc)audio.src=root.dataset.audioSrc;
 audio.volume=Number($("volumeBar").value);
 $("playButton").addEventListener("click",play);$("statusButton").addEventListener("click",play);
