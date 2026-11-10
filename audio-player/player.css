@@ -347,20 +347,33 @@ button { color: inherit; cursor: pointer; }
 }
 /* Valhalla Audio â€” corrected podcast artwork placement */
 /* Append this block to the VERY END of audio-player/player.css. */
+/* Valhalla Audio — precise center alignment for the podcast logo
+   Add this block at the VERY END of audio-player/player.css.
+   It overrides the previous .podcast-logo positioning rules. */
+
 .podcast-logo {
   position: absolute !important;
-  z-index: 1 !important;
-  left: 7% !important;
-  top: 17% !important;
+
+  /* Center of the circular emblem in the player skin */
+  left: 16.1% !important;
+  top: 42.3% !important;
+  transform: translate(-50%, -50%) !important;
+
+  /* Keep the same visual size while centering from its midpoint */
   width: 18.5% !important;
   height: auto !important;
   aspect-ratio: 1 / 1;
   object-fit: contain !important;
   object-position: center !important;
+
+  z-index: 1 !important;
   border-radius: 50%;
   pointer-events: none;
   user-select: none;
   filter: drop-shadow(0 0 7px rgba(0, 225, 255, .55))
           drop-shadow(0 0 13px rgba(0, 190, 255, .25));
 }
-.podcast-logo[hidden] { display: none !important; }
+
+.podcast-logo[hidden] {
+  display: none !important;
+}
