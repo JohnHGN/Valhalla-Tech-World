@@ -1,14 +1,4 @@
-Valhalla Tech World — اصلاح پیشنهادی
-
-فایل تغییرکرده: script.js
-
-این بسته فقط patch اصلاح را شامل می‌شود، نه نسخه کامل script.js.
-برای اعمال:
-1. فایل script.js را از مخزن فعلی باز کنید.
-2. خط قدیمی زیر را پیدا کنید:
-   glyph.innerHTML = document.querySelector(`#tab-${activePlatform} .platform-icon`).innerHTML;
-3. آن را با دو خط داخل patch جایگزین کنید.
-4. فایل را ذخیره و در ریشه مخزن بارگذاری کنید.
-
-این تغییر از خطای احتمالی در صورت نبودن آیکون جلوگیری می‌کند.
-Syntax فایل پس از این تغییر بررسی شده است؛ تست تعاملی مرورگر انجام نشده است.
+Valhalla Tech World 
+https://t.me/valhala_tw 
+https://t.me/valhalla_guard
+دنیای تکنولوژی والهالا
