@@ -410,8 +410,8 @@
       </a>
         <span class="footer-details">قلمرو فناوری، دانش و نوآوری <b>·</b> <bdi lang="en">Beyond Technology, Beyond Limits</bdi></span>
     </footer>
-    <!-- ۱. فراخوانی کتابخانه Model Viewer گوگل -->
-<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+<!-- ۱. فراخوانی کتابخانه Model Viewer از سرور پرسرعت و بدون تحریم jsDelivr -->
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
 
 <!-- ۲. استایل‌دهی کاراکتر، پنجره چت و تنظیمات ریسپانسیو موبایل -->
 <style>
@@ -419,27 +419,33 @@
     position: fixed;
     bottom: 15px;
     right: 20px;
-    z-index: 9999;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    z-index: 99999;
+    font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
   }
 
   .valhalla-3d-wrapper {
-    width: 240px;
-    height: 320px;
+    width: 220px;
+    height: 290px;
     position: relative;
     cursor: pointer;
     user-select: none;
     margin-left: auto;
-    transition: all 0.3s ease;
+    transition: transform 0.25s ease;
   }
 
-  model-viewer {
+  .valhalla-3d-wrapper:hover {
+    transform: scale(1.03);
+  }
+
+  model-viewer#valhalla-assistant {
     width: 100%;
     height: 100%;
     background-color: transparent;
     --poster-color: transparent;
     outline: none;
-    filter: drop-shadow(0 0 22px rgba(0, 195, 255, 0.35));
+    /* غیرفعال کردن دریافت مستقیم کلیک توسط بوم سه‌بعدی تا کلیک روی کاراکتر همیشه چت را باز کند */
+    pointer-events: none; 
+    filter: drop-shadow(0 0 22px rgba(0, 195, 255, 0.4));
     animation: floatEffect 4s ease-in-out infinite;
   }
 
@@ -450,51 +456,62 @@
 
   .valhalla-mini-hint {
     position: absolute;
-    top: -32px;
+    top: -30px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(10, 16, 26, 0.92);
-    border: 1px solid rgba(0, 195, 255, 0.6);
+    background: rgba(10, 16, 26, 0.95);
+    border: 1px solid rgba(0, 195, 255, 0.7);
     color: #00c3ff;
     font-size: 12px;
-    padding: 5px 12px;
+    font-weight: 600;
+    padding: 6px 14px;
     border-radius: 20px;
     white-space: nowrap;
-    box-shadow: 0 0 12px rgba(0, 195, 255, 0.25);
-    pointer-events: none;
-    transition: opacity 0.3s;
+    box-shadow: 0 0 14px rgba(0, 195, 255, 0.35);
+    cursor: pointer;
+    pointer-events: auto; /* فعال شدن کلیک روی حباب راهنما */
+    transition: all 0.3s ease;
+    z-index: 5;
+  }
+
+  .valhalla-mini-hint:hover {
+    background: #00c3ff;
+    color: #050b14;
   }
 
   .valhalla-chat-box {
     position: absolute;
-    bottom: 295px;
-    right: 10px;
+    bottom: 280px;
+    right: 0;
     width: 340px;
     height: 430px;
-    background: rgba(11, 16, 25, 0.94);
+    background: rgba(11, 16, 25, 0.95);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(0, 195, 255, 0.5);
+    border: 1px solid rgba(0, 195, 255, 0.55);
     border-radius: 16px;
-    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.7), 0 0 25px rgba(0, 195, 255, 0.2);
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.75), 0 0 25px rgba(0, 195, 255, 0.22);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     direction: rtl;
     opacity: 0;
+    visibility: hidden;
     pointer-events: none;
     transform: translateY(20px) scale(0.95);
-    transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 100000;
   }
 
   .valhalla-chat-box.active {
     opacity: 1;
+    visibility: visible;
     pointer-events: auto;
     transform: translateY(0) scale(1);
   }
 
   .chat-header {
-    background: linear-gradient(90deg, rgba(0, 195, 255, 0.18), rgba(11, 16, 25, 0.9));
+    background: linear-gradient(90deg, rgba(0, 195, 255, 0.2), rgba(11, 16, 25, 0.95));
     padding: 12px 16px;
     border-bottom: 1px solid rgba(0, 195, 255, 0.3);
     display: flex;
@@ -567,7 +584,7 @@
     display: flex;
     padding: 10px;
     border-top: 1px solid rgba(0, 195, 255, 0.25);
-    background: rgba(7, 11, 18, 0.95);
+    background: rgba(7, 11, 18, 0.98);
     gap: 8px;
   }
 
@@ -578,6 +595,7 @@
     border-radius: 8px;
     padding: 8px 12px;
     color: #fff;
+    font-family: inherit;
     font-size: 13px;
     outline: none;
   }
@@ -593,6 +611,7 @@
     border: none;
     border-radius: 8px;
     padding: 0 14px;
+    font-family: inherit;
     font-weight: bold;
     cursor: pointer;
     transition: 0.2s;
@@ -603,14 +622,13 @@
     box-shadow: 0 0 12px rgba(0, 195, 255, 0.6);
   }
 
-  /* --- تنظیمات ریسپانسیو برای موبایل و تبلت --- */
+  /* تنظیمات ریسپانسیو موبایل */
   @media (max-width: 768px) {
     .valhalla-widget-container {
-      bottom: 8px;
-      right: 8px;
+      bottom: 10px;
+      right: 10px;
     }
 
-    /* کوچک‌تر شدن کاراکتر در موبایل تا جلوی متن سایت را نگیرد */
     .valhalla-3d-wrapper {
       width: 135px;
       height: 180px;
@@ -618,14 +636,13 @@
 
     .valhalla-mini-hint {
       font-size: 10px;
-      padding: 4px 8px;
-      top: -24px;
+      padding: 4px 10px;
+      top: -22px;
     }
 
-    /* تنظیم پنجره چت متناسب با عرض صفحه موبایل */
     .valhalla-chat-box {
       position: fixed;
-      bottom: 175px;
+      bottom: 185px;
       right: 4vw;
       left: 4vw;
       width: 92vw;
@@ -641,7 +658,7 @@
   <div class="valhalla-chat-box" id="valhalla-chat">
     <div class="chat-header">
       <span><div class="status-dot"></div> دستیار هوشمند والهالا</span>
-      <button class="close-chat" id="close-chat-btn">&times;</button>
+      <button class="close-chat" id="close-chat-btn" type="button">&times;</button>
     </div>
     
     <div class="chat-messages" id="chat-messages">
@@ -652,128 +669,144 @@
 
     <div class="chat-input-area">
       <input type="text" id="user-input" placeholder="سوالت رو اینجا بنویس..." autocomplete="off">
-      <button id="send-btn">ارسال</button>
+      <button id="send-btn" type="button">ارسال</button>
     </div>
   </div>
 
-  <div class="valhalla-3d-wrapper" id="valhalla-avatar-btn">
+  <div class="valhalla-3d-wrapper" id="valhalla-avatar-btn" title="کلیک برای گفت‌وگو با هوش مصنوعی">
     <div class="valhalla-mini-hint" id="mini-hint">سوال تکنولوژی داری؟ کلیک کن! 💬</div>
     <model-viewer 
       id="valhalla-assistant"
-      src="valhalla-bot.glb" 
+      src="./valhalla-bot.glb" 
       alt="Valhalla AI Assistant"
-      camera-orbit="0deg 75deg 105%"
+      bounds="tight"
+      camera-target="auto auto auto"
+      camera-orbit="0deg 75deg auto"
       interpolation-decay="100"
       shadow-intensity="1.2" 
       shadow-softness="0.8"
-      exposure="1.1"
+      exposure="1.2"
       environment-image="neutral"
-      interaction-prompt="none"
-      disable-zoom>
+      interaction-prompt="none">
     </model-viewer>
   </div>
 
 </div>
 
-<!-- ۴. اسکریپت چرخش موس، لمس موبایل و اتصال به هوش مصنوعی -->
+<!-- ۴. اسکریپت چرخش موس، باز شدن چت و اتصال به هوش مصنوعی -->
 <script>
-  const modelViewer = document.getElementById('valhalla-assistant');
-  const avatarBtn = document.getElementById('valhalla-avatar-btn');
-  const chatBox = document.getElementById('valhalla-chat');
-  const closeChatBtn = document.getElementById('close-chat-btn');
-  const miniHint = document.getElementById('mini-hint');
-  const chatMessages = document.getElementById('chat-messages');
-  const userInput = document.getElementById('user-input');
-  const sendBtn = document.getElementById('send-btn');
+  document.addEventListener('DOMContentLoaded', () => {
+    const modelViewer = document.getElementById('valhalla-assistant');
+    const avatarBtn = document.getElementById('valhalla-avatar-btn');
+    const chatBox = document.getElementById('valhalla-chat');
+    const closeChatBtn = document.getElementById('close-chat-btn');
+    const miniHint = document.getElementById('mini-hint');
+    const chatMessages = document.getElementById('chat-messages');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
 
-  // ۱. ردیابی موس در دسکتاپ
-  window.addEventListener('mousemove', (event) => {
-    const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-    const mouseY = (event.clientY / window.innerHeight) * 2 - 1;
-    const theta = -mouseX * 35; 
-    const phi = 75 - (mouseY * 15); 
-    modelViewer.cameraOrbit = `${theta}deg ${phi}deg 105%`;
-  });
+    // ۱. ردیابی موس در دسکتاپ با فاصله خودکار (auto) برای سازگاری با خروجی Trellis
+    window.addEventListener('mousemove', (event) => {
+      if (!modelViewer) return;
+      const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+      const mouseY = (event.clientY / window.innerHeight) * 2 - 1;
+      const theta = -mouseX * 35; 
+      const phi = 75 - (mouseY * 15); 
+      modelViewer.cameraOrbit = `${theta}deg ${phi}deg auto`;
+    });
 
-  window.addEventListener('mouseleave', () => {
-    modelViewer.cameraOrbit = `0deg 75deg 105%`;
-  });
+    window.addEventListener('mouseleave', () => {
+      if (modelViewer) modelViewer.cameraOrbit = `0deg 75deg auto`;
+    });
 
-  // ۲. باز و بسته کردن پنجره چت
-  avatarBtn.addEventListener('click', () => {
-    chatBox.classList.toggle('active');
-    miniHint.style.opacity = chatBox.classList.contains('active') ? '0' : '1';
-    if (chatBox.classList.contains('active')) userInput.focus();
-  });
+    // ۲. باز و بسته کردن تضمینی پنجره چت با کلیک روی باکس یا کاراکتر
+    function toggleChat(e) {
+      e.stopPropagation();
+      chatBox.classList.toggle('active');
+      const isOpen = chatBox.classList.contains('active');
+      miniHint.style.opacity = isOpen ? '0' : '1';
+      if (isOpen) setTimeout(() => userInput.focus(), 100);
+    }
 
-  closeChatBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    chatBox.classList.remove('active');
-    miniHint.style.opacity = '1';
-  });
+    avatarBtn.addEventListener('click', toggleChat);
 
-  // ۳. کلید API دو تکه شده برای عبور از اسکنر گیت‌هاب
-  const keyPart1 = "REMOVED_SECRET_PART1";
-  const keyPart2 = "REMOVED_SECRET_PART2";
-  const GEMINI_API_KEY = keyPart1 + keyPart2;
+    closeChatBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      chatBox.classList.remove('active');
+      miniHint.style.opacity = '1';
+    });
 
-  const SYSTEM_INSTRUCTION = `
-    تو دستیار هوشمند و نگهبان سایبری وب‌سایت و کانال تلگرام Valhalla Tech World (@valhala_tw) هستی.
-    تخصص تو سخت‌افزار کامپیوتر، لپ‌تاپ، سیستم‌عامل مک (macOS)، ویندوز، عیب‌یابی سیستم و ترفندهای تکنولوژی است.
-    پاسخ‌هایت باید به زبان فارسی، کاملاً علمی، دقیق، لحن دوستانه و حرفه‌ای، و حداکثر در ۳ الی ۴ جمله خلاصه و کاربردی باشد.
-    اگر کاربر سوالی غیرمرتبط با تکنولوژی و کامپیوتر پرسید، با لحن مودبانه بگو که فقط در زمینه تکنولوژی و کامپیوتر فعالیت می‌کنی.
-  `;
+    // جلوگیری از بسته شدن چت هنگام کلیک داخل خود پنجره چت
+    chatBox.addEventListener('click', (e) => e.stopPropagation());
 
-  async function askAI(question) {
-    appendMessage(question, 'user');
-    userInput.value = '';
-    const loadingMsg = appendMessage('در حال پردازش... ⚡', 'bot');
+    // ۳. کلید API دو تکه شده
+    const keyPart1 = "REMOVED_SECRET_PART1";
+    const keyPart2 = "REMOVED_SECRET_PART2";
+    const GEMINI_API_KEY = keyPart1 + keyPart2;
 
-    modelViewer.setAttribute('auto-rotate', '');
-    modelViewer.setAttribute('rotation-per-second', '120deg');
+    const SYSTEM_INSTRUCTION = `
+      تو دستیار هوشمند و نگهبان سایبری وب‌سایت و کانال تلگرام Valhalla Tech World (@valhala_tw) هستی.
+      تخصص تو سخت‌افزار کامپیوتر، لپ‌تاپ، سیستم‌عامل مک (macOS)، ویندوز، عیب‌یابی سیستم و ترفندهای تکنولوژی است.
+      پاسخ‌هایت باید به زبان فارسی، کاملاً علمی، دقیق، لحن دوستانه و حرفه‌ای، و حداکثر در ۳ الی ۴ جمله خلاصه و کاربردی باشد.
+      اگر کاربر سوالی غیرمرتبط با تکنولوژی و کامپیوتر پرسید، با لحن مودبانه بگو که فقط در زمینه تکنولوژی و کامپیوتر فعالیت می‌کنی.
+    `;
 
-    try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          system_instruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
-          contents: [{ parts: [{ text: question }] }]
-        })
-      });
+    async function askAI(question) {
+      appendMessage(question, 'user');
+      userInput.value = '';
+      const loadingMsg = appendMessage('در حال پردازش... ⚡', 'bot');
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        console.error("API Error Details:", data);
-        loadingMsg.innerHTML = "خطا در اعتبارسنجی کلید API یا محدودیت دامنه! تنظیمات کنسول گوگل را بررسی کنید.";
-        return;
+      if (modelViewer) {
+        modelViewer.setAttribute('auto-rotate', '');
+        modelViewer.setAttribute('rotation-per-second', '120deg');
       }
 
-      const aiReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "پاسخی دریافت نشد، دوباره امتحان کنید.";
-      loadingMsg.innerHTML = aiReply.replace(/\n/g, '<br>');
-    } catch (error) {
-      loadingMsg.innerHTML = "خطا در ارتباط با سرور هوش مصنوعی! (لطفاً اتصال اینترنت یا فیلترشکن خود را بررسی کنید).";
-    } finally {
-      modelViewer.removeAttribute('auto-rotate');
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            system_instruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
+            contents: [{ parts: [{ text: question }] }]
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          console.error("API Error Details:", data);
+          loadingMsg.innerHTML = `خطای سرور (${response.status}): کلید API یا تنظیمات محدودیت دامنه در کنسول گوگل را بررسی کنید.`;
+          return;
+        }
+
+        const aiReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "پاسخی دریافت نشد، دوباره امتحان کنید.";
+        loadingMsg.innerHTML = aiReply.replace(/\n/g, '<br>');
+      } catch (error) {
+        loadingMsg.innerHTML = "خطا در ارتباط با سرور هوش مصنوعی! (لطفاً اتصال اینترنت یا فیلترشکن خود را بررسی کنید).";
+      } finally {
+        if (modelViewer) modelViewer.removeAttribute('auto-rotate');
+      }
     }
-  }
 
-  function appendMessage(text, sender) {
-    const msgDiv = document.createElement('div');
-    msgDiv.className = `msg ${sender}`;
-    msgDiv.innerHTML = text;
-    chatMessages.appendChild(msgDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-    return msgDiv;
-  }
+    function appendMessage(text, sender) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `msg ${sender}`;
+      msgDiv.innerHTML = text;
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      return msgDiv;
+    }
 
-  sendBtn.addEventListener('click', () => {
-    if (userInput.value.trim() !== '') askAI(userInput.value.trim());
-  });
+    sendBtn.addEventListener('click', () => {
+      if (userInput.value.trim() !== '') askAI(userInput.value.trim());
+    });
 
-  userInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' && userInput.value.trim() !== '') askAI(userInput.value.trim());
+    userInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && userInput.value.trim() !== '') {
+        e.preventDefault();
+        askAI(userInput.value.trim());
+      }
+    });
   });
 </script>
   </body>
