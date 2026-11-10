@@ -93,6 +93,19 @@
     <audio id="audioElement" preload="metadata"></audio>
     <div class="player-message" id="playerMessage" role="status" aria-live="polite"></div>
   </main>
+
+  <section class="podcast-library" id="podcastLibrary" aria-label="عناوین پادکست‌ها">
+    <button class="podcast-library-toggle" id="podcastLibraryToggle"
+            type="button" aria-expanded="false" aria-controls="podcastListPanel">
+      <span class="podcast-library-heading">عناوین پادکست‌ها</span>
+      <span class="podcast-library-chevron" aria-hidden="true">⌄</span>
+    </button>
+    <div class="podcast-list-panel" id="podcastListPanel" hidden>
+      <div class="podcast-list" id="podcastList" aria-live="polite">
+        <p class="podcast-list-empty">در حال بارگذاری عناوین پادکست‌ها...</p>
+      </div>
+    </div>
+  </section>
   <script src="player.js"></script>
   <script src="playlist.js"></script>
 </body>
