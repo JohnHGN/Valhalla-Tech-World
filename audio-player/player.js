@@ -6,7 +6,7 @@ const audio=$("audioElement"), seek=$("seekBar"), canvas=$("equalizer"), ctx=can
 let playlist=[], index=0, repeat=false, sleepTimer=null, sleepMinutes=0, audioCtx=null, analyser=null, bins=null, raf=0, msgTimer=0;
 const fmt=n=>{if(!Number.isFinite(n)||n<0)return"00:00";n=Math.floor(n);return`${String(Math.floor(n/60)).padStart(2,"0")}:${String(n%60).padStart(2,"0")}`};
 function notify(s){$("playerMessage").textContent=s;$("playerMessage").classList.add("show");clearTimeout(msgTimer);msgTimer=setTimeout(()=>$("playerMessage").classList.remove("show"),2600)}
-function state(){let p=!audio.paused&&!audio.ended;$("playSymbol").textContent=p?"Ⅱ":"▶";$("playButton").setAttribute("aria-label",p?"توقف موقت":"پخش");$("statusText").textContent=p?"در حال پخش":"متوقف";$("statusButton").classList.toggle("is-playing",p)}
+function state(){let p=!audio.paused&&!audio.ended;$("playSymbol").classList.toggle("is-playing",p);$("playButton").setAttribute("aria-label",p?"توقف موقت":"پخش");$("statusText").textContent=p?"در حال پخش":"متوقف";$("statusButton").classList.toggle("is-playing",p)}
 function setupAudioGraph(){
  if(audioCtx){if(audioCtx.state==="suspended")audioCtx.resume().catch(()=>{});return}
  const AC=window.AudioContext||window.webkitAudioContext;if(!AC){notify("مرورگر از اکولایزر زنده پشتیبانی نمی‌کند.");return}
