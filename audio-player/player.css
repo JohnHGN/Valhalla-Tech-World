@@ -375,3 +375,78 @@ button { color: inherit; cursor: pointer; }
   width: 17% !important;
   height: 45.33% !important;
 }
+
+
+/* VALHALLA PLAYER — final layout and Persian typography fixes */
+@font-face {
+  font-family: "Yas";
+  src: url("assets/fonts/Yas.woff2") format("woff2"),
+       url("assets/fonts/Yas.woff") format("woff"),
+       url("assets/fonts/Yas.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+.player-shell {
+  font-family: "Yas", Tahoma, Arial, sans-serif;
+}
+.player-shell button,
+.player-shell select,
+.player-shell input,
+.player-shell .playing-status,
+.player-shell .sleep-label,
+.player-shell .time-row,
+.player-shell .player-message {
+  font-family: "Yas", Tahoma, Arial, sans-serif;
+}
+
+/* True circular play/pause button, with its center preserved. */
+.controls .play-control {
+  left: 44.425%;
+  width: 16.85%;
+  height: 112%;
+  top: -12%;
+  aspect-ratio: 1 / 1;
+  box-sizing: border-box;
+  padding: 0;
+  border-radius: 50%;
+}
+
+/* Center the smaller 15/30 labels inside their rewind/forward icons. */
+.controls .skip-control {
+  flex-direction: row;
+  padding: 0;
+  gap: 0;
+}
+.skip-icon-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  flex: 0 0 100%;
+}
+.skip-icon-wrap .skip-arrow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1.18em;
+  height: 1.18em;
+  transform: translate(-50%, -50%);
+  font-size: clamp(25px, 3.35cqw, 47px);
+}
+.skip-icon-wrap strong {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  margin: 0;
+  font-family: "Yas", Tahoma, Arial, sans-serif;
+  font-size: clamp(9px, 1.15cqw, 16px);
+  font-weight: 700;
+  line-height: 1;
+  color: #fff8e9;
+  text-shadow: 0 1px 4px #000, 0 0 5px #ffb84d;
+  pointer-events: none;
+}
