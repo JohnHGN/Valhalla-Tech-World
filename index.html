@@ -423,6 +423,7 @@
     font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
   }
 
+  /* انتقال انیمیشن شناور بودن به کانتینر پدر برای جلوگیری از باگ WebGL در سافاری مک */
   .valhalla-3d-wrapper {
     width: 230px;
     height: 300px;
@@ -430,29 +431,23 @@
     cursor: pointer;
     user-select: none;
     margin-left: auto;
-    transition: transform 0.25s ease;
-  }
-
-  .valhalla-3d-wrapper:hover {
-    transform: scale(1.03);
-  }
-
-  model-viewer#valhalla-assistant {
-    width: 100%;
-    height: 100%;
-    min-height: 280px;
-    display: block;
-    background-color: transparent;
-    --poster-color: transparent;
-    outline: none;
-    pointer-events: none; 
-    filter: drop-shadow(0 0 22px rgba(0, 195, 255, 0.45));
     animation: floatEffect 4s ease-in-out infinite;
   }
 
   @keyframes floatEffect {
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-10px); }
+  }
+
+  model-viewer#valhalla-assistant {
+    width: 230px;
+    height: 300px;
+    display: block;
+    background-color: transparent;
+    --poster-color: transparent;
+    outline: none;
+    pointer-events: none;
+    filter: drop-shadow(0 0 20px rgba(0, 195, 255, 0.45));
   }
 
   .valhalla-mini-hint {
@@ -482,7 +477,7 @@
 
   .valhalla-chat-box {
     position: absolute;
-    bottom: 290px;
+    bottom: 310px;
     right: 0;
     width: 340px;
     height: 430px;
@@ -629,13 +624,10 @@
       right: 10px;
     }
 
-    .valhalla-3d-wrapper {
-      width: 135px;
-      height: 180px;
-    }
-
+    .valhalla-3d-wrapper,
     model-viewer#valhalla-assistant {
-      min-height: 170px;
+      width: 140px;
+      height: 185px;
     }
 
     .valhalla-mini-hint {
@@ -646,7 +638,7 @@
 
     .valhalla-chat-box {
       position: fixed;
-      bottom: 185px;
+      bottom: 195px;
       right: 4vw;
       left: 4vw;
       width: 92vw;
@@ -681,20 +673,21 @@
     <div class="valhalla-mini-hint" id="mini-hint">سوال تکنولوژی داری؟ کلیک کن! 💬</div>
     <model-viewer 
       id="valhalla-assistant"
-      src="https://johnhgn.github.io/Valhalla-Tech-World/valhalla-bot.glb" 
+      src="valhalla-bot.glb" 
       alt="Valhalla AI Assistant"
-      camera-orbit="0deg 75deg 105%"
-      field-of-view="30deg"
+      camera-target="auto auto auto"
+      camera-orbit="0deg 75deg auto"
+      field-of-view="auto"
       interpolation-decay="100"
       shadow-intensity="1" 
-      exposure="1.4"
+      exposure="1.5"
       interaction-prompt="none">
     </model-viewer>
   </div>
 
 </div>
 
-<!-- ۴. اسکریپت چرخش موس، عیب‌یابی مدل سه‌بعدی و اتصال چندمدله به Gemini -->
+<!-- ۴. اسکریپت چرخش موس و اتصال به مدل جدید gemini-3.0-flash -->
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const modelViewer = document.getElementById('valhalla-assistant');
@@ -706,13 +699,11 @@
     const userInput = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
 
-    // بررسی لود شدن مدل سه‌بعدی در کنسول مرورگر
+    // وقتی مدل لود شد، دوربین را دقیقاً روی مرکز حجم کاراکتر فوکوس کن
     if (modelViewer) {
       modelViewer.addEventListener('load', () => {
-        console.log("3D Model loaded successfully!");
-      });
-      modelViewer.addEventListener('error', (err) => {
-        console.error("3D Model failed to load:", err);
+        modelViewer.cameraTarget = 'auto auto auto';
+        modelViewer.framing = 'tight';
       });
     }
 
@@ -723,11 +714,11 @@
       const mouseY = (event.clientY / window.innerHeight) * 2 - 1;
       const theta = -mouseX * 35; 
       const phi = 75 - (mouseY * 15); 
-      modelViewer.cameraOrbit = `${theta}deg ${phi}deg 105%`;
+      modelViewer.cameraOrbit = `${theta}deg ${phi}deg auto`;
     });
 
     window.addEventListener('mouseleave', () => {
-      if (modelViewer) modelViewer.cameraOrbit = `0deg 75deg 105%`;
+      if (modelViewer) modelViewer.cameraOrbit = `0deg 75deg auto`;
     });
 
     // ۲. باز و بسته کردن پنجره چت
@@ -759,11 +750,11 @@
       اگر کاربر سوالی غیرمرتبط با تکنولوژی و کامپیوتر پرسید، با لحن مودبانه بگو که فقط در زمینه تکنولوژی و کامپیوتر فعالیت می‌کنی.
     `;
 
-    // لیست مدل‌های گوگل به ترتیب اولویت برای جلوگیری از خطای 404
+    // قرار دادن gemini-3.0-flash در اولویت اول طبق پیام سرور گوگل
     const MODELS_TO_TRY = [
-      "gemini-2.0-flash",
-      "gemini-1.5-flash",
-      "gemini-2.5-flash"
+      "gemini-3.0-flash",
+      "gemini-3.0-pro",
+      "gemini-2.0-flash-lite"
     ];
 
     async function askAI(question) {
@@ -798,7 +789,7 @@
             const aiReply = data.candidates[0].content.parts[0].text;
             loadingMsg.innerHTML = aiReply.replace(/\n/g, '<br>');
             if (modelViewer) modelViewer.removeAttribute('auto-rotate');
-            return; // پاسخ با موفقیت دریافت شد
+            return;
           } else {
             lastError = data.error?.message || `کد خطا: ${response.status}`;
             console.warn(`Model ${modelName} failed:`, data);
@@ -808,7 +799,6 @@
         }
       }
 
-      // اگر هیچ‌کدام از مدل‌ها جواب نداد، علت دقیق را نمایش بده:
       loadingMsg.innerHTML = `خطا در پاسخگویی API:<br><small style="color:#ff8a8a;direction:ltr;display:block;margin-top:4px;">${lastError}</small>`;
       if (modelViewer) modelViewer.removeAttribute('auto-rotate');
     }
