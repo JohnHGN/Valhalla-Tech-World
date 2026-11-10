@@ -771,13 +771,27 @@
     }
   );
 
-  // حرکت موس غیرفعال است؛ کاراکتر در حالت عادی ثابت می‌ماند.
-  // هنگام پردازش پاسخ، چرخش کوتاه/نمایشی قبلی حفظ شده است.
+  // حرکت موس غیرفعال است؛ کاراکتر در حالت عادی رو به کاربر می‌ماند.
+  // هنگام پردازش پاسخ می‌چرخد و پس از پایان، نرم و از کوتاه‌ترین مسیر به روبه‌رو برمی‌گردد.
   function animate() {
     requestAnimationFrame(animate);
+
     if (isThinking) {
       modelGroup.rotation.y += 0.08;
+    } else {
+      // زاویه را به بازهٔ منفی/مثبت ۱۸۰ درجه می‌آوریم تا برگشت مسیر طولانی نداشته باشد.
+      const shortestY = Math.atan2(
+        Math.sin(modelGroup.rotation.y),
+        Math.cos(modelGroup.rotation.y)
+      );
+      modelGroup.rotation.y += (0 - shortestY) * 0.08;
+      modelGroup.rotation.x += (0 - modelGroup.rotation.x) * 0.08;
+
+      // در نزدیکی زاویهٔ صفر، دقیقاً روبه‌رو ثابت شود.
+      if (Math.abs(shortestY) < 0.001) modelGroup.rotation.y = 0;
+      if (Math.abs(modelGroup.rotation.x) < 0.001) modelGroup.rotation.x = 0;
     }
+
     renderer.render(scene, camera);
   }
   animate();
