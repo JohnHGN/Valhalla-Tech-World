@@ -345,3 +345,22 @@ button { color: inherit; cursor: pointer; }
 @media (max-width: 620px) {
   .hud-icon { stroke-width: 1.9; }
 }
+/* Valhalla Audio â€” corrected podcast artwork placement */
+/* Append this block to the VERY END of audio-player/player.css. */
+.podcast-logo {
+  position: absolute !important;
+  z-index: 1 !important;
+  left: 7% !important;
+  top: 17% !important;
+  width: 18.5% !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1;
+  object-fit: contain !important;
+  object-position: center !important;
+  border-radius: 50%;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 0 7px rgba(0, 225, 255, .55))
+          drop-shadow(0 0 13px rgba(0, 190, 255, .25));
+}
+.podcast-logo[hidden] { display: none !important; }
