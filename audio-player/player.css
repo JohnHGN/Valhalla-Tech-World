@@ -32,8 +32,8 @@ body {
 .podcast-logo {
   position: absolute;
   z-index: 0;
-  left: 45%;
-  top: 72%;
+  left: 80%;
+  top: 120%;
   width: 17%;
   height: 45.33%;
   object-fit: contain;
