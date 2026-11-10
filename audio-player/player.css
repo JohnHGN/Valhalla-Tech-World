@@ -355,8 +355,8 @@ button { color: inherit; cursor: pointer; }
   position: absolute !important;
 
   /* Center of the circular emblem in the player skin */
-  left: 16.8% !important;
-  top: 42.3% !important;
+  left: 17.1% !important;
+  top: 42.1% !important;
   transform: translate(-50%, -50%) !important;
 
   /* Keep the same visual size while centering from its midpoint */
