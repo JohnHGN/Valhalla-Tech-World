@@ -481,3 +481,6 @@ button { color: inherit; cursor: pointer; }
 .podcast-list-empty{margin:0;padding:18px;color:#9ebac5;text-align:center;font-size:13px}
 .podcast-list-panel[hidden]{display:none!important}
 @media(max-width:620px){.podcast-library{margin-top:8px}.podcast-list-item{gap:8px;padding:7px}.podcast-list-play{min-width:88px;padding-inline:8px}}
+
+/* Empty initial state: do not show a podcast cover before selection. */
+#podcastLogo[hidden] { display: none !important; }

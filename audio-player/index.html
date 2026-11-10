@@ -9,16 +9,16 @@
 </head>
 <body>
   <main class="player-shell" id="valhallaPlayer" aria-label="پخش‌کننده صوتی وال‌هالا"
-        data-audio-src="assets/audio.mp3" data-podcast-cover="assets/ChatGPT_Podcast_Logo.png">
+        >
     <img class="player-skin" src="assets/valhalla-player-base.png" alt="" draggable="false">
-    <img class="podcast-logo" id="podcastLogo" src="assets/ChatGPT_Podcast_Logo.png" alt="لوگوی پادکست آموزش پرامپت‌نویسی با ChatGPT" draggable="false">
+    <img class="podcast-logo" id="podcastLogo" alt="لوگوی پادکست" draggable="false" hidden>
 
     <div class="brand">VALHALLA AUDIO</div>
     <button class="playing-status" id="statusButton" type="button" aria-label="تغییر وضعیت پخش">
-      <span class="status-dot"></span><span id="statusText">در حال پخش</span>
+      <span class="status-dot"></span><span id="statusText">متوقف</span>
     </button>
 
-    <div class="track-title" id="trackTitle" aria-live="polite">آماده پخش</div>
+    <div class="track-title" id="trackTitle" aria-live="polite">هیچ پادکستی انتخاب نشده</div>
     <canvas class="equalizer" id="equalizer" aria-label="اکولایزر زنده"></canvas>
 
     <div class="timeline">
