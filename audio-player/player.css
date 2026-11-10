@@ -377,51 +377,44 @@ button { color: inherit; cursor: pointer; }
 }
 
 
-/* VALHALLA PLAYER — final layout and Persian typography fixes */
-@font-face {
-  font-family: "Yas";
-  src: url("assets/fonts/Yas.woff2") format("woff2"),
-       url("assets/fonts/Yas.woff") format("woff"),
-       url("assets/fonts/Yas.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-}
-.player-shell {
-  font-family: "Yas", Tahoma, Arial, sans-serif;
-}
-.player-shell button,
-.player-shell select,
-.player-shell input,
-.player-shell .playing-status,
-.player-shell .sleep-label,
-.player-shell .time-row,
-.player-shell .player-message {
-  font-family: "Yas", Tahoma, Arial, sans-serif;
-}
+/* VALHALLA PLAYER — aligned transport controls (corrected) */
 
-/* True circular play/pause button, with its center preserved. */
+/* Keep the original button center, but make its width match its height.
+   The control row is 89% of the player width; 6.35% gives a circle
+   matching the existing 112% control-row height. */
 .controls .play-control {
-  left: 44.425%;
-  width: 16.85%;
+  left: 49.675%;
+  width: 6.35%;
   height: 112%;
   top: -12%;
+  min-width: 0;
   aspect-ratio: 1 / 1;
   box-sizing: border-box;
   padding: 0;
   border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: none;
+}
+.controls .play-control:hover {
+  transform: scale(1.04);
+}
+.controls .play-control:active {
+  transform: scale(.96);
 }
 
-/* Center the smaller 15/30 labels inside their rewind/forward icons. */
+/* Rewind/forward labels are layered precisely at the icon center. */
 .controls .skip-control {
   flex-direction: row;
+  align-items: center;
+  justify-content: center;
   padding: 0;
   gap: 0;
 }
 .skip-icon-wrap {
   position: relative;
-  display: grid;
-  place-items: center;
+  display: block;
   width: 100%;
   height: 100%;
   flex: 0 0 100%;
@@ -430,23 +423,41 @@ button { color: inherit; cursor: pointer; }
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 1.18em;
-  height: 1.18em;
+  width: 1.08em;
+  height: 1.08em;
+  margin: 0;
   transform: translate(-50%, -50%);
-  font-size: clamp(25px, 3.35cqw, 47px);
+  font-size: clamp(22px, 3.1cqw, 44px);
 }
 .skip-icon-wrap strong {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
   z-index: 1;
   margin: 0;
-  font-family: "Yas", Tahoma, Arial, sans-serif;
-  font-size: clamp(9px, 1.15cqw, 16px);
-  font-weight: 700;
-  line-height: 1;
+  transform: translate(-50%, -50%);
+  font: 700 clamp(9px, 1.05cqw, 15px)/1 "Yas", Tahoma, Arial, sans-serif;
   color: #fff8e9;
   text-shadow: 0 1px 4px #000, 0 0 5px #ffb84d;
   pointer-events: none;
+}
+
+/* Load the Persian Yas font if its file is present in this path. */
+@font-face {
+  font-family: "Yas";
+  src: url("assets/fonts/Yas.ttf") format("truetype"),
+       url("assets/fonts/Yas.woff2") format("woff2"),
+       url("assets/fonts/Yas.woff") format("woff");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+.player-shell,
+.player-shell button,
+.player-shell select,
+.player-shell .playing-status,
+.player-shell .sleep-label,
+.player-shell .time-row,
+.player-shell .player-message {
+  font-family: "Yas", Tahoma, Arial, sans-serif;
 }
