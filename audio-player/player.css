@@ -1,6 +1,21 @@
 * { box-sizing: border-box; }
 :root { color-scheme: dark; font-family: Tahoma, Arial, sans-serif; }
-body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 18px; background: #02070b; }
+html,
+body {
+  background: transparent !important;
+}
+
+body {
+  margin: 0;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
+.player-shell {
+  background: transparent !important;
+}
 .player-shell {
   position: relative; width: min(100%, 1500px); aspect-ratio: 2048 / 768;
   overflow: hidden; isolation: isolate; color: #f4fbff;
@@ -344,13 +359,4 @@ button { color: inherit; cursor: pointer; }
 }
 @media (max-width: 620px) {
   .hud-icon { stroke-width: 1.9; }
-}
-
-
-/* Logo alignment: center the podcast artwork inside the circular emblem */
-.podcast-logo {
-  left: 8.6% !important;
-  top: 19% !important;
-  width: 17% !important;
-  height: 45.33% !important;
 }
