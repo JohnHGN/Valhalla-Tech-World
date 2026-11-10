@@ -771,24 +771,12 @@
     }
   );
 
-  // ردیابی نرم موس
-  let targetRotY = 0;
-  let targetRotX = 0;
-
-  window.addEventListener('mousemove', (e) => {
-    const mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-    const mouseY = (e.clientY / window.innerHeight) * 2 - 1;
-    targetRotY = mouseX * 0.65;
-    targetRotX = mouseY * 0.25;
-  });
-
+  // حرکت موس غیرفعال است؛ کاراکتر در حالت عادی ثابت می‌ماند.
+  // هنگام پردازش پاسخ، چرخش کوتاه/نمایشی قبلی حفظ شده است.
   function animate() {
     requestAnimationFrame(animate);
     if (isThinking) {
       modelGroup.rotation.y += 0.08;
-    } else {
-      modelGroup.rotation.y += (targetRotY - modelGroup.rotation.y) * 0.08;
-      modelGroup.rotation.x += (targetRotX - modelGroup.rotation.x) * 0.08;
     }
     renderer.render(scene, camera);
   }
