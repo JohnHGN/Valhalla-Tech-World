@@ -463,129 +463,21 @@ button { color: inherit; cursor: pointer; }
 }
 
 
-/* =========================================================
-   VALHALLA AUDIO — Podcast title menu
-   This menu belongs to the audio-player component.
-   ========================================================= */
-.podcast-library {
-  direction: rtl;
-  position: relative;
-  z-index: 5;
-  width: min(100%, 1500px);
-  margin: clamp(12px, 1.5vw, 22px) auto 28px;
-  color: #eafaff;
-  font-family: "Yas", Tahoma, Arial, sans-serif;
-}
-.podcast-library-toggle {
-  width: 100%;
-  min-height: clamp(48px, 5.2vw, 68px);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 12px clamp(16px, 2.2vw, 30px);
-  border: 1px solid rgba(0, 225, 255, .65);
-  border-radius: 14px;
-  color: #dffcff;
-  background: linear-gradient(110deg, rgba(5, 27, 39, .97), rgba(5, 15, 27, .98) 58%, rgba(21, 27, 40, .97));
-  box-shadow: inset 0 0 14px rgba(0, 210, 255, .12), 0 0 14px rgba(0, 205, 255, .13);
-  cursor: pointer;
-  font: 700 clamp(14px, 1.45vw, 19px)/1.5 "Yas", Tahoma, Arial, sans-serif;
-  text-align: right;
-  transition: border-color .2s ease, box-shadow .2s ease;
-}
-.podcast-library-toggle:hover,
-.podcast-library-toggle[aria-expanded="true"] {
-  border-color: #ffd27a;
-  box-shadow: inset 0 0 16px rgba(0, 210, 255, .16), 0 0 16px rgba(0, 205, 255, .22);
-}
-.podcast-library-heading::before {
-  content: "♫";
-  color: #00eaff;
-  margin-left: 12px;
-  text-shadow: 0 0 9px #00dfff;
-}
-.podcast-library-chevron {
-  color: #00efff;
-  font: 700 25px/1 Arial, sans-serif;
-  transition: transform .2s ease;
-}
-.podcast-library-toggle[aria-expanded="true"] .podcast-library-chevron {
-  transform: rotate(180deg);
-}
-.podcast-list-panel {
-  margin-top: 9px;
-  padding: clamp(8px, 1.2vw, 16px);
-  border: 1px solid rgba(0, 220, 255, .38);
-  border-radius: 14px;
-  background: linear-gradient(145deg, rgba(3, 17, 27, .98), rgba(8, 20, 34, .98));
-  box-shadow: inset 0 0 18px rgba(0, 190, 255, .08), 0 8px 24px rgba(0, 0, 0, .35);
-}
-.podcast-list {
-  display: grid;
-  gap: 8px;
-  max-height: min(55vh, 520px);
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: #00cde8 #071722;
-}
-.podcast-list-item {
-  min-height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 8px 12px;
-  border: 1px solid rgba(105, 204, 225, .18);
-  border-radius: 10px;
-  background: rgba(8, 32, 45, .72);
-  transition: background .18s ease, border-color .18s ease;
-}
-.podcast-list-item.is-current {
-  border-color: rgba(0, 230, 255, .65);
-  background: rgba(0, 120, 150, .17);
-}
-.podcast-list-title {
-  min-width: 0;
-  color: #eafaff;
-  font-size: clamp(12px, 1.15vw, 16px);
-  line-height: 1.7;
-  overflow-wrap: anywhere;
-}
-.podcast-list-item.is-current .podcast-list-title {
-  color: #9afaff;
-}
-.podcast-list-play {
-  flex: 0 0 auto;
-  min-width: 108px;
-  min-height: 36px;
-  padding: 6px 12px;
-  border: 1px solid rgba(0, 225, 255, .65);
-  border-radius: 999px;
-  background: linear-gradient(145deg, #0b3544, #061722);
-  color: #9afaff;
-  font: 700 12px/1.5 "Yas", Tahoma, Arial, sans-serif;
-  cursor: pointer;
-  box-shadow: inset 0 0 8px rgba(0, 220, 255, .12);
-}
-.podcast-list-play:hover {
-  border-color: #ffd27a;
-  color: #fff0c9;
-  box-shadow: 0 0 10px rgba(0, 220, 255, .25);
-}
-.podcast-list-item.is-current .podcast-list-play {
-  border-color: #ffd27a;
-  color: #ffe0a2;
-}
-.podcast-list-empty {
-  margin: 0;
-  padding: 18px;
-  color: #9ebac5;
-  text-align: center;
-  font-size: 13px;
-}
-@media (max-width: 620px) {
-  .podcast-library { margin-top: 8px; }
-  .podcast-list-item { gap: 8px; padding: 7px; }
-  .podcast-list-play { min-width: 88px; padding-inline: 8px; }
-}
+/* VALHALLA — expandable podcast library */
+.podcast-library{direction:rtl;position:relative;z-index:5;width:min(100%,1500px);margin:clamp(12px,1.5vw,22px) auto 28px;color:#eafaff;font-family:"Yas",Tahoma,Arial,sans-serif}
+.podcast-library-toggle{width:100%;min-height:clamp(48px,5.2vw,68px);display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px clamp(16px,2.2vw,30px);border:1px solid rgba(0,225,255,.65);border-radius:14px;color:#dffcff;background:linear-gradient(110deg,rgba(5,27,39,.97),rgba(5,15,27,.98) 58%,rgba(21,27,40,.97));box-shadow:inset 0 0 14px rgba(0,210,255,.12),0 0 14px rgba(0,205,255,.13);cursor:pointer;font:700 clamp(14px,1.45vw,19px)/1.5 "Yas",Tahoma,Arial,sans-serif;text-align:right}
+.podcast-library-toggle:hover,.podcast-library-toggle[aria-expanded=true]{border-color:#ffd27a;box-shadow:inset 0 0 16px rgba(0,210,255,.16),0 0 16px rgba(0,205,255,.22)}
+.podcast-library-heading:before{content:"♫";color:#00eaff;margin-left:12px;text-shadow:0 0 9px #00dfff}
+.podcast-library-chevron{color:#00efff;font:700 25px/1 Arial,sans-serif;transition:transform .2s}
+.podcast-library-toggle[aria-expanded=true] .podcast-library-chevron{transform:rotate(180deg)}
+.podcast-list-panel{margin-top:9px;padding:clamp(8px,1.2vw,16px);border:1px solid rgba(0,220,255,.38);border-radius:14px;background:linear-gradient(145deg,rgba(3,17,27,.98),rgba(8,20,34,.98));box-shadow:inset 0 0 18px rgba(0,190,255,.08),0 8px 24px rgba(0,0,0,.35)}
+.podcast-list{display:grid;gap:8px;max-height:min(55vh,520px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:#00cde8 #071722}
+.podcast-list-item{min-height:52px;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:8px 12px;border:1px solid rgba(105,204,225,.18);border-radius:10px;background:rgba(8,32,45,.72)}
+.podcast-list-item.is-current{border-color:rgba(0,230,255,.65);background:rgba(0,120,150,.17)}
+.podcast-list-title{min-width:0;color:#eafaff;font-size:clamp(12px,1.15vw,16px);line-height:1.7;overflow-wrap:anywhere}
+.podcast-list-item.is-current .podcast-list-title{color:#9afaff}
+.podcast-list-play{flex:0 0 auto;min-width:108px;min-height:36px;padding:6px 12px;border:1px solid rgba(0,225,255,.65);border-radius:999px;background:linear-gradient(145deg,#0b3544,#061722);color:#9afaff;font:700 12px/1.5 "Yas",Tahoma,Arial,sans-serif;cursor:pointer}
+.podcast-list-item.is-current .podcast-list-play{border-color:#ffd27a;color:#ffe0a2}
+.podcast-list-empty{margin:0;padding:18px;color:#9ebac5;text-align:center;font-size:13px}
+.podcast-list-panel[hidden]{display:none!important}
+@media(max-width:620px){.podcast-library{margin-top:8px}.podcast-list-item{gap:8px;padding:7px}.podcast-list-play{min-width:88px;padding-inline:8px}}

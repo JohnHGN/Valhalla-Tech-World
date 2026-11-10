@@ -9,7 +9,36 @@ function notify(s){$("playerMessage").textContent=s;$("playerMessage").classList
 function setPodcastLogo(src){const img=$("podcastLogo");if(!img)return;const path=src||root.dataset.podcastCover||"";if(path){img.src=path;img.hidden=false;}else{img.removeAttribute("src");img.hidden=true;}}
 const podcastLogo=$("podcastLogo");if(podcastLogo){podcastLogo.addEventListener("error",()=>{podcastLogo.hidden=true;notify("فایل لوگوی پادکست پیدا نشد؛ نام و مسیر فایل را بررسی کنید.")});setPodcastLogo(root.dataset.podcastCover);}
 
-function state(){let p=!audio.paused&&!audio.ended;$("playSymbol").classList.toggle("is-playing",p);$("playButton").setAttribute("aria-label",p?"توقف موقت":"پخش");$("statusText").textContent=p?"در حال پخش":"متوقف";$("statusButton").classList.toggle("is-playing",p)}
+function renderPodcastMenu(){
+ const list=$("podcastList");
+ if(!list)return;
+ list.replaceChildren();
+ if(!playlist.length){
+   const empty=document.createElement("p");
+   empty.className="podcast-list-empty";
+   empty.textContent="هنوز پادکستی به فهرست اضافه نشده است.";
+   list.appendChild(empty);
+   return;
+ }
+ playlist.forEach((item,i)=>{
+   const row=document.createElement("div");
+   row.className="podcast-list-item"+(i===index?" is-current":"");
+   const title=document.createElement("span");
+   title.className="podcast-list-title";
+   title.textContent=item.title;
+   const button=document.createElement("button");
+   button.type="button";
+   button.className="podcast-list-play";
+   button.dataset.playIndex=String(i);
+   const current=(i===index);
+   const playing=current&&!audio.paused&&!audio.ended;
+   button.textContent=current?(playing?"در حال پخش":"متوقف"):"پخش";
+   button.setAttribute("aria-label",`${button.textContent}: ${item.title}`);
+   row.append(title,button);
+   list.appendChild(row);
+ });
+}
+function state(){let p=!audio.paused&&!audio.ended;$("playSymbol").classList.toggle("is-playing",p);$("playButton").setAttribute("aria-label",p?"توقف موقت":"پخش");$("statusText").textContent=p?"در حال پخش":"متوقف";$("statusButton").classList.toggle("is-playing",p);renderPodcastMenu()}
 function setupAudioGraph(){
  if(audioCtx){if(audioCtx.state==="suspended")audioCtx.resume().catch(()=>{});return}
  const AC=window.AudioContext||window.webkitAudioContext;if(!AC){notify("مرورگر از اکولایزر زنده پشتیبانی نمی‌کند.");return}
@@ -24,7 +53,7 @@ function draw(){
  raf=requestAnimationFrame(draw)
 }
 function track(item){return typeof item==="string"?{src:item,title:item.split("/").pop().replace(/\.[^.]+$/,"")}: (item&&item.src?{src:item.src,title:item.title||item.src.split("/").pop(),cover:item.cover||""}:null)}
-function selectTrack(n,autoplay=false){if(!playlist.length)return false;index=(n+playlist.length)%playlist.length;let t=playlist[index];audio.src=t.src;audio.load();$("trackTitle").textContent=t.title;setPodcastLogo(t.cover);$("currentTime").textContent=$("duration").textContent="00:00";seek.value=0;if(autoplay){setupAudioGraph();audio.play().then(state).catch(()=>notify(`پخش «${t.title}» ممکن نشد؛ فایل را بررسی کنید.`))}return true}
+function selectTrack(n,autoplay=false){if(!playlist.length)return false;index=(n+playlist.length)%playlist.length;let t=playlist[index];audio.src=t.src;audio.load();$("trackTitle").textContent=t.title;setPodcastLogo(t.cover);$("currentTime").textContent=$("duration").textContent="00:00";seek.value=0;state();if(autoplay){setupAudioGraph();audio.play().then(state).catch(()=>notify(`پخش «${t.title}» ممکن نشد؛ فایل را بررسی کنید.`))}return true}
 async function play(){
   if(!audio.src){
     notify("ابتدا فایل صوتی را انتخاب کنید.");
@@ -46,6 +75,30 @@ async function play(){
 
   state();
 }
+
+const podcastMenuToggle=$("podcastLibraryToggle"),podcastListPanel=$("podcastListPanel"),podcastList=$("podcastList");
+if(podcastMenuToggle&&podcastListPanel){
+ podcastMenuToggle.addEventListener("click",()=>{
+   const expanded=podcastMenuToggle.getAttribute("aria-expanded")==="true";
+   podcastMenuToggle.setAttribute("aria-expanded",String(!expanded));
+   podcastListPanel.hidden=expanded;
+ });
+}
+if(podcastList){
+ podcastList.addEventListener("click",e=>{
+   const button=e.target.closest("button[data-play-index]");
+   if(!button)return;
+   const target=Number(button.dataset.playIndex);
+   if(!Number.isInteger(target)||target<0||target>=playlist.length)return;
+   if(target===index){
+     if(audio.paused||audio.ended)play();
+     else{audio.pause();state()}
+   }else{
+     selectTrack(target,true);
+   }
+ });
+}
+
 if(root.dataset.audioSrc)audio.src=root.dataset.audioSrc;
 audio.volume=Number($("volumeBar").value);
 $("playButton").addEventListener("click",play);$("statusButton").addEventListener("click",play);
@@ -65,11 +118,11 @@ $("repeatButton").addEventListener("click",()=>{repeat=!repeat;audio.loop=repeat
 $("sleepButton").addEventListener("click",()=>{let opts=[0,15,30,45,60];sleepMinutes=opts[(opts.indexOf(sleepMinutes)+1)%opts.length];clearTimeout(sleepTimer);$("sleepValue").textContent=sleepMinutes?sleepMinutes+" دقیقه":"خاموش";if(sleepMinutes){sleepTimer=setTimeout(()=>{audio.pause();sleepMinutes=0;$("sleepValue").textContent="خاموش";notify("زمان توقف خودکار فرا رسید.")},sleepMinutes*60000);notify(`توقف خودکار پس از ${sleepMinutes} دقیقه`)}else notify("توقف خودکار خاموش شد.")});
 $("shareButton").addEventListener("click",async()=>{try{if(navigator.share)await navigator.share({title:"Valhalla Audio",url:location.href});else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(location.href);notify("پیوند صفحه کپی شد.")}else notify("اشتراک‌گذاری پشتیبانی نمی‌شود.")}catch(e){if(e.name!=="AbortError")notify("اشتراک‌گذاری انجام نشد.")}});
 window.ValhallaPlayer={
- setAudio(src,title="",cover=""){playlist=[];audio.src=src;audio.load();$("trackTitle").textContent=title||src.split("/").pop();setPodcastLogo(cover)},
- setPlaylist(items,start=0){playlist=Array.isArray(items)?items.map(track).filter(Boolean):[];if(!playlist.length){$("trackTitle").textContent="فهرست پخش خالی است";return}selectTrack(Math.max(0,Math.min(Number(start)||0,playlist.length-1)));notify(`${playlist.length} قطعه به فهرست پخش اضافه شد.`)},
+ setAudio(src,title="",cover=""){playlist=[];audio.src=src;audio.load();$("trackTitle").textContent=title||src.split("/").pop();setPodcastLogo(cover);state()},
+ setPlaylist(items,start=0){playlist=Array.isArray(items)?items.map(track).filter(Boolean):[];if(!playlist.length){$("trackTitle").textContent="فهرست پخش خالی است";renderPodcastMenu();return}selectTrack(Math.max(0,Math.min(Number(start)||0,playlist.length-1)));renderPodcastMenu();notify(`${playlist.length} قطعه به فهرست پخش اضافه شد.`)},
  play,pause(){audio.pause()},next(){if(playlist.length)selectTrack(index+1,true)},previous(){if(playlist.length)selectTrack(index-1,true)},
  get playlist(){return playlist.map(x=>({...x}))},get currentIndex(){return index},get audio(){return audio}
 };
 if("ResizeObserver"in window)new ResizeObserver(resize).observe(canvas);else addEventListener("resize",resize);
-resize();if(!raf)raf=requestAnimationFrame(draw);state();
+resize();renderPodcastMenu();if(!raf)raf=requestAnimationFrame(draw);state();
 })();
