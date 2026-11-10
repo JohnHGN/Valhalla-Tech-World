@@ -370,8 +370,8 @@ button { color: inherit; cursor: pointer; }
 /* Final podcast artwork alignment based on the current site screenshot */
 .player-logo,
 .podcast-logo {
-  left: 7.8% !important;
-  top: 23.8% !important;
+  left: 9% !important;
+  top: 22% !important;
   width: 17% !important;
   height: 45.33% !important;
 }
