@@ -6,7 +6,17 @@ const audio=$("audioElement"), seek=$("seekBar"), canvas=$("equalizer"), ctx=can
 let playlist=[], index=-1, repeat=false, sleepTimer=null, sleepMinutes=0, audioCtx=null, analyser=null, bins=null, raf=0, msgTimer=0;
 const fmt=n=>{if(!Number.isFinite(n)||n<0)return"00:00";n=Math.floor(n);return`${String(Math.floor(n/60)).padStart(2,"0")}:${String(n%60).padStart(2,"0")}`};
 function notify(s){$("playerMessage").textContent=s;$("playerMessage").classList.add("show");clearTimeout(msgTimer);msgTimer=setTimeout(()=>$("playerMessage").classList.remove("show"),2600)}
-function setPodcastLogo(src){const img=$("podcastLogo");if(!img)return;const path=src||root.dataset.podcastCover||"";if(path){img.src=path;img.hidden=false;}else{img.removeAttribute("src");img.hidden=true;}}
+function setPodcastLogo(src){
+ const img=$("podcastLogo");
+ if(!img)return;
+ const path=src||"";
+ img.hidden=true;
+ img.removeAttribute("src");
+ if(!path)return;
+ img.onload=()=>{img.hidden=false};
+ img.onerror=()=>{img.hidden=true;img.removeAttribute("src");notify("لوگوی این پادکست پیدا نشد؛ مسیر cover در playlist.js را بررسی کنید.")};
+ img.src=path;
+}
 const podcastLogo=$("podcastLogo");if(podcastLogo){podcastLogo.hidden=true;podcastLogo.removeAttribute("src");podcastLogo.addEventListener("error",()=>{podcastLogo.hidden=true;notify("فایل لوگوی پادکست پیدا نشد؛ نام و مسیر فایل را بررسی کنید.")});}
 
 function renderPodcastMenu(){
@@ -59,7 +69,15 @@ function draw(){
  for(let i=0;i<count;i++){let v=analyser&&!audio.paused?bins[Math.min(bins.length-1,Math.floor(i/count*bins.length))]/255:.055+((Math.sin(i*.72)+1)*.018);let bh=Math.max(3,v*h*.92),x=i*(bw+gap),y=h-2-bh,g=ctx.createLinearGradient(0,y,0,h);g.addColorStop(0,"#fff1bd");g.addColorStop(.3,"#ffb94f");g.addColorStop(.65,"#00efff");g.addColorStop(1,"rgba(0,180,255,.25)");ctx.fillStyle=g;ctx.shadowBlur=analyser&&!audio.paused?12:3;ctx.shadowColor=i%5===0?"#ffb94f":"#00dfff";ctx.beginPath();ctx.roundRect(x,y,bw,bh,Math.min(3,bw/2));ctx.fill()}ctx.shadowBlur=0}
  raf=requestAnimationFrame(draw)
 }
-function track(item){return typeof item==="string"?{src:item,title:item.split("/").pop().replace(/\.[^.]+$/,"")}: (item&&item.src?{src:item.src,title:item.title||item.src.split("/").pop(),cover:item.cover||""}:null)}
+function track(item){
+ if(typeof item==="string")return {src:item,title:item.split("/").pop().replace(/\.[^.]+$/,""),cover:""};
+ if(!item||!item.src)return null;
+ return {
+   src:item.src,
+   title:item.title||item.src.split("/").pop(),
+   cover:item.cover||item.logo||item.image||""
+ };
+}
 function selectTrack(n,autoplay=false){
  if(!playlist.length)return false;
  index=((n%playlist.length)+playlist.length)%playlist.length;
