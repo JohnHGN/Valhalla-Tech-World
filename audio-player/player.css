@@ -33,7 +33,7 @@ body {
   position: absolute;
   z-index: 0;
   left: 9%;
-  top: 18%;
+  top: 17.3%;
   width: 17%;
   height: 45.33%;
   object-fit: contain;
@@ -371,7 +371,7 @@ button { color: inherit; cursor: pointer; }
 .player-logo,
 .podcast-logo {
   left: 9% !important;
-  top: 16.5% !important;
+  top: 17.3% !important;
   width: 17% !important;
   height: 45.33% !important;
 }
