@@ -29,6 +29,7 @@ jobs:
         run: |
           mkdir -p _site/assets
           cp index.html styles.css script.js _site/
+          cp valhalla-bot.glb _site/
           cp -R assets/. _site/assets/
           mkdir -p _site/audio-player
           cp -R audio-player/. _site/audio-player/
