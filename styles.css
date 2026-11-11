@@ -1398,3 +1398,231 @@ body #valhalla-canvas-box canvas {
 @media (max-width: 680px) {
   :root { --vl-convex-blur: 24px; }
 }
+
+
+
+/* =========================================================
+   VALHALLA — iOS Liquid Glass (notification-style reference)
+   Translucent, color-reactive glass with a polished rounded rim.
+   ========================================================= */
+:root {
+  --ios-glass-blur: 42px;
+  --ios-glass-saturation: 220%;
+  --ios-glass-radius: 28px;
+}
+
+/* Main surfaces: low-opacity tinted glass. The site's real
+   background artwork must remain visible through every panel. */
+body .service-card,
+body .platform-tabs,
+body .platform-tab,
+body .guide-panel,
+body .download-box,
+body .download-link,
+body .step-item,
+body .guide-callout,
+body .privacy-strip,
+body .offer-card,
+body .academy-card,
+body .contact-card,
+body .faq-item,
+body .quick-search,
+body .search-result,
+body .academy-filter,
+body .prompt-article,
+body .pdf-reader {
+  border: 1px solid rgba(236, 248, 255, .30) !important;
+  border-radius: var(--ios-glass-radius) !important;
+  background:
+    linear-gradient(135deg,
+      rgba(255,255,255,.16) 0%,
+      rgba(177,216,255,.075) 28%,
+      rgba(102,177,230,.045) 55%,
+      rgba(255,255,255,.085) 100%) !important;
+  -webkit-backdrop-filter: blur(var(--ios-glass-blur)) saturate(var(--ios-glass-saturation)) contrast(108%) !important;
+  backdrop-filter: blur(var(--ios-glass-blur)) saturate(var(--ios-glass-saturation)) contrast(108%) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.52),
+    inset 1px 0 0 rgba(255,255,255,.20),
+    inset -1px 0 0 rgba(255,255,255,.12),
+    inset 0 -1.5px 0 rgba(8,22,38,.18),
+    inset 0 0 0 1px rgba(255,255,255,.055),
+    0 14px 36px rgba(0,0,0,.16) !important;
+  overflow: hidden;
+}
+
+/* The top edge catches light like a curved glass lip. */
+body .service-card::after,
+body .platform-tab::after,
+body .guide-panel::after,
+body .download-box::after,
+body .offer-card::after,
+body .academy-card::after,
+body .contact-card::after,
+body .faq-item::after,
+body .prompt-article::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit !important;
+  background:
+    linear-gradient(112deg,
+      rgba(255,255,255,.22) 0%,
+      rgba(255,255,255,.07) 13%,
+      transparent 35%,
+      transparent 72%,
+      rgba(192,231,255,.10) 100%),
+    radial-gradient(ellipse at 15% 0%,
+      rgba(255,255,255,.17), transparent 54%),
+    linear-gradient(180deg,
+      rgba(255,255,255,.045), transparent 38%, rgba(2,14,30,.045)) !important;
+  opacity: .88 !important;
+}
+
+/* Preserve text/content above the reflective surface. */
+body .service-card > *,
+body .platform-tab > *,
+body .guide-panel > *,
+body .download-box > *,
+body .offer-card > *,
+body .academy-card > *,
+body .contact-card > *,
+body .faq-item > *,
+body .prompt-article > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Active/hover state behaves like light moving over glass,
+   rather than changing the surface into an opaque dark card. */
+body .service-card:hover,
+body .platform-tab:hover,
+body .academy-filter:hover,
+body .academy-card:hover,
+body .offer-card:hover,
+body .contact-card:hover,
+body .faq-item:hover,
+body .download-link:hover,
+body .search-result:hover,
+body .prompt-article:hover,
+body .service-card.is-selected,
+body .platform-tab.is-selected {
+  background:
+    linear-gradient(135deg,
+      rgba(255,255,255,.22),
+      rgba(181,224,255,.105) 38%,
+      rgba(115,196,255,.07) 70%,
+      rgba(255,255,255,.12)) !important;
+  border-color: rgba(244,251,255,.52) !important;
+  box-shadow:
+    inset 0 1.8px 0 rgba(255,255,255,.68),
+    inset 1px 0 0 rgba(255,255,255,.27),
+    inset 0 -1px 0 rgba(255,255,255,.12),
+    0 18px 42px rgba(0,0,0,.19),
+    0 0 22px rgba(105,194,255,.08) !important;
+}
+
+/* Controls get the same material, scaled down. */
+body .top-link,
+body .vpn-tab,
+body .search-toggle {
+  border: 1px solid rgba(238,249,255,.36) !important;
+  background: linear-gradient(135deg,
+    rgba(255,255,255,.19),
+    rgba(160,211,255,.09) 55%,
+    rgba(255,255,255,.10)) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(210%) !important;
+  backdrop-filter: blur(30px) saturate(210%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.58),
+    inset 1px 0 0 rgba(255,255,255,.20),
+    0 8px 24px rgba(0,0,0,.14) !important;
+}
+
+/* The PDF details wrapper itself was creating the extra pill/box.
+   Keep it completely unstyled; only the surrounding article is glass. */
+body details.pdf-reader,
+body .academy-card details.pdf-reader,
+body .prompt-article details.pdf-reader {
+  display: block !important;
+  margin: 12px 0 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+body details.pdf-reader > summary,
+body .pdf-reader > summary {
+  display: inline-flex !important;
+  align-items: center;
+  width: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 3px 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  color: var(--aurora-soft, #a8f6ee) !important;
+  font: inherit;
+  cursor: pointer;
+  list-style: none !important;
+  text-decoration: none !important;
+}
+body details.pdf-reader > summary::-webkit-details-marker {
+  display: none !important;
+}
+body details.pdf-reader > summary::marker {
+  content: "" !important;
+}
+body details.pdf-reader > summary::after {
+  content: none !important;
+  display: none !important;
+}
+body details.pdf-reader > summary:hover {
+  color: #efffff !important;
+  text-decoration: underline !important;
+  text-underline-offset: 4px;
+}
+
+/* The 3D Valhalla character stays floating: never put glass behind it. */
+body .valhalla-widget-container,
+body .valhalla-3d-wrapper,
+body #valhalla-canvas-box,
+body #valhalla-canvas-box canvas {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+/* Safari support and smaller mobile glass radius. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  body .service-card,
+  body .platform-tab,
+  body .guide-panel,
+  body .academy-card,
+  body .contact-card,
+  body .faq-item,
+  body .prompt-article {
+    background: rgba(20,35,52,.78) !important;
+  }
+}
+@media (max-width: 680px) {
+  :root {
+    --ios-glass-blur: 30px;
+    --ios-glass-radius: 23px;
+  }
+}
