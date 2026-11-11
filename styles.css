@@ -709,3 +709,237 @@ body, button, input, select, textarea { font-family: var(--font-fa-body); }
     height: 445px;
   }
 }
+
+
+/* =========================================================
+   VALHALLA — Apple Liquid Glass surface system
+   Applied as a final visual layer; layout and interactions
+   remain controlled by the original styles above.
+   ========================================================= */
+:root {
+  --glass-tint: 99, 243, 213;
+  --glass-edge: rgba(221, 255, 250, .30);
+  --glass-surface: rgba(9, 22, 34, .34);
+  --glass-blur: 26px;
+}
+
+/* Main translucent cards and content panels */
+:where(
+  .service-card,
+  .platform-tabs,
+  .platform-tab,
+  .guide-panel,
+  .download-box,
+  .download-link,
+  .step-item,
+  .guide-callout,
+  .privacy-strip,
+  .offer-card,
+  .academy-card,
+  .contact-card,
+  .faq-item,
+  .quick-search,
+  .search-result,
+  .academy-filter,
+  .prompt-article,
+  .pdf-reader,
+  .pdf-reader summary
+) {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--glass-edge);
+  background:
+    linear-gradient(132deg,
+      rgba(255,255,255,.145) 0%,
+      rgba(255,255,255,.055) 24%,
+      rgba(99,243,213,.075) 56%,
+      rgba(255,255,255,.025) 100%),
+    var(--glass-surface);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(175%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(175%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.28),
+    inset 0 -1px 0 rgba(255,255,255,.055),
+    inset 1px 0 0 rgba(255,255,255,.075),
+    0 14px 38px rgba(0,0,0,.19),
+    0 3px 12px rgba(0,0,0,.12);
+  transition:
+    background .35s ease,
+    border-color .35s ease,
+    box-shadow .35s ease,
+    transform .35s cubic-bezier(.2,.75,.25,1),
+    -webkit-backdrop-filter .35s ease,
+    backdrop-filter .35s ease;
+}
+
+/* Fine glass reflection on the upper edge */
+:where(
+  .service-card,
+  .platform-tabs,
+  .platform-tab,
+  .guide-panel,
+  .download-box,
+  .download-link,
+  .step-item,
+  .guide-callout,
+  .privacy-strip,
+  .offer-card,
+  .academy-card,
+  .contact-card,
+  .faq-item,
+  .quick-search,
+  .search-result,
+  .academy-filter,
+  .prompt-article,
+  .pdf-reader,
+  .pdf-reader summary
+)::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(115deg,
+      rgba(255,255,255,.17),
+      transparent 22%,
+      transparent 72%,
+      rgba(161,255,241,.055)),
+    radial-gradient(ellipse at 12% 0%, rgba(255,255,255,.12), transparent 48%);
+  opacity: .72;
+}
+
+/* Individual card geometry remains intact */
+.service-card,
+.offer-card,
+.academy-card,
+.contact-card,
+.faq-item,
+.prompt-article,
+.search-result {
+  border-radius: 23px;
+}
+.platform-tabs { border-radius: 999px; }
+.platform-tab,
+.academy-filter,
+.download-link {
+  border-radius: 999px;
+}
+.guide-panel,
+.download-box,
+.guide-callout,
+.privacy-strip,
+.quick-search,
+.pdf-reader {
+  border-radius: 24px;
+}
+.step-item { border-radius: 18px; }
+
+/* Layered, brighter glass when a card is selected or approached */
+:where(
+  .service-card,
+  .platform-tab,
+  .academy-filter,
+  .academy-card,
+  .offer-card,
+  .contact-card,
+  .faq-item,
+  .download-link,
+  .search-result,
+  .prompt-article
+):is(:hover, :focus-visible, .is-selected) {
+  border-color: rgba(171,255,242,.58);
+  background:
+    linear-gradient(132deg,
+      rgba(255,255,255,.20),
+      rgba(255,255,255,.075) 34%,
+      rgba(99,243,213,.13) 72%,
+      rgba(255,255,255,.045)),
+    rgba(10, 31, 42, .46);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.38),
+    inset 0 0 24px rgba(155,255,239,.055),
+    0 18px 44px rgba(0,0,0,.24),
+    0 0 25px rgba(75,231,205,.105);
+}
+
+/* Navigation and small glass controls */
+.top-link,
+.vpn-tab,
+.search-toggle {
+  border: 1px solid rgba(210,255,250,.25);
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.15), rgba(99,243,213,.07)),
+    rgba(8,20,32,.40);
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  backdrop-filter: blur(20px) saturate(170%);
+  box-shadow: inset 0 1px rgba(255,255,255,.22), 0 8px 24px rgba(0,0,0,.14);
+}
+.top-link:hover,
+.vpn-tab:hover,
+.vpn-tab[aria-current="page"],
+.search-toggle:hover {
+  border-color: rgba(174,255,243,.58);
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.22), rgba(99,243,213,.13)),
+    rgba(8,25,37,.48);
+  box-shadow: inset 0 1px rgba(255,255,255,.34), 0 10px 30px rgba(38,211,184,.13);
+}
+
+/* Inputs and selectors receive the same translucent material */
+input:not([type="range"]),
+textarea,
+select {
+  border-color: rgba(210,255,250,.23);
+}
+input:not([type="range"]):focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: rgba(160,255,239,.65);
+  box-shadow: 0 0 0 3px rgba(99,243,213,.10), 0 0 22px rgba(99,243,213,.10);
+}
+
+/* Preserve readable text and avoid heavy glass effects on low-power/mobile devices */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :where(
+    .service-card, .platform-tabs, .platform-tab, .guide-panel,
+    .download-box, .download-link, .step-item, .guide-callout,
+    .privacy-strip, .offer-card, .academy-card, .contact-card,
+    .faq-item, .quick-search, .search-result, .academy-filter,
+    .prompt-article, .pdf-reader, .pdf-reader summary,
+    .top-link, .vpn-tab, .search-toggle
+  ) {
+    background: rgba(8, 22, 34, .92);
+  }
+}
+
+@media (max-width: 680px) {
+  :root { --glass-blur: 18px; }
+  :where(
+    .service-card, .platform-tabs, .platform-tab, .guide-panel,
+    .download-box, .download-link, .step-item, .guide-callout,
+    .privacy-strip, .offer-card, .academy-card, .contact-card,
+    .faq-item, .quick-search, .search-result, .academy-filter,
+    .prompt-article, .pdf-reader, .pdf-reader summary
+  ) {
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.24),
+      0 9px 24px rgba(0,0,0,.17);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(
+    .service-card, .platform-tabs, .platform-tab, .guide-panel,
+    .download-box, .download-link, .step-item, .guide-callout,
+    .privacy-strip, .offer-card, .academy-card, .contact-card,
+    .faq-item, .quick-search, .search-result, .academy-filter,
+    .prompt-article, .pdf-reader, .pdf-reader summary,
+    .top-link, .vpn-tab, .search-toggle
+  ) {
+    transition: none !important;
+  }
+}
