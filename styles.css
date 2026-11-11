@@ -1626,3 +1626,232 @@ body #valhalla-canvas-box canvas {
     --ios-glass-radius: 23px;
   }
 }
+
+
+
+/* =========================================================
+   VALHALLA — Clear optical Liquid Glass (macOS Control Center)
+   This layer intentionally replaces the earlier dark/frosted
+   treatment. Keep the site artwork visible through the surfaces.
+   ========================================================= */
+:root {
+  --vl-liquid-radius: 22px;
+  --vl-liquid-blur: 11px;
+  --vl-liquid-tint: rgba(133, 202, 226, .055);
+  --vl-liquid-edge: rgba(226, 248, 255, .43);
+}
+
+/* Transparent glass body: very little pigment, strong vibrancy,
+   and restrained blur so the wallpaper remains recognizable. */
+body .panel,
+body .service-card,
+body .platform-tabs,
+body .platform-tab,
+body .guide-panel,
+body .download-box,
+body .download-link,
+body .step-item,
+body .guide-callout,
+body .privacy-strip,
+body .offer-card,
+body .academy-card,
+body .contact-card,
+body .faq-item,
+body .quick-search,
+body .search-result,
+body .academy-filter,
+body .prompt-article,
+body .pdf-reader {
+  background-color: rgba(118, 184, 211, .045) !important;
+  background-image:
+    linear-gradient(132deg,
+      rgba(255,255,255,.135) 0%,
+      rgba(218,242,255,.045) 19%,
+      rgba(109,183,220,.018) 48%,
+      rgba(255,255,255,.065) 100%) !important;
+  -webkit-backdrop-filter: blur(var(--vl-liquid-blur)) saturate(205%) brightness(1.12) contrast(1.07) !important;
+  backdrop-filter: blur(var(--vl-liquid-blur)) saturate(205%) brightness(1.12) contrast(1.07) !important;
+  border: 1px solid var(--vl-liquid-edge) !important;
+  border-radius: var(--vl-liquid-radius) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.62),
+    inset 1px 0 0 rgba(255,255,255,.23),
+    inset -1px 0 0 rgba(255,255,255,.15),
+    inset 0 -1px 0 rgba(4,18,31,.20),
+    inset 0 0 0 1px rgba(255,255,255,.055),
+    0 12px 30px rgba(0,0,0,.12) !important;
+}
+
+/* The glass catches a broad, soft reflection like a curved pane.
+   This is a surface highlight, not a grey overlay. */
+body .academy-card {
+  isolation: isolate;
+  overflow: hidden;
+}
+body .academy-card::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  border-radius: inherit !important;
+  background:
+    radial-gradient(ellipse at 8% 0%,
+      rgba(255,255,255,.19), transparent 43%),
+    linear-gradient(118deg,
+      rgba(255,255,255,.12) 0%,
+      rgba(255,255,255,.025) 24%,
+      transparent 48%,
+      transparent 77%,
+      rgba(173,225,255,.095) 100%) !important;
+  opacity: .92 !important;
+}
+body .academy-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Cards with existing decorative ::after artwork retain that artwork;
+   their glass depth comes from optical edge and internal reflections. */
+body .offer-card,
+body .service-card,
+body .guide-panel,
+body .contact-card,
+body .faq-item,
+body .download-box,
+body .step-item,
+body .guide-callout,
+body .privacy-strip,
+body .platform-tabs,
+body .platform-tab,
+body .quick-search,
+body .search-result,
+body .academy-filter,
+body .pdf-reader {
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.58),
+    inset 1px 0 0 rgba(255,255,255,.20),
+    inset -1px 0 0 rgba(255,255,255,.13),
+    inset 0 -1px 0 rgba(5,20,35,.18),
+    0 12px 30px rgba(0,0,0,.13) !important;
+}
+
+/* Brighter edge and a gentle optical lift on interaction. */
+body .service-card:hover,
+body .platform-tab:hover,
+body .academy-filter:hover,
+body .academy-card:hover,
+body .offer-card:hover,
+body .contact-card:hover,
+body .faq-item:hover,
+body .download-link:hover,
+body .search-result:hover,
+body .prompt-article:hover,
+body .service-card.is-selected,
+body .platform-tab.is-selected {
+  background-color: rgba(151, 218, 242, .075) !important;
+  background-image:
+    linear-gradient(132deg,
+      rgba(255,255,255,.19),
+      rgba(217,243,255,.065) 34%,
+      rgba(126,199,232,.035) 68%,
+      rgba(255,255,255,.10)) !important;
+  border-color: rgba(242,252,255,.66) !important;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.72),
+    inset 1px 0 0 rgba(255,255,255,.29),
+    inset -1px 0 0 rgba(255,255,255,.18),
+    inset 0 -1px 0 rgba(255,255,255,.10),
+    0 17px 38px rgba(0,0,0,.17),
+    0 0 20px rgba(125,211,255,.075) !important;
+}
+
+/* Top navigation controls: clear glass, not opaque dark capsules. */
+body .top-link,
+body .vpn-tab,
+body .search-toggle {
+  background: linear-gradient(135deg,
+    rgba(255,255,255,.15),
+    rgba(173,220,244,.045) 52%,
+    rgba(255,255,255,.075)) !important;
+  -webkit-backdrop-filter: blur(13px) saturate(210%) brightness(1.12) !important;
+  backdrop-filter: blur(13px) saturate(210%) brightness(1.12) !important;
+  border: 1px solid rgba(232,249,255,.42) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.62),
+    inset 1px 0 0 rgba(255,255,255,.22),
+    0 7px 20px rgba(0,0,0,.11) !important;
+}
+
+/* Article action: remove the unwanted rectangular bar around the
+   "open full article" summary; leave only the text and arrow. */
+body details.pdf-reader {
+  margin-top: 15px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+body details.pdf-reader > summary,
+body .pdf-reader summary {
+  display: inline-flex !important;
+  width: fit-content !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 4px 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  background: transparent !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  color: var(--aurora-soft, #a6ffe9) !important;
+  text-decoration: none !important;
+  list-style: none !important;
+}
+body details.pdf-reader > summary::-webkit-details-marker { display: none !important; }
+body details.pdf-reader > summary::marker { content: "" !important; }
+body details.pdf-reader > summary:hover {
+  color: #fff !important;
+  text-shadow: 0 0 14px rgba(166,255,233,.38);
+  text-decoration: underline !important;
+  text-underline-offset: 4px;
+}
+
+/* The floating 3D assistant is deliberately not inside a glass card.
+   Keep its canvas and wrapper fully transparent. */
+body .valhalla-widget-container,
+body .valhalla-3d-wrapper,
+body #valhalla-avatar-btn,
+body #valhalla-canvas-box,
+body #valhalla-canvas-box canvas {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+body .valhalla-mini-hint {
+  background: linear-gradient(135deg,
+    rgba(255,255,255,.20),
+    rgba(151,214,242,.085)) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(190%) !important;
+  backdrop-filter: blur(14px) saturate(190%) !important;
+  border: 1px solid rgba(239,250,255,.55) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.66),
+    0 8px 22px rgba(0,0,0,.13) !important;
+}
+
+/* On narrow screens preserve the same clear material without
+   excessive blur that would turn the cards into opaque slabs. */
+@media (max-width: 680px) {
+  :root { --vl-liquid-blur: 9px; --vl-liquid-radius: 19px; }
+}
