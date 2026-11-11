@@ -1087,3 +1087,183 @@ body .search-toggle {
 @media (max-width: 680px) {
   :root { --vl-glass-blur: 20px; }
 }
+
+
+
+/* =========================================================
+   VALHALLA — Reference-matched Apple-style frosted glass
+   Soft, cool, highly translucent glass (not dark solid cards).
+   ========================================================= */
+:root {
+  --vl-glass-blur: 30px;
+}
+
+/* Main panels: pale translucent material so the real page
+   background remains clearly visible through the surface. */
+body .service-card,
+body .platform-tabs,
+body .platform-tab,
+body .guide-panel,
+body .download-box,
+body .download-link,
+body .step-item,
+body .guide-callout,
+body .privacy-strip,
+body .offer-card,
+body .academy-card,
+body .contact-card,
+body .faq-item,
+body .quick-search,
+body .search-result,
+body .academy-filter,
+body .prompt-article,
+body .pdf-reader,
+body .pdf-reader summary {
+  background:
+    linear-gradient(135deg,
+      rgba(255,255,255,.22) 0%,
+      rgba(236,248,255,.11) 38%,
+      rgba(195,226,241,.075) 72%,
+      rgba(255,255,255,.10) 100%) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(155%) !important;
+  backdrop-filter: blur(30px) saturate(155%) !important;
+  border: 1px solid rgba(226,244,255,.32) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.40),
+    inset 0 -1px 0 rgba(255,255,255,.10),
+    0 12px 34px rgba(0,0,0,.13) !important;
+}
+
+/* A soft specular highlight, clipped to the actual glass surface. */
+body .service-card::after,
+body .platform-tab::after,
+body .guide-panel::after,
+body .download-box::after,
+body .offer-card::after,
+body .academy-card::after,
+body .contact-card::after,
+body .faq-item::after,
+body .prompt-article::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(125deg,
+    rgba(255,255,255,.13),
+    transparent 34%,
+    transparent 76%,
+    rgba(221,246,255,.07));
+  opacity: .75;
+}
+
+/* Keep actual content above the subtle reflection. */
+body .service-card > *,
+body .platform-tab > *,
+body .guide-panel > *,
+body .download-box > *,
+body .offer-card > *,
+body .academy-card > *,
+body .contact-card > *,
+body .faq-item > *,
+body .prompt-article > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hover should brighten the glass, not turn it into an opaque slab. */
+body .service-card:hover,
+body .platform-tab:hover,
+body .academy-filter:hover,
+body .academy-card:hover,
+body .offer-card:hover,
+body .contact-card:hover,
+body .faq-item:hover,
+body .download-link:hover,
+body .search-result:hover,
+body .prompt-article:hover,
+body .service-card.is-selected,
+body .platform-tab.is-selected {
+  background:
+    linear-gradient(135deg,
+      rgba(255,255,255,.29),
+      rgba(225,244,255,.14) 48%,
+      rgba(197,233,246,.10)) !important;
+  border-color: rgba(235,249,255,.54) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.48),
+    0 16px 38px rgba(0,0,0,.16) !important;
+}
+
+body .top-link,
+body .vpn-tab,
+body .search-toggle {
+  background: linear-gradient(135deg,
+    rgba(255,255,255,.24),
+    rgba(221,241,251,.11)) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(155%) !important;
+  backdrop-filter: blur(26px) saturate(155%) !important;
+  border: 1px solid rgba(230,246,255,.38) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.42),
+              0 8px 24px rgba(0,0,0,.12) !important;
+}
+
+/* Important: the avatar wrapper itself must remain completely
+   transparent. Earlier broad glass styling created the visible
+   rectangular frosted panel behind the 3D robot. */
+body .valhalla-widget-container,
+body .valhalla-3d-wrapper,
+body #valhalla-canvas-box,
+body #valhalla-canvas-box canvas {
+  background: transparent !important;
+  border: 0 !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+body .valhalla-widget-container {
+  isolation: auto !important;
+}
+body #valhalla-canvas-box {
+  filter: drop-shadow(0 0 20px rgba(0,195,255,.34)) !important;
+}
+
+/* The small invitation pill may remain glass; it is a separate
+   intentional UI control, not a backdrop behind the character. */
+body .valhalla-mini-hint {
+  background: linear-gradient(135deg,
+    rgba(255,255,255,.32),
+    rgba(220,244,252,.18)) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(155%) !important;
+  backdrop-filter: blur(22px) saturate(155%) !important;
+  border: 1px solid rgba(235,249,255,.48) !important;
+  color: #e9fbff !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.45),
+              0 8px 22px rgba(0,0,0,.14) !important;
+}
+
+@media (max-width: 680px) {
+  body .service-card,
+  body .platform-tabs,
+  body .platform-tab,
+  body .guide-panel,
+  body .download-box,
+  body .download-link,
+  body .step-item,
+  body .guide-callout,
+  body .privacy-strip,
+  body .offer-card,
+  body .academy-card,
+  body .contact-card,
+  body .faq-item,
+  body .quick-search,
+  body .search-result,
+  body .academy-filter,
+  body .prompt-article,
+  body .pdf-reader,
+  body .pdf-reader summary {
+    -webkit-backdrop-filter: blur(22px) saturate(150%) !important;
+    backdrop-filter: blur(22px) saturate(150%) !important;
+  }
+}
