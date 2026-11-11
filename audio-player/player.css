@@ -484,3 +484,108 @@ button { color: inherit; cursor: pointer; }
 
 /* Empty initial state: do not show a podcast cover before selection. */
 #podcastLogo[hidden] { display: none !important; }
+
+
+
+/* =========================================================
+   VALHALLA AUDIO — Liquid Glass controls and podcast library
+   Covers the separate iframe document, not just the parent page.
+   ========================================================= */
+.player-shell {
+  background: transparent !important;
+}
+.controls .control,
+.playing-status {
+  background:
+    linear-gradient(135deg,
+      rgba(245,252,255,.22),
+      rgba(117,196,229,.075) 42%,
+      rgba(255,255,255,.105)) !important;
+  -webkit-backdrop-filter: blur(13px) saturate(210%) brightness(1.12) !important;
+  backdrop-filter: blur(13px) saturate(210%) brightness(1.12) !important;
+  border: 1px solid rgba(227,248,255,.48) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.72),
+    inset 1px 0 0 rgba(255,255,255,.25),
+    inset -1px 0 0 rgba(255,255,255,.16),
+    inset 0 -1px 0 rgba(2,18,30,.22),
+    0 5px 17px rgba(0,0,0,.16),
+    0 0 13px rgba(0,220,255,.075) !important;
+}
+.controls .skip-control {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+.controls .play-control {
+  background:
+    radial-gradient(circle at 35% 25%, rgba(255,255,255,.32), transparent 45%),
+    linear-gradient(145deg, rgba(150,229,250,.25), rgba(7,42,58,.28)) !important;
+  border: 1.5px solid rgba(255,236,185,.86) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.78),
+    inset 0 0 18px rgba(0,228,255,.22),
+    0 0 0 2px rgba(111,227,255,.20),
+    0 0 18px rgba(0,220,255,.26),
+    0 0 12px rgba(255,190,91,.22) !important;
+}
+.controls .control:hover,
+.playing-status:hover {
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.29), rgba(139,215,244,.12), rgba(255,255,255,.14)) !important;
+  border-color: rgba(247,253,255,.78) !important;
+}
+.speed-control select,
+.sleep-control,
+.volume-control {
+  color: #f5fcff !important;
+}
+.speed-control select {
+  background: transparent !important;
+}
+.podcast-library-toggle {
+  background:
+    linear-gradient(135deg,
+      rgba(245,252,255,.18),
+      rgba(111,194,228,.055) 46%,
+      rgba(255,255,255,.09)) !important;
+  -webkit-backdrop-filter: blur(15px) saturate(215%) brightness(1.10) !important;
+  backdrop-filter: blur(15px) saturate(215%) brightness(1.10) !important;
+  border: 1px solid rgba(233,249,255,.46) !important;
+  border-radius: 21px !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.68),
+    inset 1px 0 0 rgba(255,255,255,.22),
+    inset -1px 0 0 rgba(255,255,255,.15),
+    inset 0 -1px 0 rgba(3,20,33,.18),
+    0 9px 24px rgba(0,0,0,.12) !important;
+}
+.podcast-list-panel {
+  background:
+    linear-gradient(135deg, rgba(245,252,255,.15), rgba(111,194,228,.045), rgba(255,255,255,.07)) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(210%) brightness(1.10) !important;
+  backdrop-filter: blur(16px) saturate(210%) brightness(1.10) !important;
+  border: 1px solid rgba(233,249,255,.40) !important;
+  border-radius: 22px !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.58),
+    inset 1px 0 0 rgba(255,255,255,.18),
+    0 12px 30px rgba(0,0,0,.14) !important;
+}
+.podcast-list-item {
+  background: rgba(223,245,255,.075) !important;
+  border: 1px solid rgba(231,249,255,.28) !important;
+  border-radius: 15px !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.38) !important;
+}
+.podcast-list-item.is-current {
+  background: rgba(125,222,246,.14) !important;
+  border-color: rgba(241,252,255,.55) !important;
+}
+.podcast-list-play {
+  background: linear-gradient(135deg, rgba(255,255,255,.20), rgba(121,208,237,.08)) !important;
+  border: 1px solid rgba(236,250,255,.46) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.55) !important;
+}
