@@ -589,3 +589,45 @@ button { color: inherit; cursor: pointer; }
   border: 1px solid rgba(236,250,255,.46) !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.55) !important;
 }
+
+
+/* Clear optical glass for the podcast title bar and library */
+.podcast-library-toggle,
+.podcast-list-panel,
+.podcast-list-item,
+.podcast-list-play,
+.controls .control,
+.playing-status {
+  background-color: rgba(190,226,247,.045) !important;
+  background-image: linear-gradient(135deg,
+    rgba(255,255,255,.20),
+    rgba(207,237,255,.045) 36%,
+    rgba(110,184,224,.015) 68%,
+    rgba(255,255,255,.10)) !important;
+  -webkit-backdrop-filter: blur(4px) saturate(245%) brightness(1.18) !important;
+  backdrop-filter: blur(4px) saturate(245%) brightness(1.18) !important;
+  border: 1px solid rgba(239,250,255,.60) !important;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.82),
+    inset 1px 0 0 rgba(255,255,255,.28),
+    inset -1px 0 0 rgba(255,255,255,.20),
+    inset 0 -2px 0 rgba(255,255,255,.13),
+    0 9px 26px rgba(0,0,0,.14) !important;
+}
+.podcast-library-toggle {
+  border-radius: 24px !important;
+  min-height: clamp(48px,5.2vw,68px);
+}
+.podcast-list-panel { border-radius: 25px !important; }
+.podcast-list-item { border-radius: 18px !important; }
+.podcast-list-play { border-radius: 999px !important; }
+.controls .play-control {
+  background:
+    radial-gradient(ellipse at 30% 18%,rgba(255,255,255,.52),transparent 48%),
+    linear-gradient(145deg,rgba(209,243,255,.30),rgba(100,174,215,.08)) !important;
+  border: 1.5px solid rgba(255,255,255,.88) !important;
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.92),
+    inset 0 0 20px rgba(218,245,255,.18),
+    0 0 0 1px rgba(255,255,255,.30),
+    0 0 22px rgba(120,211,255,.22) !important;
+}
