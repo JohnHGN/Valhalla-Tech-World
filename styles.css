@@ -1929,3 +1929,107 @@ body .podcast-player-frame {
 body .podcast-player-frame iframe {
   background: transparent !important;
 }
+
+
+/* =========================================================
+   VALHALLA CLEAR OPTICAL GLASS — definitive material override
+   The previous treatment was too dark and too heavily frosted.
+   ========================================================= */
+:root {
+  --vl-liquid-blur: 5px;
+  --vl-liquid-radius: 28px;
+}
+body .contact-section,
+body .panel,
+body .service-card,
+body .offer-card,
+body .academy-card,
+body .guide-panel,
+body .download-box,
+body .faq-item,
+body .platform-tabs,
+body .quick-search,
+body .pdf-reader {
+  background-color: rgba(194, 229, 249, .035) !important;
+  background-image:
+    linear-gradient(125deg,
+      rgba(255,255,255,.145) 0%,
+      rgba(207,237,255,.035) 20%,
+      rgba(109,184,225,.012) 48%,
+      rgba(255,255,255,.055) 72%,
+      rgba(255,255,255,.13) 100%) !important;
+  -webkit-backdrop-filter: blur(5px) saturate(235%) brightness(1.16) !important;
+  backdrop-filter: blur(5px) saturate(235%) brightness(1.16) !important;
+  border: 1px solid rgba(236,249,255,.48) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.78),
+    inset 1px 0 0 rgba(255,255,255,.30),
+    inset -1px 0 0 rgba(255,255,255,.22),
+    inset 0 -2px 0 rgba(255,255,255,.13),
+    inset 0 0 18px rgba(220,244,255,.055),
+    0 14px 35px rgba(0,0,0,.16),
+    0 1px 2px rgba(255,255,255,.18) !important;
+}
+body .contact-section {
+  background-color: rgba(185,222,246,.025) !important;
+  -webkit-backdrop-filter: blur(4px) saturate(245%) brightness(1.18) !important;
+  backdrop-filter: blur(4px) saturate(245%) brightness(1.18) !important;
+  border-radius: 30px !important;
+  border-color: rgba(229,248,255,.53) !important;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.82),
+    inset 2px 0 0 rgba(255,255,255,.28),
+    inset -2px 0 0 rgba(255,255,255,.20),
+    inset 0 -2px 0 rgba(255,255,255,.14),
+    inset 0 0 26px rgba(215,241,255,.07),
+    0 20px 50px rgba(0,0,0,.18) !important;
+}
+body .contact-card,
+body .contact-card-primary,
+body .contact-card-instagram {
+  background-color: rgba(191,226,247,.055) !important;
+  background-image:
+    linear-gradient(145deg,
+      rgba(255,255,255,.20),
+      rgba(207,235,252,.055) 34%,
+      rgba(109,174,218,.025) 67%,
+      rgba(255,255,255,.11)) !important;
+  -webkit-backdrop-filter: blur(4px) saturate(250%) brightness(1.16) !important;
+  backdrop-filter: blur(4px) saturate(250%) brightness(1.16) !important;
+  border: 1px solid rgba(239,250,255,.62) !important;
+  border-radius: 24px !important;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.82),
+    inset 2px 0 0 rgba(255,255,255,.28),
+    inset -2px 0 0 rgba(255,255,255,.20),
+    inset 0 -2px 0 rgba(255,255,255,.14),
+    0 9px 25px rgba(0,0,0,.13) !important;
+}
+body .contact-card::before,
+body .contact-card::after {
+  pointer-events: none !important;
+}
+body .contact-card:hover {
+  background-color: rgba(208,239,255,.10) !important;
+  border-color: rgba(255,255,255,.82) !important;
+}
+body .valhalla-widget-container,
+body .valhalla-3d-wrapper,
+body #valhalla-avatar-btn,
+body #valhalla-canvas-box,
+body #valhalla-canvas-box canvas {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+body .valhalla-mini-hint {
+  background: rgba(204,235,252,.055) !important;
+  background-image: linear-gradient(145deg,rgba(255,255,255,.20),rgba(187,225,247,.045)) !important;
+  -webkit-backdrop-filter: blur(5px) saturate(230%) !important;
+  backdrop-filter: blur(5px) saturate(230%) !important;
+  border: 1px solid rgba(242,251,255,.62) !important;
+  border-radius: 999px !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.8), 0 8px 22px rgba(0,0,0,.13) !important;
+}
