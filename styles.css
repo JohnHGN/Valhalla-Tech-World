@@ -717,29 +717,22 @@ body, button, input, select, textarea { font-family: var(--font-fa-body); }
 
 
 /* =========================================================
-   VALHALLA — Full wallpaper on phones and tablets
-   Desktop keeps the original fixed/cover treatment. On touch
-   layouts the wallpaper scales to the viewport width so the
-   complete artwork is visible instead of being aggressively
-   cropped by cover + fixed positioning (notably iOS Safari).
+   VALHALLA — Center-pinned wallpaper on phones and tablets
+   The wallpaper stays centered in the visible screen while
+   the page content scrolls above it. Cover fills the screen
+   so there is no empty black area beneath the image.
    ========================================================= */
 @media (max-width: 1024px) {
   body::before {
-    position: absolute;
+    position: fixed;
     inset: 0;
-    min-height: 100%;
-    background-position: center top;
-    background-size: 100% auto;
+    min-height: 0;
+    background-position: center center;
+    background-size: cover;
     background-repeat: no-repeat;
     background-attachment: scroll;
-  }
-}
-
-@media (max-width: 680px) {
-  body::before {
-    background-position: center top;
-    background-size: 100% auto;
-    background-attachment: scroll;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
   }
 }
 
