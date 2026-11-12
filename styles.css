@@ -2033,3 +2033,49 @@ body .valhalla-mini-hint {
   border-radius: 999px !important;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.8), 0 8px 22px rgba(0,0,0,.13) !important;
 }
+
+
+/* Remove decorative square icon tiles from the service offer cards. */
+.offer-card > .offer-icon { display: none !important; }
+
+/* Physical SIM card — integrated Valhalla glass component. */
+.physical-sim-card { grid-column: 1 / -1; min-height: 0; }
+.sim-tabs { display:flex; flex-wrap:wrap; gap:8px; margin: 7px 0 16px; }
+.sim-tab {
+  appearance:none; border:1px solid rgba(205,232,245,.24); border-radius:999px;
+  padding:9px 15px; background:rgba(255,255,255,.045); color:#c9dce5;
+  font:600 11px/1.4 var(--font-fa-body); cursor:pointer;
+  transition:background .2s ease,border-color .2s ease,transform .2s ease;
+}
+.sim-tab:hover { transform:translateY(-1px); border-color:rgba(225,245,255,.55); }
+.sim-tab.is-active {
+  color:#f4fbff; border-color:rgba(145,229,220,.72);
+  background:linear-gradient(135deg,rgba(255,255,255,.20),rgba(117,197,220,.12));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),0 5px 18px rgba(0,0,0,.12);
+}
+.sim-panel {
+  display:grid; grid-template-columns:minmax(190px, .82fr) minmax(0,1.5fr);
+  align-items:start; gap:22px; padding:16px;
+  border:1px solid rgba(215,239,249,.19); border-radius:20px;
+  background:rgba(255,255,255,.025);
+}
+.sim-panel[hidden] { display:none !important; }
+.sim-product-image { display:block; width:100%; max-width:360px; aspect-ratio:1/1; object-fit:cover; border-radius:15px; border:1px solid rgba(255,255,255,.22); box-shadow:0 12px 28px rgba(0,0,0,.22); }
+.sim-product-copy h4 { margin:0 0 9px; color:#f0f8fb; font-size:16px; }
+.sim-product-copy h4 bdi { color:#bde9e7; font-family:var(--font-en-body); }
+.sim-product-copy p { margin:0 0 10px; color:#b7cbd3; font-size:11px; line-height:2; }
+.sim-product-copy ul { margin:0 0 12px; padding-inline-start:20px; color:#d2e0e6; font-size:10px; line-height:2.1; }
+.sim-product-copy h5 { margin:12px 0 8px; color:#dff8f4; font-size:11px; }
+.sim-price-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+.sim-price-grid span { padding:8px 10px; border:1px solid rgba(185,221,231,.16); border-radius:10px; background:rgba(255,255,255,.035); color:#d6e5e9; font-size:10px; line-height:1.7; }
+.sim-note,.sim-disclaimer { display:block; margin-top:10px; color:#9db1ba; font-size:9px; line-height:1.9; }
+.sim-buy-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:13px; padding-top:12px; border-top:1px solid rgba(180,224,230,.15); color:#c9dce2; font-size:10px; }
+.sim-buy-row .offer-link { flex:0 0 auto; padding:0; margin:0; border:0; }
+.sim-disclaimer { margin-top:8px; }
+@media (max-width:680px) {
+  .sim-panel { grid-template-columns:1fr; gap:14px; padding:12px; }
+  .sim-product-image { max-width:100%; aspect-ratio:16/9; object-fit:contain; }
+  .sim-buy-row { align-items:flex-start; flex-direction:column; }
+  .sim-tab { flex:1 1 auto; padding:8px 10px; font-size:10px; }
+  .sim-price-grid { grid-template-columns:1fr; }
+}
