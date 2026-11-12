@@ -2959,33 +2959,24 @@ body .physical-sim-card .offer-topline::after {
 }
 
 
-/* FINAL TYPOGRAPHY FIX — make the right hero motto match .hero-coordinates exactly.
-   This intentionally overrides the older ROG-font rule above. */
-.hero.video-hero > .hero-note {
+/* Definitive hero footer typography match.
+   The earlier .hero-note rules around lines 2439–2463 set Arial Rounded
+   with !important; this later, more-specific rule overrides those declarations. */
+body .hero.video-hero > .hero-note,
+body .hero.video-hero > .hero-note > bdi,
+body .hero.video-hero > .hero-note > i {
   font-family: "Orbitron", "Arial Rounded MT", Arial, sans-serif !important;
   font-size: 8px !important;
   font-weight: 600 !important;
   line-height: 1.2 !important;
   letter-spacing: 2.5px !important;
   text-transform: none !important;
-  direction: ltr !important;
 }
 
-.hero.video-hero > .hero-note > bdi,
-.hero.video-hero > .hero-note > i {
-  font-family: inherit !important;
-  font-size: inherit !important;
-  font-weight: inherit !important;
-  line-height: inherit !important;
-  letter-spacing: inherit !important;
-}
-
-/* Keep both captions at the same responsive size on narrow screens. */
 @media (max-width: 680px) {
-  .hero.video-hero .hero-coordinates {
-    font-size: 6px !important;
-  }
-  .hero.video-hero > .hero-note {
+  body .hero.video-hero > .hero-note,
+  body .hero.video-hero > .hero-note > bdi,
+  body .hero.video-hero > .hero-note > i {
     font-size: 6px !important;
     letter-spacing: 1px !important;
   }
