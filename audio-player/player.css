@@ -631,3 +631,147 @@ button { color: inherit; cursor: pointer; }
     0 0 0 1px rgba(255,255,255,.30),
     0 0 22px rgba(120,211,255,.22) !important;
 }
+
+/* =========================================================
+   VALHALLA AUDIO — Mobile control layout repair
+   Keep the desktop layout untouched; compact controls on phones.
+   ========================================================= */
+@media (max-width: 620px) {
+  .player-shell {
+    width: 100%;
+  }
+
+  .controls {
+    left: 4%;
+    right: 4%;
+    top: 72.2%;
+    height: 15.2%;
+  }
+
+  /* All controls stay in one aligned row, with no inherited padding. */
+  .controls .control {
+    top: 8%;
+    height: 78%;
+    min-width: 0;
+    padding: 0;
+    gap: 0;
+    border-radius: 999px;
+    transform: none;
+  }
+
+  .controls .speed-control {
+    left: 0;
+    width: 11.5%;
+    gap: 2%;
+  }
+  .speed-control .speed-icon { font-size: clamp(11px, 2.1cqw, 17px); }
+  .speed-control select {
+    width: 48%;
+    min-width: 0;
+    padding: 0;
+    font-size: clamp(7px, 1.35cqw, 11px);
+    text-align: center;
+  }
+  .speed-control .chevron { display: none; }
+
+  .controls .sleep-control {
+    left: 12.2%;
+    width: 10%;
+    gap: 0;
+  }
+  .sleep-control .sleep-icon { font-size: clamp(12px, 2.2cqw, 18px); }
+  .sleep-control .sleep-label,
+  .sleep-control .chevron { display: none; }
+
+  .controls .rewind {
+    left: 23.2%;
+    width: 7%;
+  }
+  .controls .previous {
+    left: 31.2%;
+    width: 7%;
+  }
+  .controls .play-control {
+    left: 41.2%;
+    top: -2%;
+    width: 9%;
+    height: 98%;
+    min-width: 0;
+    padding: 0;
+    border-radius: 50%;
+  }
+  .controls .next {
+    left: 53.2%;
+    width: 7%;
+  }
+  .controls .forward {
+    left: 61.2%;
+    width: 7%;
+  }
+
+  .controls .volume-control {
+    left: 70%;
+    width: 16%;
+    gap: 3%;
+  }
+  .volume-control .volume-icon { font-size: clamp(12px, 2.25cqw, 18px); }
+  .volume-control input {
+    width: 58%;
+    min-width: 0;
+    height: 16px;
+    margin: 0;
+  }
+
+  .controls .utility-control {
+    left: 87.5%;
+    width: 12.5%;
+    height: 78%;
+    top: 8%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 0;
+    gap: 0;
+  }
+  .utility-control button {
+    min-width: 0;
+    width: 48%;
+    height: 100%;
+    padding: 0;
+    font-size: clamp(13px, 2.5cqw, 20px);
+  }
+  .utility-control i { height: 48%; }
+
+  .controls .hud-icon,
+  .controls .skip-arrow,
+  .controls .transport-icon {
+    font-size: clamp(13px, 2.45cqw, 20px);
+  }
+  .skip-icon-wrap .skip-arrow {
+    width: 1.08em;
+    height: 1.08em;
+    font-size: clamp(13px, 2.45cqw, 20px);
+  }
+  .skip-icon-wrap strong {
+    font-size: clamp(7px, 1.25cqw, 10px);
+  }
+  .play-symbol { font-size: clamp(18px, 3.1cqw, 25px); }
+}
+
+/* Very narrow phones: prioritize spacing and tap targets over labels. */
+@media (max-width: 380px) {
+  .controls {
+    left: 3.2%;
+    right: 3.2%;
+  }
+  .controls .speed-control { width: 10.5%; }
+  .controls .sleep-control { left: 11.2%; width: 8.5%; }
+  .controls .rewind { left: 20.8%; width: 7.2%; }
+  .controls .previous { left: 29%; width: 7.2%; }
+  .controls .play-control { left: 40.5%; width: 9.5%; }
+  .controls .next { left: 53%; width: 7.2%; }
+  .controls .forward { left: 61.2%; width: 7.2%; }
+  .controls .volume-control { left: 69.5%; width: 15.5%; }
+  .controls .utility-control { left: 86.2%; width: 13.8%; }
+  .volume-control input { width: 54%; }
+}
