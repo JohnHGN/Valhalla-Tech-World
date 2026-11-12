@@ -2752,3 +2752,111 @@ body .physical-sim-card .offer-topline::after {
     transition: none !important;
   }
 }
+
+
+/* =========================================================
+   VALHALLA HERO CTA — ROG / CYBERPUNK RE-DESIGN
+   Replaces the earlier pill-like CTA without changing its link.
+   ========================================================= */
+.hero.video-hero > .hero-cta {
+  --cta-cyan: #62fff0;
+  --cta-blue: #20cfff;
+  --cta-magenta: #ff3c9d;
+  position: absolute !important;
+  z-index: 8 !important;
+  left: 50% !important;
+  bottom: 26px !important;
+  transform: translate(-50%, 50%) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 13px !important;
+  min-width: 236px !important;
+  min-height: 62px !important;
+  padding: 8px 19px 8px 17px !important;
+  margin: 0 !important;
+  border: 1px solid rgba(98,255,240,.78) !important;
+  border-radius: 3px !important;
+  color: #f2fffe !important;
+  background:
+    linear-gradient(115deg, rgba(0,238,221,.13), transparent 32%),
+    linear-gradient(180deg, rgba(13,28,43,.97), rgba(2,9,18,.98)) !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  clip-path: polygon(0 12px, 12px 0, calc(100% - 25px) 0, 100% 25px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 25px 100%, 0 calc(100% - 25px)) !important;
+  box-shadow:
+    0 0 0 1px rgba(32,207,255,.18),
+    0 0 18px rgba(0,220,255,.20),
+    0 0 34px rgba(255,60,157,.10),
+    inset 0 1px 0 rgba(255,255,255,.20),
+    inset 0 -12px 24px rgba(0,0,0,.38) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease, filter .28s ease !important;
+}
+.hero.video-hero > .hero-cta::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  background: linear-gradient(105deg, transparent 20%, rgba(98,255,240,.19) 48%, rgba(255,60,157,.12) 53%, transparent 78%) !important;
+  transform: translateX(-130%) !important;
+  transition: transform .7s cubic-bezier(.2,.8,.2,1) !important;
+}
+.hero.video-hero > .hero-cta::after {
+  content: "" !important;
+  position: absolute !important;
+  z-index: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 3px !important;
+  background: linear-gradient(180deg, var(--cta-magenta), var(--cta-cyan)) !important;
+  box-shadow: 0 0 12px var(--cta-cyan), 0 0 18px var(--cta-magenta) !important;
+  pointer-events: none !important;
+}
+.hero.video-hero > .hero-cta:hover {
+  transform: translate(-50%, calc(50% - 4px)) !important;
+  border-color: #b6fff8 !important;
+  filter: brightness(1.14) saturate(1.15) !important;
+  box-shadow:
+    0 0 0 1px rgba(98,255,240,.35),
+    0 0 24px rgba(0,230,255,.38),
+    0 0 48px rgba(255,60,157,.20),
+    0 12px 30px rgba(0,0,0,.48),
+    inset 0 1px 0 rgba(255,255,255,.30) !important;
+}
+.hero.video-hero > .hero-cta:hover::before { transform: translateX(130%) !important; }
+.hero.video-hero > .hero-cta:active { transform: translate(-50%, calc(50% - 1px)) scale(.975) !important; }
+.hero.video-hero > .hero-cta .cta-frame { position:absolute !important; inset:0 !important; z-index:1 !important; pointer-events:none !important; }
+.hero.video-hero > .hero-cta .cta-corner { position:absolute !important; width:11px !important; height:11px !important; border:0 !important; opacity:1 !important; }
+.hero.video-hero > .hero-cta .cta-tl { top:5px !important; left:5px !important; border-top:1px solid var(--cta-cyan) !important; border-left:1px solid var(--cta-cyan) !important; }
+.hero.video-hero > .hero-cta .cta-tr { top:5px !important; right:5px !important; border-top:1px solid var(--cta-magenta) !important; border-right:1px solid var(--cta-magenta) !important; }
+.hero.video-hero > .hero-cta .cta-bl { bottom:5px !important; left:5px !important; border-bottom:1px solid var(--cta-magenta) !important; border-left:1px solid var(--cta-magenta) !important; }
+.hero.video-hero > .hero-cta .cta-br { bottom:5px !important; right:5px !important; border-bottom:1px solid var(--cta-cyan) !important; border-right:1px solid var(--cta-cyan) !important; }
+.hero.video-hero > .hero-cta .cta-scan { position:absolute !important; left:0 !important; right:0 !important; top:-2px !important; height:2px !important; opacity:.65 !important; background:linear-gradient(90deg,transparent,var(--cta-cyan),var(--cta-magenta),transparent) !important; animation:cta-scan 3.2s linear infinite !important; pointer-events:none !important; }
+.hero.video-hero > .hero-cta .cta-icon { position:relative !important; z-index:2 !important; display:grid !important; place-items:center !important; flex:0 0 37px !important; width:37px !important; height:37px !important; color:var(--cta-cyan) !important; border:1px solid rgba(98,255,240,.46) !important; background:linear-gradient(145deg,rgba(0,235,255,.16),rgba(255,60,157,.08)) !important; box-shadow:inset 0 0 12px rgba(0,220,255,.12),0 0 13px rgba(0,220,255,.16) !important; clip-path:polygon(0 0,75% 0,100% 25%,100% 100%,25% 100%,0 75%) !important; }
+.hero.video-hero > .hero-cta .cta-icon svg { display:block !important; width:20px !important; height:20px !important; filter:drop-shadow(0 0 5px rgba(98,255,240,.75)) !important; }
+.hero.video-hero > .hero-cta .cta-copy { position:relative !important; z-index:2 !important; display:flex !important; flex-direction:column !important; align-items:flex-start !important; gap:4px !important; line-height:1.2 !important; }
+.hero.video-hero > .hero-cta .cta-overline { display:flex !important; align-items:center !important; gap:7px !important; color:rgba(125,220,229,.76) !important; font:600 8px/1 "Orbitron",Arial,sans-serif !important; letter-spacing:1.45px !important; direction:ltr !important; }
+.hero.video-hero > .hero-cta .cta-overline i { display:inline-block !important; width:5px !important; height:5px !important; border-radius:50% !important; background:var(--cta-magenta) !important; box-shadow:0 0 8px var(--cta-magenta) !important; }
+.hero.video-hero > .hero-cta .cta-label { position:relative !important; z-index:2 !important; color:#f1fffd !important; font-family:var(--font-fa-heading) !important; font-size:14px !important; font-weight:800 !important; letter-spacing:0 !important; text-shadow:0 0 10px rgba(98,255,240,.36),0 1px 3px #000 !important; }
+.hero.video-hero > .hero-cta .cta-arrow { position:relative !important; z-index:2 !important; display:grid !important; place-items:center !important; width:25px !important; height:25px !important; margin-inline-start:3px !important; color:var(--cta-magenta) !important; border:1px solid rgba(255,60,157,.48) !important; background:rgba(255,60,157,.07) !important; font:20px/1 Arial,sans-serif !important; text-shadow:0 0 9px rgba(255,60,157,.75) !important; transition:transform .25s ease,color .25s ease,border-color .25s ease !important; }
+.hero.video-hero > .hero-cta:hover .cta-arrow { transform:translateX(-3px) !important; color:#fff !important; border-color:var(--cta-magenta) !important; }
+.hero.video-hero > .hero-cta .cta-hud-line { position:absolute !important; z-index:2 !important; left:16% !important; right:16% !important; bottom:0 !important; height:1px !important; background:linear-gradient(90deg,transparent,var(--cta-cyan),var(--cta-magenta),transparent) !important; box-shadow:0 0 9px rgba(98,255,240,.8) !important; opacity:1 !important; }
+@media (max-width:680px) {
+  .hero.video-hero > .hero-cta { bottom:20px !important; min-width:205px !important; min-height:54px !important; padding:7px 14px !important; gap:10px !important; }
+  .hero.video-hero > .hero-cta .cta-icon { flex-basis:32px !important; width:32px !important; height:32px !important; }
+  .hero.video-hero > .hero-cta .cta-label { font-size:12px !important; }
+  .hero.video-hero > .hero-cta .cta-overline { font-size:7px !important; }
+  .hero.video-hero > .hero-cta .cta-arrow { width:22px !important; height:22px !important; font-size:17px !important; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .hero.video-hero > .hero-cta,
+  .hero.video-hero > .hero-cta::before,
+  .hero.video-hero > .hero-cta .cta-scan,
+  .hero.video-hero > .hero-cta .cta-arrow { animation:none !important; transition:none !important; }
+}
