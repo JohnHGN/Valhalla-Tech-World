@@ -2378,3 +2378,66 @@ body .physical-sim-card .offer-topline::after {
   .hero.video-hero > .hero-note { bottom: 11px !important; }
   .hero.video-hero > .hero-cta { bottom: 0px !important; }
 }
+
+/* =========================================
+   VALHALLA HERO — PERFECT FOOTER ALIGNMENT
+   ========================================= */
+
+.hero.video-hero {
+  position: relative !important;
+}
+
+/* Left: English brand motto */
+.hero.video-hero .hero-coordinates {
+  position: absolute !important;
+  left: 22px !important;
+  bottom: 26px !important;
+  transform: translateY(50%) !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+}
+
+/* Right: Innovation / Knowledge / Technology */
+.hero.video-hero > .hero-note {
+  position: absolute !important;
+  right: 46px !important;
+  bottom: 26px !important;
+  transform: translateY(50%) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+}
+
+/* Center: Discover Valhalla button */
+.hero.video-hero > .hero-cta {
+  position: absolute !important;
+  left: 50% !important;
+  bottom: 26px !important;
+  transform: translate(-50%, 50%) !important;
+  margin: 0 !important;
+}
+
+/* Hover animation */
+.hero.video-hero > .hero-cta:hover {
+  transform: translate(-50%, calc(50% - 3px)) !important;
+}
+
+/* Mobile adjustment */
+@media (max-width: 680px) {
+  .hero.video-hero .hero-coordinates {
+    left: 12px !important;
+    bottom: 20px !important;
+    font-size: 6px !important;
+  }
+
+  .hero.video-hero > .hero-note {
+    right: 12px !important;
+    bottom: 20px !important;
+    font-size: 7px !important;
+  }
+
+  .hero.video-hero > .hero-cta {
+    bottom: 20px !important;
+  }
+}
