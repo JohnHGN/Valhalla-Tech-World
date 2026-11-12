@@ -2925,15 +2925,28 @@ body .physical-sim-card .offer-topline::after {
   }
 }
 
-/* Match right hero caption with left brand typography */
+/* Load ASUS ROG Font */
+@font-face {
+  font-family: "ROG";
+  src: url("audio-player/assets/fonts/EA-Font-v15-by-Ghettoshark.ttf.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 
+/* ROG Typography - Right Hero Text */
 .hero.video-hero > .hero-note {
-  font-family: "Orbitron", "Arial Rounded MT", Arial, sans-serif !important;
+  font-family: "ROG" !important;
   font-size: 8px !important;
-  font-weight: 600 !important;
-  letter-spacing: 2.5px !important;
+  font-weight: normal !important;
+  letter-spacing: 2px !important;
   line-height: 1.2 !important;
   text-transform: uppercase !important;
+}
+
+/* Preserve neon icon */
+.hero.video-hero > .hero-note > span {
+  font-family: Arial, sans-serif !important;
 }
 
 /* Keep the typography consistent on mobile */
