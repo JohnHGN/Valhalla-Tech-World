@@ -2925,33 +2925,41 @@ body .physical-sim-card .offer-topline::after {
   }
 }
 
-/* Load ASUS ROG Font */
+/* =========================================================
+   VALHALLA HERO — SHARED ROG FONT FOR BOTH FOOTER LABELS
+   ========================================================= */
 @font-face {
   font-family: "ROG";
   src: url("audio-player/assets/fonts/EA-Font-v15-by-Ghettoshark.ttf.woff") format("woff");
-  font-weight: normal;
   font-style: normal;
+  font-weight: 400;
   font-display: swap;
 }
 
-/* ROG Typography - Right Hero Text */
-.hero.video-hero > .hero-note {
-  font-family: "ROG" !important;
+/* Both English captions use the exact same ROG typography. */
+.hero.video-hero .hero-coordinates,
+.hero.video-hero > .hero-note,
+.hero.video-hero > .hero-note bdi {
+  font-family: "ROG", sans-serif !important;
   font-size: 8px !important;
-  font-weight: normal !important;
-  letter-spacing: 2px !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  letter-spacing: 1.5px !important;
   line-height: 1.2 !important;
   text-transform: uppercase !important;
 }
 
-/* Preserve neon icon */
+/* Keep only the decorative sparkle independent from the shared font. */
 .hero.video-hero > .hero-note > span {
   font-family: Arial, sans-serif !important;
+  font-size: 14px !important;
+  letter-spacing: normal !important;
 }
 
-/* Keep the typography consistent on mobile */
 @media (max-width: 680px) {
-  .hero.video-hero > .hero-note {
+  .hero.video-hero .hero-coordinates,
+  .hero.video-hero > .hero-note,
+  .hero.video-hero > .hero-note bdi {
     font-size: 6px !important;
     letter-spacing: 1px !important;
   }
