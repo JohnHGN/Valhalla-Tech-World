@@ -2984,85 +2984,106 @@ body .hero.video-hero > .hero-note > i {
 
 
 /* =========================================================
-   VALHALLA — compact mobile header and hero CTA
-   Desktop styling remains unchanged.
+   VALHALLA — MOBILE HEADER / HERO CTA SIZE CORRECTION
+   Overrides the oversized earlier !important declarations.
+   Desktop layout remains unchanged.
    ========================================================= */
-@media (max-width: 680px) {
-  /* VPN guide pill in the top navigation */
-  body .topbar .top-nav .vpn-tab {
-    flex: 0 1 auto !important;
-    width: auto !important;
-    max-width: 96px !important;
+@media screen and (max-width: 700px) {
+  /* VPN guide control in the top navigation */
+  body .topbar .top-nav > .vpn-tab {
+    display: inline-flex !important;
+    box-sizing: border-box !important;
+    flex: 0 1 142px !important;
+    width: 142px !important;
+    max-width: 142px !important;
     min-width: 0 !important;
-    min-height: 32px !important;
+    min-height: 34px !important;
+    height: auto !important;
     padding: 5px 7px !important;
     gap: 4px !important;
-    font-size: 8px !important;
+    justify-content: center !important;
+    align-items: center !important;
+    font-size: 9px !important;
     line-height: 1.25 !important;
     white-space: normal !important;
     text-align: center !important;
-    justify-content: center !important;
-    border-radius: 17px 17px 17px 5px !important;
+    overflow-wrap: anywhere !important;
   }
 
-  body .topbar .top-nav .vpn-tab > span {
+  body .topbar .top-nav > .vpn-tab > span {
     flex: 0 0 auto !important;
     font-size: 12px !important;
     line-height: 1 !important;
   }
 
-  /* Compact search control so it balances with the VPN pill */
-  body .topbar .top-nav .search-toggle {
-    flex: 0 0 34px !important;
-    width: 34px !important;
-    min-width: 34px !important;
-    height: 34px !important;
-    min-height: 34px !important;
-    padding: 6px !important;
-  }
-
-  body .topbar .top-nav .search-toggle svg {
-    width: 16px !important;
-    height: 16px !important;
-  }
-
-  /* Discover Valhalla CTA: smaller, centered, and proportional */
-  body .hero.video-hero > .hero-cta {
-    left: 50% !important;
-    width: auto !important;
-    min-width: 0 !important;
-    max-width: calc(100% - 44px) !important;
-    min-height: 42px !important;
-    padding: 6px 13px !important;
-    gap: 7px !important;
-    font-size: 10px !important;
-    line-height: 1.2 !important;
-    border-radius: 5px !important;
+  body .topbar .top-nav > .vpn-tab bdi {
+    font-size: 8px !important;
     white-space: nowrap !important;
   }
 
-  body .hero.video-hero > .hero-cta > span:first-child {
-    font-size: 14px !important;
-    line-height: 1 !important;
+  /* Search button stays compact and aligned with VPN */
+  body .topbar .top-nav > .search-toggle {
+    flex: 0 0 38px !important;
+    width: 38px !important;
+    min-width: 38px !important;
+    max-width: 38px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    padding: 7px !important;
   }
 
-  body .hero.video-hero > .hero-cta .hero-cta-arrow {
-    font-size: 13px !important;
-    line-height: 1 !important;
+  /* Discover Valhalla button at the bottom of the hero */
+  body .hero.video-hero > .hero-cta {
+    box-sizing: border-box !important;
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: min(78vw, 250px) !important;
+    min-height: 42px !important;
+    height: auto !important;
+    padding: 6px 14px !important;
+    gap: 0 !important;
+    font-size: 11px !important;
+    line-height: 1.25 !important;
+    white-space: nowrap !important;
+  }
+
+  body .hero.video-hero > .hero-cta .cta-label {
+    font-size: 11px !important;
+    line-height: 1.25 !important;
+  }
+
+  body .hero.video-hero > .hero-cta .cta-overline {
+    font-size: 6px !important;
+    letter-spacing: 1px !important;
   }
 }
 
-@media (max-width: 390px) {
-  body .topbar .top-nav .vpn-tab {
-    max-width: 88px !important;
-    min-height: 30px !important;
-    padding: 4px 6px !important;
-    font-size: 7px !important;
+@media screen and (max-width: 390px) {
+  body .topbar .top-nav > .vpn-tab {
+    flex-basis: 128px !important;
+    width: 128px !important;
+    max-width: 128px !important;
+    min-height: 32px !important;
+    padding: 4px 5px !important;
+    font-size: 8px !important;
+  }
+
+  body .topbar .top-nav > .search-toggle {
+    flex-basis: 35px !important;
+    width: 35px !important;
+    min-width: 35px !important;
+    max-width: 35px !important;
+    height: 35px !important;
+    min-height: 35px !important;
   }
 
   body .hero.video-hero > .hero-cta {
     min-height: 39px !important;
     padding: 5px 11px !important;
-    font-size: 9px !important;
+    max-width: 82vw !important;
+  }
+
+  body .hero.video-hero > .hero-cta .cta-label {
+    font-size: 10px !important;
   }
 }
