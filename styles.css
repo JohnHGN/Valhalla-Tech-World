@@ -2079,3 +2079,22 @@ body .valhalla-mini-hint {
   .sim-tab { flex:1 1 auto; padding:8px 10px; font-size:10px; }
   .sim-price-grid { grid-template-columns:1fr; }
 }
+
+
+/* Final cleanup: remove the small square symbol and its unwanted glass tile
+   from every service-card heading row, without changing the main glass cards. */
+body .offer-card .offer-symbol { display: none !important; }
+body .offer-card .offer-topline {
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+body .physical-sim-card .offer-topline::before,
+body .physical-sim-card .offer-topline::after {
+  content: none !important;
+  display: none !important;
+}
