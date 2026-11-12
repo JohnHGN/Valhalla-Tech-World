@@ -715,6 +715,34 @@ body, button, input, select, textarea { font-family: var(--font-fa-body); }
   :where(.service-card, .platform-tab, .academy-filter, .academy-card, .offer-card, .contact-card, .faq-item, .download-link, .search-result):is(:hover, :focus-visible) { animation: none !important; }
 }
 
+
+/* =========================================================
+   VALHALLA — Full wallpaper on phones and tablets
+   Desktop keeps the original fixed/cover treatment. On touch
+   layouts the wallpaper scales to the viewport width so the
+   complete artwork is visible instead of being aggressively
+   cropped by cover + fixed positioning (notably iOS Safari).
+   ========================================================= */
+@media (max-width: 1024px) {
+  body::before {
+    position: absolute;
+    inset: 0;
+    min-height: 100%;
+    background-position: center top;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+  }
+}
+
+@media (max-width: 680px) {
+  body::before {
+    background-position: center top;
+    background-size: 100% auto;
+    background-attachment: scroll;
+  }
+}
+
 /* Cinematic video hero and full Persian Yas typography. */
 :lang(en) { font-family: var(--font-en-body); }
 :lang(en) h1, :lang(en) h2, :lang(en) h3, :lang(en) h4, .en-display { font-family: var(--font-en-heading); }
