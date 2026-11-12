@@ -223,11 +223,10 @@
         <div class="offer-grid">
           <article class="offer-card offer-featured">
             <div class="offer-topline"><span>01 / CONNECT</span><span class="offer-pulse"></span></div>
-            <div class="offer-icon offer-icon-connect" aria-hidden="true">⌁</div>
             <p class="offer-kicker">VALHALLA GUARD</p>
             <h3>اتصال هوشمند و پایدار</h3>
             <p class="offer-description">راهکارهای اتصال امن و سریع برای استفاده روزمره، گیمینگ و کار حرفه‌ای. پلن‌های WireGuard و V2Ray با موقعیت‌های متعدد، پایداری بالا و پشتیبانی از همه دستگاه‌ها.</p>
-            <div class="offer-chips"><span>WireGuard Turbo / Gaming</span><span>V2Ray Eco</span><span>Multi-Location</span><span>Fast Ping</span><span>۱ و ۲ ماهه</span><span>کاربر نامحدود</span><span>Android · iOS · Windows · Mac</span></div>
+            <div class="offer-chips"><span>WireGuard Turbo / Gaming</span><span>V2Ray Eco</span><span>Multi-Location</span><span>Fast Ping</span><span>۱ و ۲ ماهه</span><span>Android · iOS · Windows · Mac</span></div>
             <div class="offer-actions">
               <a class="offer-link" href="https://t.me/valhala_tw/61" target="_blank" rel="noopener noreferrer">معرفی پلن‌ها در کانال <span aria-hidden="true">↗</span></a>
               <a class="offer-link" href="https://t.me/valhalla_guard" target="_blank" rel="noopener noreferrer">مشاوره و استعلام <span aria-hidden="true">↗</span></a>
@@ -235,7 +234,6 @@
           </article>
           <article class="offer-card">
             <div class="offer-topline"><span>02 / HARDWARE</span><span class="offer-symbol" aria-hidden="true">⌘</span></div>
-            <div class="offer-icon offer-icon-hardware" aria-hidden="true">▰</div>
             <p class="offer-kicker">PC · LAPTOP · GAMING</p>
             <h3>سیستم و لپ‌تاپ</h3>
             <p class="offer-description">مشاوره خرید، فروش و تعمیرات تخصصی سیستم‌های گیمینگ و لپ‌تاپ. همراه با آموزش‌های کاربردی برای نگهداری، بهینه‌سازی و ارتقای عملکرد دستگاه.</p>
@@ -244,7 +242,6 @@
           </article>
           <article class="offer-card">
             <div class="offer-topline"><span>03 / DIGITAL</span><span class="offer-symbol" aria-hidden="true">◎</span></div>
-            <div class="offer-icon offer-icon-digital" aria-hidden="true">◉</div>
             <p class="offer-kicker">VIRTUAL NUMBERS</p>
             <h3>شمارهٔ مجازی</h3>
             <p class="offer-description">شماره‌های مجازی دائمی از بیش از ۱۶۰ کشور با فعال‌سازی فوری و امکان شارژ مجدد. مناسب برای تلگرام، واتساپ، اینستاگرام، جیمیل، اپل، ChatGPT و ده‌ها سرویس دیگر.</p>
@@ -256,7 +253,6 @@
           </article>
           <article class="offer-card">
             <div class="offer-topline"><span>04 / ACCOUNTS</span><span class="offer-symbol" aria-hidden="true">✧</span></div>
-            <div class="offer-icon offer-icon-account" aria-hidden="true">◈</div>
             <p class="offer-kicker">APPLE ID · DIGITAL SERVICES</p>
             <h3>اکانت و خدمات دیجیتال</h3>
             <p class="offer-description">اپل‌آیدی آماده و سفارشی همراه با راهنمایی تنظیمات امنیتی و پشتیبانی کامل. برای دسترسی به سرویس‌های اپل و سایر پلتفرم‌های دیجیتال.</p>
@@ -265,6 +261,54 @@
               <a class="offer-link" href="https://t.me/valhala_tw/54" target="_blank" rel="noopener noreferrer">معرفی در کانال <span aria-hidden="true">↗</span></a>
               <a class="offer-link" href="https://t.me/Valhalla_Guard" target="_blank" rel="noopener noreferrer">جزئیات و سفارش <span aria-hidden="true">↗</span></a>
             </div>
+          </article>
+          <article class="offer-card physical-sim-card" id="physical-sim">
+            <div class="offer-topline"><span>05 / CONNECTIVITY</span><span class="offer-symbol" aria-hidden="true">▣</span></div>
+            <p class="offer-kicker">INTERNATIONAL PHYSICAL SIM</p>
+            <h3>سیم‌کارت فیزیکی</h3>
+            <p class="offer-description">سه سیم‌کارت بین‌المللی از گرجستان، اتریش و انگلستان؛ هرکدام با شرایط فعال‌سازی، نگهداری و تعرفه‌های مستقل.</p>
+            <div class="sim-tabs" role="tablist" aria-label="انتخاب سیم‌کارت">
+              <button class="sim-tab is-active" id="sim-tab-cellfie" type="button" role="tab" aria-selected="true" aria-controls="sim-panel-cellfie" data-sim-tab="cellfie">Cellfie · گرجستان</button>
+              <button class="sim-tab" id="sim-tab-eety" type="button" role="tab" aria-selected="false" aria-controls="sim-panel-eety" data-sim-tab="eety" tabindex="-1">Eety · اتریش</button>
+              <button class="sim-tab" id="sim-tab-vodafone" type="button" role="tab" aria-selected="false" aria-controls="sim-panel-vodafone" data-sim-tab="vodafone" tabindex="-1">Vodafone · انگلستان</button>
+            </div>
+            <section class="sim-panel is-active" id="sim-panel-cellfie" role="tabpanel" aria-labelledby="sim-tab-cellfie" data-sim-panel="cellfie">
+              <img class="sim-product-image" src="assets/cellfie-sim.svg" alt="تصویر سیم‌کارت فیزیکی Cellfie گرجستان" loading="lazy">
+              <div class="sim-product-copy">
+                <h4>Cellfie | گرجستان <bdi dir="ltr">+995</bdi></h4>
+                <p>شماره واقعی گرجستان؛ بدون نیاز به پاسپورت و با تخصیص تصادفی شماره. طبق اطلاعات محصول، در ایران از طریق شبکه رایتل قابل استفاده است.</p>
+                <ul><li>اعتبار اولیه: صفر</li><li>نگهداری خط: شارژ حداکثر هر ۸۵ روز و دریافت حداقل یک پیامک در ماه</li><li>کد مشاهده شماره: <bdi dir="ltr">*110*00#</bdi></li><li>کد بسته‌های اینترنت: <bdi dir="ltr">*225#</bdi></li></ul>
+                <h5>بسته‌های اینترنت Continental Pass</h5>
+                <div class="sim-price-grid"><span>۱ گیگابایت · ۱۵ لاری</span><span>۳ گیگابایت · ۳۵ لاری</span><span>۵ گیگابایت · ۵۵ لاری</span><span>۱۰ گیگابایت · ۱۰۰ لاری</span></div>
+                <small class="sim-note">اعتبار بسته‌ها ۳۰ روز است. تعرفه مصرف آزاد و تماس بین‌المللی در مرجع دارای ابهام است؛ پیش از اعلام قیمت نهایی استعلام شود.</small>
+              </div>
+            </section>
+            <section class="sim-panel" id="sim-panel-eety" role="tabpanel" aria-labelledby="sim-tab-eety" data-sim-panel="eety" hidden>
+              <img class="sim-product-image" src="assets/eety-sim.svg" alt="تصویر سیم‌کارت فیزیکی Eety اتریش" loading="lazy">
+              <div class="sim-product-copy">
+                <h4>Eety | اتریش <bdi dir="ltr">+43</bdi></h4>
+                <p>شماره واقعی اتریش که طبق اطلاعات محصول با پاسپورت معتبر به نام خریدار ثبت می‌شود. شماره به‌صورت تصادفی تخصیص می‌یابد و در ایران از طریق شبکه همراه اول قابل استفاده اعلام شده است.</p>
+                <ul><li>ارائه پاسپورت معتبر برای فعال‌سازی الزامی است</li><li>اعتبار اولیه: صفر</li><li>نگهداری خط: شارژ حداقل هر ۸۵ روز و دریافت حداقل یک پیامک در ماه</li><li>کد بررسی اعتبار: <bdi dir="ltr">*149#</bdi></li></ul>
+                <h5>تعرفه مصرف آزاد</h5>
+                <div class="sim-price-grid"><span>تماس: ۰٫۰۵ یورو</span><span>پیامک: ۰٫۰۵ یورو</span><span>اینترنت: ۰٫۰۰۰۹۰۲۳ یورو / مگابایت</span></div>
+                <small class="sim-note">بسته TOP تا ۱۰ گیگابایت در اتحادیه اروپا معرفی شده، اما قیمت، مدت اعتبار و پوشش دقیق آن باید پیش از سفارش استعلام شود.</small>
+              </div>
+            </section>
+            <section class="sim-panel" id="sim-panel-vodafone" role="tabpanel" aria-labelledby="sim-tab-vodafone" data-sim-panel="vodafone" hidden>
+              <img class="sim-product-image" src="assets/vodafone-sim.svg" alt="تصویر سیم‌کارت فیزیکی Vodafone انگلستان" loading="lazy">
+              <div class="sim-product-copy">
+                <h4>Vodafone | انگلستان <bdi dir="ltr">+44</bdi></h4>
+                <p>شماره واقعی بریتانیا با امکان استفاده از تماس، پیامک و اینترنت در ایران طبق اطلاعات محصول؛ از طریق شبکه رایتل.</p>
+                <ul><li>سیم‌کارت به‌صورت پلمپ ارسال می‌شود</li><li>اعتبار اولیه صفر؛ برای شروع استفاده شارژ ۵ پوندی لازم است</li><li>برای حفظ خط، شارژ ۵ پوندی پیش از گذشت حدود ۸۵ روز انجام شود</li><li>مدیریت شارژ از طریق My Vodafone؛ کد بررسی اعتبار: <bdi dir="ltr">*#1345#</bdi></li></ul>
+                <h5>تعرفه‌های مصرفی</h5>
+                <div class="sim-price-grid"><span>تماس خروجی: ۰٫۶۰ پوند / دقیقه</span><span>تماس ورودی: ۰٫۶۰ پوند / دقیقه</span><span>پیامک خروجی: ۰٫۰۸ پوند</span><span>اینترنت: ۰٫۱۲ پوند / مگابایت</span></div>
+              </div>
+            </section>
+            <div class="sim-buy-row">
+              <span>برای استعلام موجودی، قیمت خرید و ثبت سفارش</span>
+              <a class="offer-link sim-support-link" href="https://t.me/Valhalla_Guard" target="_blank" rel="noopener noreferrer">تماس با پشتیبانی <span aria-hidden="true">↗</span></a>
+            </div>
+            <small class="sim-disclaimer">تعرفه‌ها و شرایط بر اساس فایل راهنمای محصول هستند و ممکن است تغییر کنند. دریافت پیامک یا کد تأیید از سرویس‌های ثالث تضمین‌شده نیست. پیش از سفارش، شرایط روز را از پشتیبانی استعلام کنید.</small>
           </article>
         </div>
         <p class="section-footnote">قیمت، موجودی و شرایط خرید در این صفحه ثابت نیست؛ برای جزئیات به کانال یا پشتیبانی مجموعه مراجعه کن.</p>
@@ -947,5 +991,40 @@
     }
   });
 </script>
-  </body>
+  
+<script>
+(() => {
+  const tabs = [...document.querySelectorAll("[data-sim-tab]")];
+  const panels = [...document.querySelectorAll("[data-sim-panel]")];
+  if (!tabs.length || !panels.length) return;
+  const activate = (name, focus = false) => {
+    tabs.forEach(tab => {
+      const active = tab.dataset.simTab === name;
+      tab.classList.toggle("is-active", active);
+      tab.setAttribute("aria-selected", String(active));
+      tab.tabIndex = active ? 0 : -1;
+      if (active && focus) tab.focus();
+    });
+    panels.forEach(panel => {
+      const active = panel.dataset.simPanel === name;
+      panel.classList.toggle("is-active", active);
+      panel.hidden = !active;
+    });
+  };
+  tabs.forEach((tab, index) => {
+    tab.addEventListener("click", () => activate(tab.dataset.simTab));
+    tab.addEventListener("keydown", event => {
+      if (!["ArrowLeft","ArrowRight","Home","End"].includes(event.key)) return;
+      event.preventDefault();
+      let next = index;
+      if (event.key === "ArrowRight") next = (index + 1) % tabs.length;
+      if (event.key === "ArrowLeft") next = (index - 1 + tabs.length) % tabs.length;
+      if (event.key === "Home") next = 0;
+      if (event.key === "End") next = tabs.length - 1;
+      activate(tabs[next].dataset.simTab, true);
+    });
+  });
+})();
+</script>
+</body>
 </html>
