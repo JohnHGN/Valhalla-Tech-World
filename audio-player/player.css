@@ -775,3 +775,223 @@ button { color: inherit; cursor: pointer; }
   .controls .utility-control { left: 86.2%; width: 13.8%; }
   .volume-control input { width: 54%; }
 }
+
+
+/* =========================================================
+   VALHALLA AUDIO — Mobile control positioning (final pass)
+   Re-centers every control in a single, evenly spaced row.
+   Desktop rules remain unchanged.
+   ========================================================= */
+@media screen and (max-width: 620px) {
+  .player-shell .timeline {
+    left: 28.7%;
+    right: 7.2%;
+    top: 61.2%;
+    height: 9%;
+  }
+
+  .player-shell .controls {
+    left: 4%;
+    right: 4%;
+    top: 72.8%;
+    height: 14.8%;
+    direction: ltr;
+  }
+
+  .player-shell .controls > .control {
+    position: absolute;
+    top: 12%;
+    height: 76%;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: none;
+  }
+
+  /* Left-side utility controls */
+  .player-shell .controls .speed-control {
+    left: 0%;
+    width: 11.5%;
+    gap: 2%;
+  }
+  .player-shell .speed-control .speed-icon { font-size: clamp(12px, 2.4cqw, 17px); }
+  .player-shell .speed-control select {
+    width: 52%;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    font-size: clamp(8px, 1.55cqw, 11px);
+    line-height: 1;
+    text-align: center;
+  }
+  .player-shell .speed-control .chevron { display: none; }
+
+  .player-shell .controls .sleep-control {
+    left: 12.5%;
+    width: 8.5%;
+    gap: 0;
+  }
+  .player-shell .sleep-control .sleep-icon { font-size: clamp(13px, 2.5cqw, 18px); }
+  .player-shell .sleep-control .sleep-label,
+  .player-shell .sleep-control .chevron { display: none; }
+
+  /* Transport cluster — centered around the main play button */
+  .player-shell .controls .rewind {
+    left: 22.5%;
+    width: 7.2%;
+  }
+  .player-shell .controls .previous {
+    left: 31%;
+    width: 7.2%;
+  }
+  .player-shell .controls .play-control {
+    left: 41.4%;
+    width: 9.2%;
+    height: 96%;
+    top: 2%;
+    padding: 0;
+    aspect-ratio: auto;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .player-shell .controls .next {
+    left: 53.2%;
+    width: 7.2%;
+  }
+  .player-shell .controls .forward {
+    left: 61.7%;
+    width: 7.2%;
+  }
+
+  /* Volume and secondary actions on the right */
+  .player-shell .controls .volume-control {
+    left: 70.2%;
+    width: 15.2%;
+    gap: 4%;
+  }
+  .player-shell .volume-control .volume-icon { font-size: clamp(13px, 2.5cqw, 18px); }
+  .player-shell .volume-control input[type="range"] {
+    display: block;
+    width: 61%;
+    min-width: 0;
+    height: 14px;
+    margin: 0;
+    padding: 0;
+    accent-color: #00efff;
+  }
+
+  .player-shell .controls .utility-control {
+    left: 87%;
+    width: 13%;
+    top: 12%;
+    height: 76%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 0;
+    gap: 0;
+  }
+  .player-shell .utility-control button {
+    flex: 0 0 48%;
+    width: 48%;
+    min-width: 0;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(14px, 2.7cqw, 20px);
+  }
+  .player-shell .utility-control i { height: 48%; margin: 0; }
+
+  /* Consistent icon sizing and optical centering */
+  .player-shell .controls .hud-icon,
+  .player-shell .controls .transport-icon,
+  .player-shell .controls .skip-arrow {
+    flex: 0 0 auto;
+    font-size: clamp(13px, 2.55cqw, 19px);
+  }
+  .player-shell .skip-icon-wrap {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    flex: 0 0 100%;
+  }
+  .player-shell .skip-icon-wrap .skip-arrow {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 1.08em;
+    height: 1.08em;
+    margin: 0;
+    transform: translate(-50%, -50%);
+  }
+  .player-shell .skip-icon-wrap strong {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: 0;
+    transform: translate(-50%, -50%);
+    font-size: clamp(7px, 1.35cqw, 10px);
+    line-height: 1;
+  }
+  .player-shell .play-symbol { font-size: clamp(19px, 3.5cqw, 26px); }
+
+  /* Prevent native range thumbs from appearing oversized on phones */
+  .player-shell input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+  }
+  .player-shell input[type="range"]::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #00eaff, #8defff 55%, rgba(190,235,255,.55));
+    box-shadow: 0 0 5px rgba(0,225,255,.45);
+  }
+  .player-shell input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    margin-top: -4px;
+    border: 1px solid rgba(255,255,255,.9);
+    border-radius: 50%;
+    background: #dffaff;
+    box-shadow: 0 0 6px rgba(0,225,255,.6);
+  }
+  .player-shell input[type="range"]::-moz-range-track {
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #00eaff, #8defff 55%, rgba(190,235,255,.55));
+  }
+  .player-shell input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border: 1px solid rgba(255,255,255,.9);
+    border-radius: 50%;
+    background: #dffaff;
+    box-shadow: 0 0 6px rgba(0,225,255,.6);
+  }
+}
+
+@media screen and (max-width: 380px) {
+  .player-shell .controls { left: 3%; right: 3%; }
+  .player-shell .controls .speed-control { width: 11%; }
+  .player-shell .controls .sleep-control { left: 12%; width: 8%; }
+  .player-shell .controls .rewind { left: 21%; width: 7.4%; }
+  .player-shell .controls .previous { left: 29.5%; width: 7.4%; }
+  .player-shell .controls .play-control { left: 40.8%; width: 9.5%; }
+  .player-shell .controls .next { left: 52.5%; width: 7.4%; }
+  .player-shell .controls .forward { left: 61%; width: 7.4%; }
+  .player-shell .controls .volume-control { left: 69.5%; width: 15.5%; }
+  .player-shell .controls .utility-control { left: 86.5%; width: 13.5%; }
+}
