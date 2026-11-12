@@ -2264,3 +2264,41 @@ body .physical-sim-card .offer-topline::after {
 @media (prefers-reduced-motion: reduce) {
   .hero.video-hero > .hero-cta { transition:none; }
 }
+
+
+/* Visibility and final vertical tuning for the hero's two bottom elements.
+   Keep the motto above floating overlays; lower the CTA closer to the bottom edge. */
+.hero.video-hero > .hero-note {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: absolute !important;
+  z-index: 1000 !important;
+  right: clamp(24px, 3.2vw, 46px) !important;
+  bottom: 24px !important;
+  color: #eafffb !important;
+  background: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  text-shadow: 0 2px 12px rgba(0,0,0,.9), 0 0 15px rgba(42,223,211,.38) !important;
+  white-space: nowrap !important;
+  pointer-events: none;
+}
+.hero.video-hero > .hero-note > span { color: #7affeb !important; }
+.hero.video-hero > .hero-note i { color: rgba(139,255,235,.9) !important; }
+.hero.video-hero > .hero-cta {
+  bottom: 10px !important;
+}
+@media (max-width: 680px) {
+  .hero.video-hero > .hero-note {
+    right: 12px !important;
+    bottom: 17px !important;
+    font-size: 7px !important;
+    gap: 4px !important;
+  }
+  .hero.video-hero > .hero-cta { bottom: 8px !important; }
+}
