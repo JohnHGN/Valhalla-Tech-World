@@ -2302,3 +2302,59 @@ body .physical-sim-card .offer-topline::after {
   }
   .hero.video-hero > .hero-cta { bottom: 8px !important; }
 }
+
+
+/* Match the user's marked reference positions while restoring the original
+   Valhalla typography, mint palette and subtle glow (no label-shaped frame). */
+.hero.video-hero > .hero-note {
+  position: absolute !important;
+  right: clamp(24px, 3.2vw, 46px) !important;
+  bottom: 12px !important;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: auto;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  color: #d0e9e7 !important;
+  font-family: var(--font-en-body) !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  line-height: 1.5;
+  letter-spacing: .035em !important;
+  text-shadow: 0 1px 8px rgba(0,0,0,.72), 0 0 13px rgba(99,243,213,.2) !important;
+  white-space: nowrap !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 1000 !important;
+}
+.hero.video-hero > .hero-note > span {
+  color: var(--aurora) !important;
+  font-size: 13px !important;
+  text-shadow: 0 0 12px rgba(99,243,213,.72) !important;
+}
+.hero.video-hero > .hero-note i {
+  color: #6ea99f !important;
+  font-style: normal !important;
+}
+.hero.video-hero > .hero-cta {
+  bottom: -14px !important;
+}
+@media (max-width:680px) {
+  .hero.video-hero > .hero-note {
+    right: 12px !important;
+    bottom: 12px !important;
+    gap: 4px !important;
+    font-size: 7px !important;
+    letter-spacing: 0 !important;
+  }
+  .hero.video-hero > .hero-cta { bottom: -7px !important; }
+}
