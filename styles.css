@@ -2924,3 +2924,22 @@ body .physical-sim-card .offer-topline::after {
     padding: 8px 20px !important;
   }
 }
+
+/* Match right hero caption with left brand typography */
+
+.hero.video-hero > .hero-note {
+  font-family: "Orbitron", "Arial Rounded MT", Arial, sans-serif !important;
+  font-size: 8px !important;
+  font-weight: 600 !important;
+  letter-spacing: 2.5px !important;
+  line-height: 1.2 !important;
+  text-transform: uppercase !important;
+}
+
+/* Keep the typography consistent on mobile */
+@media (max-width: 680px) {
+  .hero.video-hero > .hero-note {
+    font-size: 6px !important;
+    letter-spacing: 1px !important;
+  }
+}
