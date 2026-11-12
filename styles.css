@@ -2860,3 +2860,67 @@ body .physical-sim-card .offer-topline::after {
   .hero.video-hero > .hero-cta .cta-scan,
   .hero.video-hero > .hero-cta .cta-arrow { animation:none !important; transition:none !important; }
 }
+
+
+/* =========================================================
+   VALHALLA HERO CTA — MINIMAL GLASS ROG FINISH
+   Side icons removed in index.html; preserve the original link.
+   ========================================================= */
+.hero.video-hero > .hero-cta {
+  min-width: 218px !important;
+  min-height: 56px !important;
+  padding: 9px 28px !important;
+  gap: 0 !important;
+  border: 1px solid rgba(139, 255, 244, .58) !important;
+  border-radius: 7px !important;
+  background:
+    linear-gradient(115deg, rgba(98,255,240,.15), transparent 42%, rgba(255,60,157,.09)),
+    linear-gradient(180deg, rgba(178, 242, 255, .19), rgba(22, 54, 72, .28)) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(165%) !important;
+  backdrop-filter: blur(18px) saturate(165%) !important;
+  box-shadow:
+    0 0 0 1px rgba(32,207,255,.12),
+    0 0 22px rgba(0,220,255,.16),
+    0 9px 26px rgba(0,0,0,.25),
+    inset 0 1px 0 rgba(255,255,255,.34),
+    inset 0 -1px 0 rgba(98,255,240,.12) !important;
+}
+.hero.video-hero > .hero-cta .cta-copy {
+  align-items: center !important;
+  gap: 5px !important;
+}
+.hero.video-hero > .hero-cta .cta-label {
+  font-size: 14px !important;
+  text-shadow: 0 0 11px rgba(98,255,240,.42), 0 1px 3px rgba(0,0,0,.55) !important;
+}
+.hero.video-hero > .hero-cta .cta-overline {
+  opacity: .78 !important;
+  letter-spacing: 1.6px !important;
+}
+.hero.video-hero > .hero-cta::after {
+  width: 2px !important;
+  opacity: .75 !important;
+  box-shadow: 0 0 9px var(--cta-cyan) !important;
+}
+.hero.video-hero > .hero-cta .cta-corner {
+  opacity: .58 !important;
+}
+.hero.video-hero > .hero-cta .cta-hud-line {
+  left: 24% !important;
+  right: 24% !important;
+  opacity: .72 !important;
+}
+.hero.video-hero > .hero-cta:hover {
+  background:
+    linear-gradient(115deg, rgba(98,255,240,.22), transparent 42%, rgba(255,60,157,.13)),
+    linear-gradient(180deg, rgba(205,250,255,.24), rgba(25,67,85,.36)) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+}
+@media (max-width:680px) {
+  .hero.video-hero > .hero-cta {
+    min-width: 198px !important;
+    min-height: 52px !important;
+    padding: 8px 20px !important;
+  }
+}
