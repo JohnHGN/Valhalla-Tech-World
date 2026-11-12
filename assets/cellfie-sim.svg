@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="480" viewBox="0 0 480 480">
+<defs><linearGradient id="bg" x2="0" y2="1"><stop stop-color="#e92d96"/><stop offset="1" stop-color="#570b3c"/></linearGradient><linearGradient id="card" x2="0" y2="1"><stop stop-color="#e92d96"/><stop offset="1" stop-color="#570b3c"/></linearGradient><filter id="shadow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="13"/></filter><pattern id="grain" width="6" height="6" patternUnits="userSpaceOnUse"><path d="M0 1h6M0 4h6" stroke="#fff" stroke-opacity=".045"/></pattern></defs>
+<rect width="480" height="480" rx="8" fill="url(#bg)"/><rect width="480" height="480" fill="url(#grain)"/>
+<rect x="48" y="118" width="384" height="244" rx="17" fill="#000" opacity=".32" filter="url(#shadow)"/>
+<rect x="46" y="116" width="388" height="248" rx="17" fill="url(#card)"/>
+<g fill="none" stroke="#fff" stroke-opacity=".22" stroke-width="9"><path d="M46 148a72 72 0 0 0 72-72M46 177a101 101 0 0 0 101-101M434 333a72 72 0 0 0-72 72M434 304a101 101 0 0 0-101 101"/></g>
+<g fill="#fff" font-family="Arial,sans-serif" text-anchor="middle"><text x="255" y="224" font-size="34">Cellfie</text><text x="255" y="264" font-size="25">Simcard</text></g>
+<g transform="translate(335 202)" fill="none" stroke="#fff" stroke-width="4"><path d="M0 0h75v40l-13 12H0z"/><rect x="12" y="9" width="37" height="29" rx="5" fill="#b6a66d" stroke="#887d55" stroke-width="2"/><path d="M24 9v29M37 9v29M12 23h37" stroke="#80764e" stroke-width="1.5"/></g>
+<g transform="translate(82 300)"><g transform="rotate(-18 25 25)"><rect x="0" y="0" width="44" height="44" rx="9" fill="#8130a4"/><rect x="12" y="9" width="42" height="42" rx="9" fill="#ee345e"/><path d="M21 12l24 14-24 14z" fill="#fff"/></g></g>
+<text x="240" y="440" fill="#fff" opacity=".0" font-size="1">Cellfie</text></svg>
