@@ -2358,3 +2358,23 @@ body .physical-sim-card .offer-topline::after {
   }
   .hero.video-hero > .hero-cta { bottom: -7px !important; }
 }
+
+
+/* Align the three hero-footer captions on one shared horizontal text line. */
+.hero.video-hero .hero-coordinates {
+  bottom: 18px !important;
+  line-height: 1.2 !important;
+}
+.hero.video-hero > .hero-note {
+  bottom: 16px !important;
+  line-height: 1.2 !important;
+  align-items: center !important;
+}
+.hero.video-hero > .hero-cta {
+  bottom: 0px !important;
+}
+@media (max-width: 680px) {
+  .hero.video-hero .hero-coordinates { bottom: 12px !important; }
+  .hero.video-hero > .hero-note { bottom: 11px !important; }
+  .hero.video-hero > .hero-cta { bottom: 0px !important; }
+}
