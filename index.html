@@ -896,7 +896,7 @@
       })();
     </script>
 
-    <!-- ۳-ب. موتور رندر Three.js با OrbitControls، زوم جزئیات، بازگشت سر پس از ۷ ثانیه توقف موس و انیمیشن‌های تصادفی -->
+    <!-- ۳-ب. موتور رندر Three.js با تراز صاف سر رو به جلو و بازگشت پس از ۷ ثانیه توقف موس -->
     <script type="module">
       import * as THREE from 'https://esm.sh/three@0.160.0';
       import { GLTFLoader } from 'https://esm.sh/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
@@ -938,6 +938,38 @@
         }
       }
 
+      function computeBakedHeadYawCorrection(headNode) {
+        if (!headNode) return 0;
+        headNode.updateMatrixWorld(true);
+        const pairs = [
+          ['TempleArmorPlateLeft', 'TempleArmorPlateRight'],
+          ['BrowWingPlateLeft', 'BrowWingPlateRight'],
+          ['HoodRimLeft', 'HoodRimRight'],
+          ['CrimsonEyeRight', 'CrimsonEyeLeft'],
+        ];
+        const box = new THREE.Box3();
+        const cA = new THREE.Vector3();
+        const cB = new THREE.Vector3();
+        let sumAngle = 0;
+        let count = 0;
+        for (const [nameA, nameB] of pairs) {
+          const a = headNode.getObjectByName(nameA);
+          const b = headNode.getObjectByName(nameB);
+          if (!a || !b) continue;
+          box.setFromObject(a).getCenter(cA);
+          box.setFromObject(b).getCenter(cB);
+          const left = cA.x <= cB.x ? cA : cB;
+          const right = cA.x <= cB.x ? cB : cA;
+          const dx = right.x - left.x;
+          const dz = right.z - left.z;
+          if (dx > 0.05) {
+            sumAngle += Math.atan2(dz, dx);
+            count++;
+          }
+        }
+        return count > 0 ? sumAngle / count : 0;
+      }
+
       const isSoftwareGl = detectSoftwareGl();
       let headTrackingEnabled = true;
 
@@ -960,7 +992,7 @@
 
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(options.fov, w / h, 0.08, 100);
-        camera.position.set(0.18, 0.34, 3.45);
+        camera.position.set(0.05, 0.24, 3.45);
 
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: !isSoftwareGl });
         renderer.setSize(w, h);
@@ -1003,7 +1035,7 @@
         controls.maxDistance = options.maxDist;
         controls.minPolarAngle = 0.15;
         controls.maxPolarAngle = Math.PI * 0.65;
-        controls.target.set(0, 0.05, 0);
+        controls.target.set(0.05, 0.05, 0);
         controls.update();
 
         const modelGroup = new THREE.Group();
@@ -1034,7 +1066,7 @@
         let lastPointerX = null;
         let lastPointerY = null;
         let lastPointerMoveAt = performance.now();
-        let isPointerIdle = false;
+        let isPointerIdle = true;
         let pointerIdleTimer = 0;
 
         const loader = new GLTFLoader();
@@ -1061,12 +1093,30 @@
                 }
               });
             });
-            neckGroup = model.getObjectByName('NeckGroup') || null;
-            headGroup = model.getObjectByName('HeadGroup') || null;
-            if (neckGroup) neckRestEuler.setFromQuaternion(neckGroup.quaternion, 'YXZ');
-            if (headGroup) headRestEuler.setFromQuaternion(headGroup.quaternion, 'YXZ');
 
             modelGroup.add(model);
+            model.updateMatrixWorld(true);
+
+            neckGroup = model.getObjectByName('NeckGroup') || null;
+            headGroup = model.getObjectByName('HeadGroup') || null;
+
+            // Neutralize any baked-in yaw in the GLB so resting head faces dead straight ahead
+            const bakedYawCorr = computeBakedHeadYawCorrection(headGroup);
+            if (Math.abs(bakedYawCorr) > 0.01) {
+              const neckRatio = neckGroup ? 0.26 : 0;
+              if (neckGroup) {
+                neckGroup.rotation.order = 'YXZ';
+                neckGroup.rotation.y += bakedYawCorr * neckRatio;
+              }
+              if (headGroup) {
+                headGroup.rotation.order = 'YXZ';
+                headGroup.rotation.y += bakedYawCorr * (1 - neckRatio);
+              }
+              model.updateMatrixWorld(true);
+            }
+
+            if (neckGroup) neckRestEuler.setFromQuaternion(neckGroup.quaternion, 'YXZ');
+            if (headGroup) headRestEuler.setFromQuaternion(headGroup.quaternion, 'YXZ');
 
             try {
               animController.init(model, gltf, {
@@ -1249,8 +1299,8 @@
         }
 
         function resetView() {
-          camera.position.set(0.18, 0.34, 3.45);
-          controls.target.set(0, 0.05, 0);
+          camera.position.set(0.05, 0.24, 3.45);
+          controls.target.set(0.05, 0.05, 0);
           controls.update();
           requestRender();
         }
