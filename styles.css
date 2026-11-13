@@ -3002,3 +3002,177 @@ body .hero.video-hero > .hero-note > i {
     letter-spacing: 1px !important;
   }
 }
+
+/* ============================================================
+   Valhalla 3D Interactive Controls & Fullscreen Inspector Modal
+   ============================================================ */
+.valhalla-3d-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 4px;
+  padding: 5px 7px;
+  border-radius: 12px;
+  background: rgba(7, 17, 29, 0.92);
+  border: 1px solid rgba(135, 226, 240, 0.28);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
+  pointer-events: auto;
+  position: relative;
+  z-index: 8;
+}
+
+.valhalla-3d-toolbar button {
+  appearance: none;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 7px;
+  border-radius: 7px;
+  border: 1px solid rgba(135, 226, 240, 0.22);
+  background: rgba(14, 34, 52, 0.95);
+  color: #cbe7ef;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.valhalla-3d-toolbar button:hover {
+  border-color: rgba(99, 243, 213, 0.65);
+  color: #ffffff;
+}
+
+.valhalla-3d-toolbar button.is-active {
+  background: #14494d;
+  border-color: rgba(99, 243, 213, 0.78);
+  color: #eafffa;
+}
+
+#valhalla-3d-modal[hidden] {
+  display: none !important;
+}
+
+#valhalla-3d-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100020;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(3, 8, 16, 0.88);
+}
+
+.v3d-modal-card {
+  width: min(980px, 95vw);
+  height: min(740px, 90vh);
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  border: 1px solid rgba(99, 243, 213, 0.32);
+  background: #07121f;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.72);
+  overflow: hidden;
+  direction: rtl;
+}
+
+.v3d-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 18px;
+  background: #0b1a2b;
+  border-bottom: 1px solid rgba(141, 211, 222, 0.2);
+}
+
+.v3d-modal-head h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #eaf9fc;
+}
+
+.v3d-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.v3d-modal-actions button {
+  appearance: none;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(141, 211, 222, 0.28);
+  background: #10253a;
+  color: #d9f3f8;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.v3d-modal-actions button:hover {
+  border-color: #63f3d5;
+  color: #ffffff;
+}
+
+#v3d-modal-close {
+  width: 36px;
+  padding: 0;
+  font-size: 20px;
+  line-height: 1;
+}
+
+#valhalla-modal-canvas {
+  flex: 1;
+  min-height: 280px;
+  width: 100%;
+  background: radial-gradient(circle at 50% 42%, #0e2238 0%, #050b14 75%);
+  cursor: grab;
+  touch-action: none;
+}
+
+#valhalla-modal-canvas:active {
+  cursor: grabbing;
+}
+
+.v3d-modal-hint {
+  margin: 0;
+  padding: 10px 18px;
+  font-size: 12px;
+  color: #9dc2cf;
+  background: #091624;
+  border-top: 1px solid rgba(141, 211, 222, 0.16);
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .valhalla-3d-toolbar {
+    gap: 4px;
+    padding: 4px 5px;
+  }
+  .valhalla-3d-toolbar button {
+    min-width: 24px;
+    height: 24px;
+    padding: 0 5px;
+    font-size: 10px;
+  }
+  #valhalla-3d-modal {
+    padding: 10px;
+  }
+  .v3d-modal-card {
+    width: 100%;
+    height: 86vh;
+  }
+  .v3d-modal-head h3 {
+    font-size: 12px;
+  }
+}
+
