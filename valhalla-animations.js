@@ -26,13 +26,16 @@ const _v2 = new THREE.Vector3();
 const _v3 = new THREE.Vector3();
 const _v4 = new THREE.Vector3();
 const _v5 = new THREE.Vector3();
+const _v6 = new THREE.Vector3();
 const _q1 = new THREE.Quaternion();
 const _q2 = new THREE.Quaternion();
 const _q3 = new THREE.Quaternion();
 const _q4 = new THREE.Quaternion();
 const _q5 = new THREE.Quaternion();
+const _q6 = new THREE.Quaternion();
 const _e1 = new THREE.Euler();
 const _m1 = new THREE.Matrix4();
+const _m2 = new THREE.Matrix4();
 
 function clamp(v, min, max) {
   return Math.max(min, Math.min(max, v));
@@ -243,13 +246,53 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
 
     let fingers = findByOverride(ov.fingers) || [];
     if (!fingers.length && hand) {
-      const fList = [];
+      const namedFingers = [];
       hand.traverse((child) => {
         if (child !== hand && /finger|thumb|index|middle|ring|pinky|digit|knuckle/i.test(child.name)) {
-          fList.push(child);
+          namedFingers.push(child);
         }
       });
-      fingers = deduplicateRoots(fList);
+      if (namedFingers.length) {
+        fingers = deduplicateRoots(namedFingers);
+      } else {
+        fingers = hand.children.filter((c) => !c.isMesh && c.children.length > 0);
+      }
+    }
+
+    const fingerMeta = [];
+    const palmInwardWorld = new THREE.Vector3(side === 'left' ? -1 : 1, 0, 0);
+    const tmpBox = new THREE.Box3();
+    const tmpCtr = new THREE.Vector3();
+    const tmpPivot = new THREE.Vector3();
+
+    if (hand && fingers.length) {
+      for (const fRoot of fingers) {
+        fRoot.updateMatrixWorld(true);
+        fRoot.getWorldPosition(tmpPivot);
+        tmpBox.setFromObject(fRoot);
+        if (tmpBox.isEmpty()) continue;
+        tmpBox.getCenter(tmpCtr);
+        const dirWorld = tmpCtr.clone().sub(tmpPivot);
+        if (dirWorld.lengthSq() < 1e-6) dirWorld.set(0, -1, 0);
+        dirWorld.normalize();
+
+        const curlAxisWorld = new THREE.Vector3().crossVectors(dirWorld, palmInwardWorld);
+        if (curlAxisWorld.lengthSq() < 1e-6) curlAxisWorld.set(0, 0, side === 'left' ? -1 : 1);
+        curlAxisWorld.normalize();
+
+        const fQuatInv = fRoot.getWorldQuaternion(new THREE.Quaternion()).invert();
+        const curlAxisLocal = curlAxisWorld.clone().applyQuaternion(fQuatInv).normalize();
+
+        const distal = fRoot.children.find((c) => !c.isMesh && c.children.length > 0) || null;
+        let distalAxisLocal = null;
+        if (distal) {
+          distal.updateMatrixWorld(true);
+          const dQuatInv = distal.getWorldQuaternion(new THREE.Quaternion()).invert();
+          distalAxisLocal = curlAxisWorld.clone().applyQuaternion(dQuatInv).normalize();
+        }
+
+        fingerMeta.push({ node: fRoot, curlAxisLocal, distal, distalAxisLocal });
+      }
     }
 
     const rest = {};
@@ -275,10 +318,45 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
 
       if (hand) {
         rest.handOffsetModel = model.worldToLocal(pH.clone()).sub(model.worldToLocal(pS.clone()));
+
+        hand.updateMatrixWorld(true);
+        const hPos = hand.getWorldPosition(new THREE.Vector3());
+        const hQuatInv = hand.getWorldQuaternion(new THREE.Quaternion()).invert();
+
+        let avgFingerWorld = new THREE.Vector3();
+        if (fingers.length) {
+          fingers.forEach((f) => avgFingerWorld.add(f.getWorldPosition(new THREE.Vector3())));
+          avgFingerWorld.divideScalar(fingers.length);
+        } else {
+          avgFingerWorld.copy(hPos).add(new THREE.Vector3(0, -0.08, 0));
+        }
+        const handDirWorld = avgFingerWorld.clone().sub(hPos);
+        const handDirLen = handDirWorld.length();
+        if (handDirLen > 1e-4) handDirWorld.normalize();
+        else handDirWorld.set(0, -1, 0);
+
+        const palmOutWorld = palmInwardWorld.clone();
+        palmOutWorld.addScaledVector(handDirWorld, -palmOutWorld.dot(handDirWorld)).normalize();
+        const sideAxisWorld = new THREE.Vector3().crossVectors(palmOutWorld, handDirWorld).normalize();
+
+        rest.handAxisLocal = handDirWorld.clone().applyQuaternion(hQuatInv).normalize();
+        rest.palmNormalLocal = palmOutWorld.clone().applyQuaternion(hQuatInv).normalize();
+        rest.handBasisLocal = new THREE.Matrix4().makeBasis(
+          sideAxisWorld.clone().applyQuaternion(hQuatInv).normalize(),
+          rest.palmNormalLocal,
+          rest.handAxisLocal
+        );
+        rest.handBasisLocalQuat = new THREE.Quaternion().setFromRotationMatrix(rest.handBasisLocal);
+
+        const palmDist = clamp(handDirLen * 0.72, 0.035, 0.065);
+        rest.palmOffsetLocal = rest.handAxisLocal
+          .clone()
+          .multiplyScalar(palmDist)
+          .addScaledVector(rest.palmNormalLocal, 0.038);
       }
     }
 
-    return { side, shoulder, upperArm, forearm, wristJoint, hand, shoulderRaven, fingers, rest };
+    return { side, shoulder, upperArm, forearm, wristJoint, hand, shoulderRaven, fingers, fingerMeta, rest };
   }
 
   const leftArm = resolveArmSide('left');
@@ -452,7 +530,11 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
   [head, neck, torso, legs, beard, ...eyes, ...brows].forEach(trackNode);
   [leftArm, rightArm].forEach((arm) => {
     if (!arm) return;
-    [arm.shoulder, arm.upperArm, arm.forearm, arm.wristJoint, arm.hand, arm.shoulderRaven, ...arm.fingers].forEach(trackNode);
+    [arm.shoulder, arm.upperArm, arm.forearm, arm.wristJoint, arm.hand, arm.shoulderRaven].forEach(trackNode);
+    for (const fm of arm.fingerMeta) {
+      trackNode(fm.node);
+      if (fm.distal) trackNode(fm.distal);
+    }
   });
 
   const eyeMaterials = [];
@@ -525,7 +607,7 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
           wristJoint: leftArm.wristJoint?.name || null,
           hand: leftArm.hand?.name || null,
           shoulderRaven: leftArm.shoulderRaven?.name || null,
-          fingers: leftArm.fingers.map((f) => f.name),
+          fingersCount: leftArm.fingerMeta.length,
         },
         rightArm: {
           shoulder: rightArm.shoulder?.name || null,
@@ -534,7 +616,7 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
           wristJoint: rightArm.wristJoint?.name || null,
           hand: rightArm.hand?.name || null,
           shoulderRaven: rightArm.shoulderRaven?.name || null,
-          fingers: rightArm.fingers.map((f) => f.name),
+          fingersCount: rightArm.fingerMeta.length,
         },
         spear: spearMeta ? { name: spearMeta.node.name, side: spearMeta.restSide, isBone: spearMeta.isBone, length: +spearMeta.length.toFixed(3) } : null,
         beard: beard?.name || null,
@@ -558,16 +640,66 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
 }
 
 /**
+ * Curls (positive angle) or opens (negative angle) an arm's fingers smoothly using measured local hinge axes.
+ */
+function applyFingerCurl(arm, restPoses, curlAngle, blend, perFingerOffsets = null) {
+  if (!arm || !arm.fingerMeta.length) return;
+  arm.fingerMeta.forEach((fm, idx) => {
+    const rf = restPoses.get(fm.node);
+    if (!rf) return;
+    const angle = curlAngle + (perFingerOffsets ? perFingerOffsets[idx] || 0 : 0);
+    _q1.setFromAxisAngle(fm.curlAxisLocal, angle);
+    _q2.copy(rf.quaternion).multiply(_q1);
+    fm.node.quaternion.copy(rf.quaternion).slerp(_q2, blend);
+
+    if (fm.distal && fm.distalAxisLocal) {
+      const rd = restPoses.get(fm.distal);
+      if (rd) {
+        _q3.setFromAxisAngle(fm.distalAxisLocal, angle * 0.78);
+        _q4.copy(rd.quaternion).multiply(_q3);
+        fm.distal.quaternion.copy(rd.quaternion).slerp(_q4, blend);
+      }
+    }
+  });
+}
+
+/**
+ * Orients a hand node in world space so its fingers point along targetFingersWorld
+ * and its palm faces along targetPalmWorld.
+ */
+function orientHandToWorld(arm, restPoses, targetFingersWorld, targetPalmWorld, blend) {
+  if (!arm?.hand || !arm.rest?.handBasisLocalQuat) return;
+  const hand = arm.hand;
+  const rh = restPoses.get(hand);
+  if (!rh || !hand.parent) return;
+
+  hand.parent.updateMatrixWorld(true);
+  const fDir = _v4.copy(targetFingersWorld).normalize();
+  const pDir = _v5.copy(targetPalmWorld).addScaledVector(fDir, -targetPalmWorld.dot(fDir));
+  if (pDir.lengthSq() < 1e-6) pDir.set(0, 1, 0);
+  pDir.normalize();
+  const sDir = _v6.crossVectors(pDir, fDir).normalize();
+
+  _m2.makeBasis(sDir, pDir, fDir);
+  const targetBasisWorldQuat = _q1.setFromRotationMatrix(_m2);
+  const desiredHandWorldQuat = _q2.copy(targetBasisWorldQuat).multiply(_q3.copy(arm.rest.handBasisLocalQuat).invert());
+  const parentWorldQuatInv = hand.parent.getWorldQuaternion(_q4).invert();
+  const desiredLocalQuat = parentWorldQuatInv.multiply(desiredHandWorldQuat);
+
+  hand.quaternion.copy(rh.quaternion).slerp(desiredLocalQuat, blend);
+  hand.updateMatrixWorld(true);
+}
+
+/**
  * Aims an arm cleanly toward a world-space hand target.
  * Supports both 2-bone (upperArm + forearm) and 1-piece shoulder-pivoted arm groups,
- * and stabilizes any shoulder-mounted raven so it stays perched upright.
+ * stabilizes any shoulder-mounted raven, and curls/opens fingers.
  */
 function solveArmIK(arm, targetWorldPos, poleWorldDir, restPoses, blend, fingerCurl = 0) {
   if (!arm || !arm.upperArm || blend <= 0.001) return;
 
   const upper = arm.upperArm;
   const fore = arm.forearm;
-  const hand = arm.hand;
   const restUpper = restPoses.get(upper);
   if (!restUpper) return;
 
@@ -663,21 +795,15 @@ function solveArmIK(arm, targetWorldPos, poleWorldDir, restPoses, blend, fingerC
     }
   }
 
-  if (hand && arm.fingers.length) {
-    const curlAngle = fingerCurl * 0.92 * blend * (arm.side === 'left' ? 1 : -1);
-    for (const finger of arm.fingers) {
-      const rf = restPoses.get(finger);
-      if (!rf) continue;
-      _e1.set(0, 0, curlAngle);
-      _q1.setFromEuler(_e1).multiply(rf.quaternion);
-      finger.quaternion.copy(rf.quaternion).slerp(_q1, blend);
-    }
+  if (Math.abs(fingerCurl) > 0.001) {
+    applyFingerCurl(arm, restPoses, fingerCurl * 0.92, blend);
   }
 }
 
 /**
  * Procedural Cyber-Viking LED Face & Terminal Renderer.
- * Supports MeshBasicMaterial (used by LedFaceDisplay) as well as Standard/Physical materials.
+ * Drives Coding Terminal, Surprised, Deep Thinking, Viking Laugh, and Combat Ready expressions
+ * cleanly on LedFaceDisplay (MeshBasicMaterial) as well as Standard/Physical materials.
  */
 class HolographicFaceDisplay {
   constructor(rig) {
@@ -874,25 +1000,33 @@ class HolographicFaceDisplay {
     this.renderAccum = 1;
   }
 
-  update(dt, time, codeMix, pulse, surpriseMix = 0) {
+  update(dt, time, codeMix, pulse, exprMix = 0, exprMode = 'surprised', exprParams = null) {
     const headRef = this.rig.head || this.rig.model;
     headRef.updateMatrixWorld(true);
     this.headInvMatrix.copy(headRef.matrixWorld).invert();
 
     this.uniforms.uValhallaCodeMix.value = codeMix;
     this.uniforms.uValhallaCodePulse.value = pulse;
-    this.uniforms.uValhallaSurpriseMix.value = surpriseMix;
+    this.uniforms.uValhallaSurpriseMix.value = exprMix;
     this.uniforms.uValhallaTime.value = time;
 
-    if (codeMix <= 0.01 && surpriseMix <= 0.01) return;
+    if (codeMix <= 0.01 && exprMix <= 0.01) return;
 
     this.renderAccum += dt;
     if (this.renderAccum < 1 / 26) return;
     const stepDt = this.renderAccum;
     this.renderAccum = 0;
 
-    if (surpriseMix > codeMix) {
-      this.drawSurprisedFaceCanvas(time, surpriseMix);
+    if (exprMix > codeMix) {
+      if (exprMode === 'thinking') {
+        this.drawThinkingFaceCanvas(time, exprMix, exprParams || {});
+      } else if (exprMode === 'laugh') {
+        this.drawLaughFaceCanvas(time, exprMix, exprParams || {});
+      } else if (exprMode === 'combat') {
+        this.drawCombatFaceCanvas(time, exprMix, exprParams || {});
+      } else {
+        this.drawSurprisedFaceCanvas(time, exprMix);
+      }
       this.texture.needsUpdate = true;
       return;
     }
@@ -982,6 +1116,241 @@ class HolographicFaceDisplay {
     ctx.textAlign = 'center';
     ctx.fillText('?!', w * 0.5, h * 0.25);
     ctx.textAlign = 'left';
+    ctx.shadowBlur = 0;
+  }
+
+  drawThinkingFaceCanvas(time, intensity, params) {
+    const ctx = this.ctx;
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+    const gazeY = params.gazeY ?? -12;
+    const gazeX = params.gazeX ?? 0;
+    const browRaise = params.browRaise ?? 0;
+    const blink = params.blink ?? 1;
+
+    ctx.fillStyle = '#030811';
+    ctx.fillRect(0, 0, w, h);
+
+    const glow = ctx.createRadialGradient(w * 0.5, h * 0.45, 18, w * 0.5, h * 0.45, w * 0.56);
+    glow.addColorStop(0, 'rgba(65, 224, 255, 0.13)');
+    glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, w, h);
+
+    const eyeY = h * 0.44;
+    const leftEyeX = w * 0.34;
+    const rightEyeX = w * 0.66;
+
+    ctx.strokeStyle = '#7bf5ff';
+    ctx.lineWidth = 10;
+    ctx.lineCap = 'round';
+    ctx.shadowBlur = 16;
+    ctx.shadowColor = 'rgba(72, 232, 255, 0.85)';
+
+    ctx.beginPath();
+    ctx.moveTo(leftEyeX - 36, eyeY - 58 - browRaise * 10);
+    ctx.quadraticCurveTo(leftEyeX, eyeY - 72 - browRaise * 14, leftEyeX + 34, eyeY - 54 - browRaise * 6);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(rightEyeX - 34, eyeY - 48 + browRaise * 4);
+    ctx.quadraticCurveTo(rightEyeX, eyeY - 55, rightEyeX + 36, eyeY - 52 - browRaise * 4);
+    ctx.stroke();
+
+    const rx = 38;
+    const ry = Math.max(5, 36 * blink);
+    [leftEyeX, rightEyeX].forEach((ex) => {
+      ctx.fillStyle = '#53eeff';
+      ctx.beginPath();
+      ctx.ellipse(ex, eyeY, rx, ry, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (blink > 0.35) {
+        const px = ex + gazeX * 14;
+        const py = eyeY + gazeY * 14;
+        ctx.fillStyle = '#031320';
+        ctx.beginPath();
+        ctx.arc(px, py, 14, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#e8fcff';
+        ctx.beginPath();
+        ctx.arc(px - 5, py - 5, 5.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+
+    ctx.strokeStyle = '#58eaff';
+    ctx.lineWidth = 8;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.43, h * 0.62);
+    ctx.quadraticCurveTo(w * 0.50, h * 0.605, w * 0.56, h * 0.615);
+    ctx.stroke();
+
+    for (let i = 0; i < 3; i++) {
+      const pulseDot = 0.35 + 0.65 * Math.max(0, Math.sin(time * 4.2 - i * 0.9));
+      ctx.fillStyle = `rgba(255, 165, 64, ${pulseDot * clamp(intensity, 0, 1)})`;
+      ctx.shadowColor = 'rgba(255, 150, 48, 0.8)';
+      ctx.beginPath();
+      ctx.arc(w * 0.44 + i * 28, h * 0.25, 5.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+  }
+
+  drawLaughFaceCanvas(time, intensity, params) {
+    const ctx = this.ctx;
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+    const laughAmp = params.laughAmp ?? 0.5;
+    const mouthOpen = params.mouthOpen ?? 0;
+
+    ctx.fillStyle = '#040a14';
+    ctx.fillRect(0, 0, w, h);
+
+    const glow = ctx.createRadialGradient(w * 0.5, h * 0.46, 20, w * 0.5, h * 0.46, w * 0.55);
+    glow.addColorStop(0, `rgba(72, 238, 255, ${0.14 + 0.08 * laughAmp})`);
+    glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, w, h);
+
+    const eyeY = h * 0.44;
+    const leftEyeX = w * 0.34;
+    const rightEyeX = w * 0.66;
+
+    ctx.strokeStyle = '#7bf6ff';
+    ctx.lineCap = 'round';
+    ctx.shadowBlur = 18;
+    ctx.shadowColor = 'rgba(75, 235, 255, 0.9)';
+
+    ctx.lineWidth = 9;
+    ctx.beginPath();
+    ctx.arc(leftEyeX, eyeY - 38 - laughAmp * 6, 40, Math.PI * 1.18, Math.PI * 1.82);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(rightEyeX, eyeY - 38 - laughAmp * 6, 40, Math.PI * 1.18, Math.PI * 1.82);
+    ctx.stroke();
+
+    ctx.lineWidth = 15;
+    ctx.strokeStyle = '#62f3ff';
+    [leftEyeX, rightEyeX].forEach((ex) => {
+      ctx.beginPath();
+      ctx.moveTo(ex - 34, eyeY + 8);
+      ctx.quadraticCurveTo(ex, eyeY - 26 - laughAmp * 6, ex + 34, eyeY + 8);
+      ctx.stroke();
+    });
+
+    const smileW = 54 + 10 * clamp(intensity, 0, 1);
+    const openH = 6 + mouthOpen * 22;
+    ctx.fillStyle = '#03121e';
+    ctx.strokeStyle = '#6cf4ff';
+    ctx.lineWidth = 8.5;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.5 - smileW, h * 0.59);
+    ctx.quadraticCurveTo(w * 0.5, h * 0.60 + openH * 0.15, w * 0.5 + smileW, h * 0.59);
+    ctx.quadraticCurveTo(w * 0.5, h * 0.65 + openH, w * 0.5 - smileW, h * 0.59);
+    ctx.closePath();
+    if (mouthOpen > 0.15) ctx.fill();
+    ctx.stroke();
+
+    ctx.shadowBlur = 0;
+  }
+
+  drawCombatFaceCanvas(time, intensity, params) {
+    const ctx = this.ctx;
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+    const scanX = params.scanX ?? 0;
+
+    ctx.fillStyle = '#03060d';
+    ctx.fillRect(0, 0, w, h);
+
+    const glow = ctx.createRadialGradient(w * 0.5, h * 0.44, 15, w * 0.5, h * 0.44, w * 0.55);
+    glow.addColorStop(0, 'rgba(65, 228, 255, 0.14)');
+    glow.addColorStop(0.75, 'rgba(255, 88, 28, 0.07)');
+    glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, w, h);
+
+    const eyeY = h * 0.44;
+    const leftEyeX = w * 0.34;
+    const rightEyeX = w * 0.66;
+
+    ctx.strokeStyle = '#80f6ff';
+    ctx.lineWidth = 11;
+    ctx.lineCap = 'round';
+    ctx.shadowBlur = 18;
+    ctx.shadowColor = 'rgba(72, 232, 255, 0.95)';
+
+    ctx.beginPath();
+    ctx.moveTo(leftEyeX - 38, eyeY - 46);
+    ctx.lineTo(leftEyeX + 36, eyeY - 24);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(rightEyeX + 38, eyeY - 46);
+    ctx.lineTo(rightEyeX - 36, eyeY - 24);
+    ctx.stroke();
+
+    const drawWarriorEye = (ex, isLeft) => {
+      ctx.save();
+      ctx.beginPath();
+      if (isLeft) {
+        ctx.moveTo(ex - 36, eyeY - 14);
+        ctx.lineTo(ex + 34, eyeY - 2);
+        ctx.lineTo(ex + 28, eyeY + 18);
+        ctx.lineTo(ex - 32, eyeY + 14);
+      } else {
+        ctx.moveTo(ex + 36, eyeY - 14);
+        ctx.lineTo(ex - 34, eyeY - 2);
+        ctx.lineTo(ex - 28, eyeY + 18);
+        ctx.lineTo(ex + 32, eyeY + 14);
+      }
+      ctx.closePath();
+      ctx.fillStyle = '#5ff3ff';
+      ctx.fill();
+      ctx.clip();
+
+      ctx.fillStyle = '#041421';
+      ctx.beginPath();
+      ctx.arc(ex + scanX * 18, eyeY + 4, 11, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(ex + scanX * 18 - 3, eyeY + 1, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    };
+
+    drawWarriorEye(leftEyeX, true);
+    drawWarriorEye(rightEyeX, false);
+
+    ctx.strokeStyle = '#53ecff';
+    ctx.lineWidth = 8.5;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.41, h * 0.62);
+    ctx.lineTo(w * 0.59, h * 0.62);
+    ctx.stroke();
+
+    ctx.strokeStyle = `rgba(255, 116, 36, ${0.65 * clamp(intensity, 0, 1)})`;
+    ctx.shadowColor = 'rgba(255, 116, 36, 0.85)';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(78, eyeY - 26);
+    ctx.lineTo(62, eyeY - 26);
+    ctx.lineTo(62, eyeY + 30);
+    ctx.lineTo(78, eyeY + 30);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(w - 78, eyeY - 26);
+    ctx.lineTo(w - 62, eyeY - 26);
+    ctx.lineTo(w - 62, eyeY + 30);
+    ctx.lineTo(w - 78, eyeY + 30);
+    ctx.stroke();
+
     ctx.shadowBlur = 0;
   }
 
@@ -1089,27 +1458,110 @@ class HolographicFaceDisplay {
 }
 
 /* ============================================================================
- * Built-in Cinematic Animations (Extended Durations)
+ * Helper: Attach Spear to Hand-Locked Pivot for Weapon Animations
+ * ========================================================================== */
+function createSpearPivotState(rig) {
+  const spear = rig.spear;
+  const startSide = spear?.restSide || 'right';
+  const activeArm = startSide === 'right' ? rig.rightArm : rig.leftArm;
+  rig.model.updateMatrixWorld(true);
+
+  const getHandModelPos = (arm) => {
+    if (arm?.hand) return rig.model.worldToLocal(arm.hand.getWorldPosition(new THREE.Vector3()));
+    if (arm?.upperArm) return rig.model.worldToLocal(arm.upperArm.getWorldPosition(new THREE.Vector3()));
+    return new THREE.Vector3(arm?.side === 'left' ? 0.35 : -0.35, 0.5, 0.15);
+  };
+
+  const restAnchorModel = activeArm?.hand
+    ? getHandModelPos(activeArm)
+    : rig.model.worldToLocal(spear.localGripCenter.clone().applyMatrix4(spear.node.matrixWorld));
+
+  const worldShaftDir = spear.localShaftAxis.clone().transformDirection(spear.node.matrixWorld);
+  const modelQuatInv = rig.model.getWorldQuaternion(new THREE.Quaternion()).invert();
+  const upModel = worldShaftDir.applyQuaternion(modelQuatInv).normalize();
+  const fwdModel = new THREE.Vector3(0, 0, 1);
+  fwdModel.addScaledVector(upModel, -fwdModel.dot(upModel));
+  if (fwdModel.lengthSq() < 1e-5) fwdModel.set(0, 0, 1);
+  fwdModel.normalize();
+  const rightModel = new THREE.Vector3().crossVectors(upModel, fwdModel).normalize();
+  const frontBasis = new THREE.Matrix4().makeBasis(rightModel, upModel, fwdModel);
+  const restPivotQuat = new THREE.Quaternion().setFromRotationMatrix(frontBasis);
+
+  const pivot = new THREE.Group();
+  pivot.name = '__ValhallaSpearAnimPivot';
+
+  return {
+    startSide,
+    activeArm,
+    restAnchorModel,
+    restPivotQuat,
+    pivot,
+    attached: false,
+  };
+}
+
+function attachSpearPivot(rig, pivotState) {
+  const sp = rig.spear;
+  if (!sp || !pivotState) return;
+  rig.model.updateMatrixWorld(true);
+  rig.model.add(pivotState.pivot);
+  pivotState.pivot.position.copy(pivotState.restAnchorModel);
+  pivotState.pivot.quaternion.copy(pivotState.restPivotQuat);
+  pivotState.pivot.updateMatrixWorld(true);
+  if (!sp.isBone) {
+    pivotState.pivot.attach(sp.node);
+    pivotState.attached = true;
+  }
+}
+
+function detachSpearPivot(rig, pivotState) {
+  const sp = rig.spear;
+  if (!pivotState) return;
+  if (pivotState.attached && sp && !sp.isBone) {
+    sp.restParent.attach(sp.node);
+    sp.node.position.copy(sp.restPosition);
+    sp.node.quaternion.copy(sp.restQuaternion);
+    sp.node.scale.copy(sp.restScale);
+  } else if (sp?.isBone) {
+    sp.node.position.copy(sp.restPosition);
+    sp.node.quaternion.copy(sp.restQuaternion);
+    sp.node.scale.copy(sp.restScale);
+  }
+  pivotState.pivot.removeFromParent();
+}
+
+function syncSpearBoneToPivot(rig, pivotState) {
+  const sp = rig.spear;
+  if (!sp?.isBone || !pivotState) return;
+  sp.node.parent.updateMatrixWorld(true);
+  const parentInv = _m1.copy(sp.node.parent.matrixWorld).invert();
+  const desiredWorldPos = pivotState.pivot.getWorldPosition(_v3);
+  const offsetWorld = sp.localGripCenter.clone().applyQuaternion(pivotState.pivot.getWorldQuaternion(_q3));
+  desiredWorldPos.sub(offsetWorld);
+  sp.node.position.copy(desiredWorldPos.applyMatrix4(parentInv));
+  const parentQuatInv = sp.node.parent.getWorldQuaternion(_q4).invert();
+  sp.node.quaternion.copy(parentQuatInv.multiply(pivotState.pivot.getWorldQuaternion(_q3)));
+}
+
+/* ============================================================================
+ * Built-in Cinematic Animations (01–03 Preserved + 04–07 Expansion Pack 02)
  * ========================================================================== */
 
 /**
- * 1. Hand-Locked Spear Spin & Front Chest Transfer (11.0s)
+ * 01. One-Handed Spear Spinning & Hand-to-Hand Transfer (11.0s)
  */
 function createSpearSpinAnimation() {
   return {
     id: 'spearSpin',
-    label: 'Hand-Driven Spear Spin & Transfer',
+    label: 'One-Handed Spear Spin & Transfer',
     duration: 11.0,
     canPlay(rig) {
       return rig.capabilities.hasSpear && rig.capabilities.hasArms;
     },
     createState(rig) {
-      const spear = rig.spear;
-      const startSide = spear.restSide || 'right';
+      const base = createSpearPivotState(rig);
       const rightArm = rig.rightArm;
       const leftArm = rig.leftArm;
-
-      rig.model.updateMatrixWorld(true);
 
       const getHandModelPos = (arm) => {
         if (arm?.hand) return rig.model.worldToLocal(arm.hand.getWorldPosition(new THREE.Vector3()));
@@ -1129,71 +1581,22 @@ function createSpearSpinAnimation() {
       const shoulderZ = (sR.z + sL.z) * 0.5;
       const armLen = Math.max(rightArm?.rest?.upperLength || 0.44, leftArm?.rest?.upperLength || 0.44);
 
-      const rightRestHandModel = getHandModelPos(rightArm);
-      const leftRestHandModel = getHandModelPos(leftArm);
-      const rightSpinHandModel = new THREE.Vector3(sR.x + 0.07, shoulderY - 0.03, shoulderZ + armLen * 0.94);
-      const leftSpinHandModel = new THREE.Vector3(sL.x - 0.07, shoulderY - 0.03, shoulderZ + armLen * 0.94);
-      const rightMeetHandModel = new THREE.Vector3(midX - 0.07, shoulderY - 0.02, shoulderZ + armLen * 0.88);
-      const leftMeetHandModel = new THREE.Vector3(midX + 0.07, shoulderY - 0.02, shoulderZ + armLen * 0.88);
-      const rightGuardHandModel = new THREE.Vector3(sR.x - 0.04, shoulderY - 0.22, shoulderZ + armLen * 0.65);
-      const leftGuardHandModel = new THREE.Vector3(sL.x + 0.04, shoulderY - 0.22, shoulderZ + armLen * 0.65);
-
-      const restGripWorld = spear.localGripCenter.clone().applyMatrix4(spear.node.matrixWorld);
-      const restAnchorModel =
-        startSide === 'right' && rightArm?.hand
-          ? rightRestHandModel.clone()
-          : startSide === 'left' && leftArm?.hand
-          ? leftRestHandModel.clone()
-          : rig.model.worldToLocal(restGripWorld.clone());
-
-      const worldShaftDir = spear.localShaftAxis.clone().transformDirection(spear.node.matrixWorld);
-      const modelQuatInv = rig.model.getWorldQuaternion(new THREE.Quaternion()).invert();
-      const upModel = worldShaftDir.applyQuaternion(modelQuatInv).normalize();
-      const fwdModel = new THREE.Vector3(0, 0, 1);
-      fwdModel.addScaledVector(upModel, -fwdModel.dot(upModel));
-      if (fwdModel.lengthSq() < 1e-5) fwdModel.set(0, 0, 1);
-      fwdModel.normalize();
-      const rightModel = new THREE.Vector3().crossVectors(upModel, fwdModel).normalize();
-      const frontBasis = new THREE.Matrix4().makeBasis(rightModel, upModel, fwdModel);
-      const restPivotQuat = new THREE.Quaternion().setFromRotationMatrix(frontBasis);
-
-      const pivot = new THREE.Group();
-      pivot.name = '__ValhallaSpearAnimPivot';
-
       return {
-        startSide,
-        sR,
-        sL,
-        midX,
-        rightRestHandModel,
-        leftRestHandModel,
-        rightSpinHandModel,
-        leftSpinHandModel,
-        rightMeetHandModel,
-        leftMeetHandModel,
-        rightGuardHandModel,
-        leftGuardHandModel,
-        restAnchorModel,
-        restPivotQuat,
-        pivot,
-        attached: false,
+        ...base,
+        rightSpinHandModel: new THREE.Vector3(sR.x + 0.07, shoulderY - 0.03, shoulderZ + armLen * 0.94),
+        leftSpinHandModel: new THREE.Vector3(sL.x - 0.07, shoulderY - 0.03, shoulderZ + armLen * 0.94),
+        rightMeetHandModel: new THREE.Vector3(midX - 0.07, shoulderY - 0.02, shoulderZ + armLen * 0.88),
+        leftMeetHandModel: new THREE.Vector3(midX + 0.07, shoulderY - 0.02, shoulderZ + armLen * 0.88),
+        rightGuardHandModel: new THREE.Vector3(sR.x - 0.04, shoulderY - 0.22, shoulderZ + armLen * 0.65),
+        leftGuardHandModel: new THREE.Vector3(sL.x + 0.04, shoulderY - 0.22, shoulderZ + armLen * 0.65),
+        rightRestHandModel: getHandModelPos(rightArm),
+        leftRestHandModel: getHandModelPos(leftArm),
       };
     },
     onEnter(rig, state) {
-      const sp = rig.spear;
-      rig.model.updateMatrixWorld(true);
-      rig.model.add(state.pivot);
-      state.pivot.position.copy(state.restAnchorModel);
-      state.pivot.quaternion.copy(state.restPivotQuat);
-      state.pivot.updateMatrixWorld(true);
-
-      if (!sp.isBone) {
-        state.pivot.attach(sp.node);
-        state.attached = true;
-      }
+      attachSpearPivot(rig, state);
     },
     update(rig, state, t, dt, blend) {
-      const sp = rig.spear;
       const domIsRight = state.startSide === 'right';
       const domSign = domIsRight ? -1 : 1;
 
@@ -1214,7 +1617,6 @@ function createSpearSpinAnimation() {
       const meet2 = smoothstep(8.45, 8.90, t) * (1 - smoothstep(9.50, 9.95, t));
       const meetBlend = clamp(meet1 + meet2, 0, 1);
 
-      // 4 full turns in dominant hand + 1 pass turn + 4 full turns in opposite hand + 1 pass-back turn
       const p1 = easeInOutCubic(clamp((t - 0.95) / 3.40, 0, 1)) * (Math.PI * 8);
       const passSpin = easeInOutCubic(clamp((t - 4.55) / 0.70, 0, 1)) * (Math.PI * 2);
       const p2 = easeInOutCubic(clamp((t - 5.25) / 3.45, 0, 1)) * (Math.PI * 8);
@@ -1270,16 +1672,14 @@ function createSpearSpinAnimation() {
         }
       }
 
-      const rightArmWeight = stageBlend * blend;
-      const leftArmWeight = stageBlend * blend;
-
+      const armWeight = stageBlend * blend;
       if (rig.rightArm?.upperArm) {
         const rightWorld = rig.model.localToWorld(rightTargetModel.clone());
-        solveArmIK(rig.rightArm, rightWorld, new THREE.Vector3(-0.5, -0.7, -0.4), rig.restPoses, rightArmWeight, 0.8);
+        solveArmIK(rig.rightArm, rightWorld, new THREE.Vector3(-0.5, -0.7, -0.4), rig.restPoses, armWeight, 0.8);
       }
       if (rig.leftArm?.upperArm) {
         const leftWorld = rig.model.localToWorld(leftTargetModel.clone());
-        solveArmIK(rig.leftArm, leftWorld, new THREE.Vector3(0.5, -0.7, -0.4), rig.restPoses, leftArmWeight, 0.8);
+        solveArmIK(rig.leftArm, leftWorld, new THREE.Vector3(0.5, -0.7, -0.4), rig.restPoses, armWeight, 0.8);
       }
 
       const applyWristTwirl = (arm, activeAmount) => {
@@ -1318,36 +1718,16 @@ function createSpearSpinAnimation() {
       state.pivot.quaternion.copy(state.restPivotQuat).slerp(animPivotQuat, blend);
       state.pivot.updateMatrixWorld(true);
 
-      if (sp.isBone) {
-        sp.node.parent.updateMatrixWorld(true);
-        const parentInv = _m1.copy(sp.node.parent.matrixWorld).invert();
-        const desiredWorldPos = state.pivot.getWorldPosition(_v3);
-        const offsetWorld = sp.localGripCenter.clone().applyQuaternion(state.pivot.getWorldQuaternion(_q3));
-        desiredWorldPos.sub(offsetWorld);
-        sp.node.position.copy(desiredWorldPos.applyMatrix4(parentInv));
-        const parentQuatInv = sp.node.parent.getWorldQuaternion(_q4).invert();
-        sp.node.quaternion.copy(parentQuatInv.multiply(state.pivot.getWorldQuaternion(_q3)));
-      }
+      syncSpearBoneToPivot(rig, state);
     },
     onExit(rig, state) {
-      const sp = rig.spear;
-      if (state.attached && sp && !sp.isBone) {
-        sp.restParent.attach(sp.node);
-        sp.node.position.copy(sp.restPosition);
-        sp.node.quaternion.copy(sp.restQuaternion);
-        sp.node.scale.copy(sp.restScale);
-      } else if (sp?.isBone) {
-        sp.node.position.copy(sp.restPosition);
-        sp.node.quaternion.copy(sp.restQuaternion);
-        sp.node.scale.copy(sp.restScale);
-      }
-      state.pivot.removeFromParent();
+      detachSpearPivot(rig, state);
     },
   };
 }
 
 /**
- * 2. Surprised / Amazed Reaction (8.0s)
+ * 02. Surprised / Amazed Reaction (8.0s)
  */
 function createSurprisedReactionAnimation() {
   return {
@@ -1419,7 +1799,7 @@ function createSurprisedReactionAnimation() {
       for (const m of rig.morphBindings.browUp) m.mesh.morphTargetInfluences[m.index] = 0.92 * exprLevel;
       for (const m of rig.morphBindings.surprise) m.mesh.morphTargetInfluences[m.index] = 0.88 * exprLevel;
 
-      context.faceDisplay?.update(dt, state.time, 0, 0, exprLevel);
+      context.faceDisplay?.update(dt, state.time, 0, 0, exprLevel, 'surprised');
 
       if (state.freeArm?.upperArm) {
         const targetModel = state.chinTargetModel.clone();
@@ -1453,7 +1833,7 @@ function createSurprisedReactionAnimation() {
 }
 
 /**
- * 3. Holographic Coding / Hacker Mode (12.5s)
+ * 03. Holographic Coding / Hacker Mode (12.5s)
  */
 function createCodingModeAnimation() {
   return {
@@ -1491,7 +1871,7 @@ function createCodingModeAnimation() {
         }
       }
 
-      context.faceDisplay?.update(dt, state.time, codeMix, pulse, 0);
+      context.faceDisplay?.update(dt, state.time, codeMix, pulse, 0, 'code');
     },
     onExit(rig, state, context) {
       context.faceDisplay?.update(0, 0, 0, 0, 0);
@@ -1499,8 +1879,802 @@ function createCodingModeAnimation() {
   };
 }
 
+/**
+ * 04. Deep Thinking / Intelligence Mode (6.4s)
+ */
+function createDeepThinkingAnimation() {
+  return {
+    id: 'deepThinking',
+    label: 'Deep Thinking / Intelligence Mode',
+    duration: 6.4,
+    canPlay() {
+      return true;
+    },
+    createState(rig) {
+      const spearSide = rig.spear?.restSide || 'right';
+      const freeSide = spearSide === 'right' ? 'left' : 'right';
+      const freeArm = freeSide === 'left' ? rig.leftArm : rig.rightArm;
+      const sideSign = freeSide === 'left' ? 1 : -1;
+
+      rig.model.updateMatrixWorld(true);
+      let beardTargetModel = new THREE.Vector3(sideSign * 0.08, 1.06, 0.34);
+      if (rig.beard) {
+        const bBox = measureObjectBoxInSpace(rig.beard, rig.model);
+        if (bBox) {
+          const ctr = bBox.getCenter(new THREE.Vector3());
+          const sz = bBox.getSize(new THREE.Vector3());
+          beardTargetModel.set(ctr.x + sideSign * sz.x * 0.16, ctr.y + sz.y * 0.06, bBox.max.z + 0.03);
+        }
+      } else if (rig.head) {
+        const hBox = measureObjectBoxInSpace(rig.head, rig.model);
+        if (hBox) {
+          const ctr = hBox.getCenter(new THREE.Vector3());
+          const sz = hBox.getSize(new THREE.Vector3());
+          beardTargetModel.set(ctr.x + sideSign * sz.x * 0.10, hBox.min.y + sz.y * 0.14, hBox.max.z - sz.z * 0.03);
+        }
+      }
+
+      return { freeArm, sideSign, beardTargetModel, time: 0 };
+    },
+    update(rig, state, t, dt, blend, context) {
+      state.time += dt;
+
+      const poseEnvelope = smoothstep(0.30, 1.25, t) * (1 - smoothstep(5.00, 6.25, t));
+      const handReach = easeInOutCubic(clamp((t - 0.45) / 1.30, 0, 1)) * (1 - easeInOutCubic(clamp((t - 4.80) / 1.35, 0, 1)));
+      const strokeActive = smoothstep(1.65, 2.15, t) * (1 - smoothstep(4.50, 4.95, t));
+      const strokeWave = Math.sin(t * 2.6) * strokeActive;
+
+      const upLook = smoothstep(1.10, 1.85, t) * (1 - smoothstep(3.05, 3.65, t));
+      const downLook = smoothstep(3.35, 3.85, t) * (1 - smoothstep(4.35, 4.95, t));
+      const gazeY = -0.82 * upLook + 0.68 * downLook;
+      const gazeX = state.sideSign * 0.28 * upLook;
+      const browRaise = 0.75 * upLook + 0.25 * poseEnvelope;
+      const blink = t > 2.55 && t < 2.75 ? 1 - Math.sin(((t - 2.55) / 0.20) * Math.PI) * 0.85 : 1;
+
+      if (rig.head) {
+        const rh = rig.restPoses.get(rig.head);
+        if (rh) {
+          const pitch = (-0.06 * upLook + 0.09 * downLook + strokeWave * 0.014) * poseEnvelope;
+          const yaw = state.sideSign * 0.09 * poseEnvelope;
+          const roll = state.sideSign * -0.10 * poseEnvelope;
+          _q1.setFromEuler(_e1.set(pitch, yaw, roll)).multiply(rh.quaternion);
+          rig.head.quaternion.slerp(_q1, blend);
+        }
+      }
+
+      if (rig.torso) {
+        const rt = rig.restPoses.get(rig.torso);
+        if (rt) {
+          const lean = (0.025 * downLook - 0.015 * upLook) * poseEnvelope;
+          const twist = state.sideSign * -0.04 * poseEnvelope;
+          _q1.setFromEuler(_e1.set(lean, twist, 0)).multiply(rt.quaternion);
+          rig.torso.quaternion.copy(rt.quaternion).slerp(_q1, blend);
+          if (rig.legs) {
+            const rl = rig.restPoses.get(rig.legs);
+            if (rl) {
+              _q2.setFromEuler(_e1.set(-lean * 0.85, -twist * 0.85, 0)).multiply(rl.quaternion);
+              rig.legs.quaternion.copy(rl.quaternion).slerp(_q2, blend);
+            }
+          }
+        }
+      }
+
+      const exprLevel = clamp(smoothstep(0.20, 0.85, t) * (1 - smoothstep(5.20, 6.10, t)) * blend, 0, 1);
+      context.faceDisplay?.update(dt, state.time, 0, 0, exprLevel, 'thinking', {
+        gazeY,
+        gazeX,
+        browRaise,
+        blink,
+      });
+
+      if (state.freeArm?.upperArm) {
+        const targetModel = state.beardTargetModel.clone();
+        targetModel.y += strokeWave * 0.015;
+        targetModel.z += Math.cos(t * 2.6) * 0.008 * strokeActive;
+        const targetWorld = rig.model.localToWorld(targetModel);
+        solveArmIK(
+          state.freeArm,
+          targetWorld,
+          new THREE.Vector3(state.sideSign * 0.5, -0.65, -0.5),
+          rig.restPoses,
+          handReach * blend,
+          0
+        );
+
+        const baseCurl = 0.42 + 0.16 * strokeWave;
+        applyFingerCurl(state.freeArm, rig.restPoses, baseCurl, handReach * blend, [
+          -0.08 * strokeWave,
+          0.08 * strokeWave,
+          0.14,
+          0.22,
+          -0.12,
+        ]);
+
+        const wNode = state.freeArm.hand || state.freeArm.wristJoint;
+        if (wNode) {
+          const rw = rig.restPoses.get(wNode);
+          if (rw) {
+            _q1.setFromEuler(_e1.set(-0.28 * handReach, state.sideSign * 0.22 * handReach, strokeWave * 0.09)).multiply(rw.quaternion);
+            wNode.quaternion.copy(rw.quaternion).slerp(_q1, blend);
+          }
+        }
+      }
+    },
+    onExit(rig, state, context) {
+      context.faceDisplay?.update(0, 0, 0, 0, 0);
+    },
+  };
+}
+
+/**
+ * 05. Amused / Confident Viking Laugh (5.2s)
+ */
+function createVikingLaughAnimation() {
+  return {
+    id: 'vikingLaugh',
+    label: 'Amused / Confident Viking Laugh',
+    duration: 5.2,
+    canPlay() {
+      return true;
+    },
+    createState(rig) {
+      const spearSide = rig.spear?.restSide || 'right';
+      const freeSide = spearSide === 'right' ? 'left' : 'right';
+      const freeArm = freeSide === 'left' ? rig.leftArm : rig.rightArm;
+      const spearArm = spearSide === 'right' ? rig.rightArm : rig.leftArm;
+      const sideSign = freeSide === 'left' ? 1 : -1;
+
+      const spearPivot = rig.spear ? createSpearPivotState(rig) : null;
+
+      rig.model.updateMatrixWorld(true);
+      let beardTargetModel = new THREE.Vector3(sideSign * 0.09, 1.03, 0.34);
+      if (rig.head) {
+        const hBox = measureObjectBoxInSpace(rig.head, rig.model);
+        if (hBox) {
+          const ctr = hBox.getCenter(new THREE.Vector3());
+          const sz = hBox.getSize(new THREE.Vector3());
+          beardTargetModel.set(ctr.x + sideSign * sz.x * 0.15, hBox.min.y + sz.y * 0.14, hBox.max.z - sz.z * 0.03);
+        }
+      }
+
+      return { freeArm, spearArm, sideSign, beardTargetModel, spearPivot, time: 0 };
+    },
+    onEnter(rig, state) {
+      if (state.spearPivot) attachSpearPivot(rig, state.spearPivot);
+    },
+    update(rig, state, t, dt, blend, context) {
+      state.time += dt;
+
+      const exprEnv = smoothstep(0.25, 0.95, t) * (1 - smoothstep(4.00, 4.95, t));
+      const laughEnv = smoothstep(1.05, 1.45, t) * (1 - smoothstep(3.05, 3.65, t));
+      const chucklePulse = Math.max(0, Math.sin((t - 1.05) * 10.5));
+      const laughAmp = laughEnv * (0.45 + 0.55 * chucklePulse);
+      const mouthOpen = laughEnv * (0.28 + 0.72 * chucklePulse);
+
+      const handReach = easeInOutCubic(clamp((t - 1.75) / 0.65, 0, 1)) * (1 - easeInOutCubic(clamp((t - 3.65) / 0.85, 0, 1)));
+      const strokeWave = Math.sin(t * 4.5) * smoothstep(2.25, 2.55, t) * (1 - smoothstep(3.35, 3.65, t));
+
+      if (rig.head) {
+        const rh = rig.restPoses.get(rig.head);
+        if (rh) {
+          const noticeYaw = state.sideSign * -0.10 * smoothstep(0.0, 0.6, t) * (1 - smoothstep(3.8, 5.0, t));
+          const headBack = -0.11 * laughEnv - 0.032 * chucklePulse * laughEnv;
+          const headRoll = state.sideSign * 0.05 * exprEnv;
+          _q1.setFromEuler(_e1.set(headBack, noticeYaw, headRoll)).multiply(rh.quaternion);
+          rig.head.quaternion.slerp(_q1, blend);
+        }
+      }
+
+      if (rig.torso) {
+        const rt = rig.restPoses.get(rig.torso);
+        if (rt) {
+          const chestBack = -0.045 * laughEnv - 0.018 * chucklePulse * laughEnv;
+          const twist = state.sideSign * -0.04 * exprEnv;
+          _q1.setFromEuler(_e1.set(chestBack, twist, 0)).multiply(rt.quaternion);
+          rig.torso.quaternion.copy(rt.quaternion).slerp(_q1, blend);
+          if (rig.legs) {
+            const rl = rig.restPoses.get(rig.legs);
+            if (rl) {
+              _q2.setFromEuler(_e1.set(-chestBack * 0.85, -twist * 0.85, 0)).multiply(rl.quaternion);
+              rig.legs.quaternion.copy(rl.quaternion).slerp(_q2, blend);
+            }
+          }
+        }
+      }
+
+      if (state.spearArm?.upperArm) {
+        const rs = rig.restPoses.get(state.spearArm.upperArm);
+        if (rs) {
+          const shoulderBob = -0.045 * chucklePulse * laughEnv;
+          _q1.setFromEuler(_e1.set(shoulderBob, 0, state.sideSign * 0.03 * laughEnv)).multiply(rs.quaternion);
+          state.spearArm.upperArm.quaternion.copy(rs.quaternion).slerp(_q1, blend);
+        }
+      }
+
+      if (state.freeArm?.upperArm) {
+        if (handReach > 0.01) {
+          const targetModel = state.beardTargetModel.clone();
+          targetModel.y += strokeWave * 0.016 - 0.012 * chucklePulse * laughEnv;
+          const targetWorld = rig.model.localToWorld(targetModel);
+          solveArmIK(
+            state.freeArm,
+            targetWorld,
+            new THREE.Vector3(state.sideSign * 0.5, -0.65, -0.5),
+            rig.restPoses,
+            handReach * blend,
+            0.48 + 0.14 * strokeWave
+          );
+        } else {
+          const rf = rig.restPoses.get(state.freeArm.upperArm);
+          if (rf) {
+            const shoulderBob = -0.05 * chucklePulse * laughEnv;
+            _q1.setFromEuler(_e1.set(shoulderBob, 0, -state.sideSign * 0.03 * laughEnv)).multiply(rf.quaternion);
+            state.freeArm.upperArm.quaternion.copy(rf.quaternion).slerp(_q1, blend);
+          }
+        }
+      }
+
+      context.faceDisplay?.update(dt, state.time, 0, 0, clamp(exprEnv * blend, 0, 1), 'laugh', {
+        laughAmp,
+        mouthOpen,
+      });
+
+      if (state.spearPivot) {
+        rig.model.updateMatrixWorld(true);
+        const liveHandModel = state.spearPivot.activeArm?.hand
+          ? rig.model.worldToLocal(state.spearPivot.activeArm.hand.getWorldPosition(new THREE.Vector3()))
+          : state.spearPivot.restAnchorModel;
+        state.spearPivot.pivot.position.lerpVectors(state.spearPivot.restAnchorModel, liveHandModel, blend);
+        const subtleTilt = _q1.setFromEuler(_e1.set(0.03 * laughEnv, 0, 0));
+        state.spearPivot.pivot.quaternion.copy(state.spearPivot.restPivotQuat).multiply(subtleTilt);
+        state.spearPivot.pivot.updateMatrixWorld(true);
+        syncSpearBoneToPivot(rig, state.spearPivot);
+      }
+    },
+    onExit(rig, state, context) {
+      if (state.spearPivot) detachSpearPivot(rig, state.spearPivot);
+      context.faceDisplay?.update(0, 0, 0, 0, 0);
+    },
+  };
+}
+
+/**
+ * 06. Combat Ready / Warrior Alert (6.0s)
+ */
+function createCombatReadyAnimation() {
+  return {
+    id: 'combatReady',
+    label: 'Combat Ready / Warrior Alert',
+    duration: 6.0,
+    canPlay(rig) {
+      return rig.capabilities.hasSpear && rig.capabilities.hasArms;
+    },
+    createState(rig) {
+      const base = createSpearPivotState(rig);
+      const rightArm = rig.rightArm;
+      const leftArm = rig.leftArm;
+
+      const getShoulderModelPos = (arm) => {
+        if (arm?.upperArm) return rig.model.worldToLocal(arm.upperArm.getWorldPosition(new THREE.Vector3()));
+        return new THREE.Vector3(arm?.side === 'left' ? 0.32 : -0.32, 0.9, 0);
+      };
+
+      const sR = getShoulderModelPos(rightArm);
+      const sL = getShoulderModelPos(leftArm);
+      const midX = (sR.x + sL.x) * 0.5;
+      const shoulderY = (sR.y + sL.y) * 0.5;
+      const shoulderZ = (sR.z + sL.z) * 0.5;
+      const armLen = Math.max(rightArm?.rest?.upperLength || 0.44, leftArm?.rest?.upperLength || 0.44);
+
+      const rightCombatHandModel = new THREE.Vector3(sR.x + 0.05, shoulderY - 0.14, shoulderZ + armLen * 0.86);
+      const leftCombatGuardHandModel = new THREE.Vector3(midX + 0.09, shoulderY - 0.08, shoulderZ + armLen * 0.90);
+
+      return {
+        ...base,
+        rightCombatHandModel,
+        leftCombatGuardHandModel,
+        time: 0,
+      };
+    },
+    onEnter(rig, state) {
+      attachSpearPivot(rig, state);
+    },
+    update(rig, state, t, dt, blend, context) {
+      state.time += dt;
+
+      const alertSnap = easeOutBack(clamp(t / 0.40, 0, 1), 1.15) * (1 - easeInOutCubic(clamp((t - 4.70) / 1.15, 0, 1)));
+      const stanceU = easeInOutCubic(clamp((t - 0.15) / 0.95, 0, 1)) * (1 - easeInOutCubic(clamp((t - 4.55) / 1.35, 0, 1)));
+      const breath = Math.sin(t * 2.8) * 0.012 * stanceU;
+
+      const scanWave = Math.sin((t - 1.35) * 1.9) * smoothstep(1.30, 1.85, t) * (1 - smoothstep(4.10, 4.65, t));
+
+      if (rig.torso) {
+        const rt = rig.restPoses.get(rig.torso);
+        if (rt) {
+          const stanceYaw = 0.20 * stanceU;
+          const stanceLean = 0.055 * stanceU + breath * 0.5;
+          _q1.setFromEuler(_e1.set(stanceLean, stanceYaw, 0)).multiply(rt.quaternion);
+          rig.torso.quaternion.copy(rt.quaternion).slerp(_q1, blend);
+          if (rig.legs) {
+            const rl = rig.restPoses.get(rig.legs);
+            if (rl) {
+              _q2.setFromEuler(_e1.set(-stanceLean * 0.85, -stanceYaw * 0.72, 0)).multiply(rl.quaternion);
+              rig.legs.quaternion.copy(rl.quaternion).slerp(_q2, blend);
+            }
+          }
+        }
+      }
+
+      if (rig.head) {
+        const rh = rig.restPoses.get(rig.head);
+        if (rh) {
+          const headYaw = (-0.16 * stanceU + scanWave * 0.15);
+          const headPitch = 0.06 * alertSnap;
+          _q1.setFromEuler(_e1.set(headPitch, headYaw, 0)).multiply(rh.quaternion);
+          rig.head.quaternion.slerp(_q1, blend);
+        }
+      }
+
+      const armWeight = stanceU * blend;
+      if (rig.rightArm?.upperArm) {
+        const rTarget = state.rightCombatHandModel.clone();
+        rTarget.y += breath;
+        const rightWorld = rig.model.localToWorld(rTarget);
+        solveArmIK(rig.rightArm, rightWorld, new THREE.Vector3(-0.5, -0.7, -0.4), rig.restPoses, armWeight, 0.92);
+
+        const wNode = rig.rightArm.hand || rig.rightArm.wristJoint;
+        if (wNode) {
+          const rw = rig.restPoses.get(wNode);
+          if (rw) {
+            _q1.setFromEuler(_e1.set(-0.32 * stanceU, -0.18 * stanceU, 0.20 * stanceU)).multiply(rw.quaternion);
+            wNode.quaternion.copy(rw.quaternion).slerp(_q1, blend);
+          }
+        }
+      }
+
+      if (rig.leftArm?.upperArm) {
+        const lTarget = state.leftCombatGuardHandModel.clone();
+        lTarget.y += breath * 0.8;
+        const leftWorld = rig.model.localToWorld(lTarget);
+        solveArmIK(rig.leftArm, leftWorld, new THREE.Vector3(0.5, -0.7, -0.4), rig.restPoses, armWeight, 0.85);
+
+        const wNode = rig.leftArm.hand || rig.leftArm.wristJoint;
+        if (wNode) {
+          const rw = rig.restPoses.get(wNode);
+          if (rw) {
+            _q1.setFromEuler(_e1.set(-0.42 * stanceU, 0.26 * stanceU, 0)).multiply(rw.quaternion);
+            wNode.quaternion.copy(rw.quaternion).slerp(_q1, blend);
+          }
+        }
+      }
+
+      rig.model.updateMatrixWorld(true);
+      const liveRightModel = rig.rightArm?.hand
+        ? rig.model.worldToLocal(rig.rightArm.hand.getWorldPosition(new THREE.Vector3()))
+        : state.rightCombatHandModel;
+
+      state.pivot.position.lerpVectors(state.restAnchorModel, liveRightModel, stanceU * blend);
+
+      const combatTiltQuat = _q1.setFromEuler(_e1.set(0.52 * stanceU, 0.08 * stanceU, -0.36 * stanceU));
+      const animPivotQuat = state.restPivotQuat.clone().multiply(combatTiltQuat);
+      state.pivot.quaternion.copy(state.restPivotQuat).slerp(animPivotQuat, blend);
+      state.pivot.updateMatrixWorld(true);
+      syncSpearBoneToPivot(rig, state);
+
+      context.faceDisplay?.update(dt, state.time, 0, 0, clamp(alertSnap * blend, 0, 1), 'combat', {
+        scanX: scanWave,
+      });
+    },
+    onExit(rig, state, context) {
+      detachSpearPivot(rig, state);
+      context.faceDisplay?.update(0, 0, 0, 0, 0);
+    },
+  };
+}
+
+/**
+ * 07. Power Surge / Summoning Energy (7.4s)
+ */
+function createPowerSurgeEffects() {
+  const fxGroup = new THREE.Group();
+  fxGroup.name = '__ValhallaPowerSurgeFX';
+
+  const spriteCanvas = document.createElement('canvas');
+  spriteCanvas.width = 128;
+  spriteCanvas.height = 128;
+  const sCtx = spriteCanvas.getContext('2d');
+  const sGrad = sCtx.createRadialGradient(64, 64, 2, 64, 64, 64);
+  sGrad.addColorStop(0.0, 'rgba(255, 250, 225, 1.0)');
+  sGrad.addColorStop(0.22, 'rgba(255, 175, 55, 0.92)');
+  sGrad.addColorStop(0.52, 'rgba(255, 92, 12, 0.42)');
+  sGrad.addColorStop(1.0, 'rgba(255, 50, 0, 0.0)');
+  sCtx.fillStyle = sGrad;
+  sCtx.fillRect(0, 0, 128, 128);
+  const sparkTex = new THREE.CanvasTexture(spriteCanvas);
+  sparkTex.colorSpace = THREE.SRGBColorSpace;
+
+  const haloMat = new THREE.SpriteMaterial({
+    map: sparkTex,
+    color: 0xff7e1a,
+    transparent: true,
+    opacity: 0,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+  const haloSprite = new THREE.Sprite(haloMat);
+  haloSprite.scale.setScalar(0.32);
+  fxGroup.add(haloSprite);
+
+  const coreGeo = new THREE.SphereGeometry(0.042, 24, 24);
+  const coreMat = new THREE.MeshBasicMaterial({
+    color: 0xffcf70,
+    transparent: true,
+    opacity: 0,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+  const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+  fxGroup.add(coreMesh);
+
+  const shellGeo = new THREE.SphereGeometry(0.072, 32, 32);
+  const shellUniforms = {
+    uTime: { value: 0 },
+    uCharge: { value: 0 },
+    uIntensity: { value: 0 },
+  };
+  const shellMat = new THREE.ShaderMaterial({
+    uniforms: shellUniforms,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    vertexShader: `
+      uniform float uTime;
+      uniform float uCharge;
+      varying vec3 vNormalDir;
+      varying vec3 vViewDir;
+      varying vec3 vLocalPos;
+      void main() {
+        vLocalPos = position;
+        float ripple = sin(position.x * 28.0 + uTime * 8.0) * cos(position.y * 28.0 - uTime * 6.5) * 0.008 * uCharge;
+        vec3 displaced = position + normal * ripple;
+        vec4 mvPos = modelViewMatrix * vec4(displaced, 1.0);
+        vNormalDir = normalize(normalMatrix * normal);
+        vViewDir = normalize(-mvPos.xyz);
+        gl_Position = projectionMatrix * mvPos;
+      }
+    `,
+    fragmentShader: `
+      uniform float uTime;
+      uniform float uCharge;
+      uniform float uIntensity;
+      varying vec3 vNormalDir;
+      varying vec3 vViewDir;
+      varying vec3 vLocalPos;
+      void main() {
+        float ndotv = clamp(dot(normalize(vNormalDir), normalize(vViewDir)), 0.0, 1.0);
+        float fresnel = pow(1.0 - ndotv, 1.85);
+        float w1 = sin(vLocalPos.x * 46.0 + uTime * 9.0) * sin(vLocalPos.y * 46.0 - uTime * 7.2);
+        float w2 = cos(vLocalPos.z * 52.0 + uTime * 10.5);
+        float plasma = 0.55 + 0.45 * (w1 * 0.6 + w2 * 0.4);
+        vec3 deepOrange = vec3(1.0, 0.30, 0.02);
+        vec3 hotAmber = vec3(1.0, 0.68, 0.14);
+        vec3 whiteCore = vec3(1.0, 0.95, 0.72);
+        vec3 col = mix(deepOrange, hotAmber, plasma);
+        col = mix(col, whiteCore, pow(ndotv, 2.2) * 0.65 * uCharge);
+        float alpha = clamp((fresnel * 0.90 + plasma * 0.42) * uIntensity, 0.0, 1.0);
+        gl_FragColor = vec4(col * (1.25 + 0.75 * uCharge), alpha);
+      }
+    `,
+  });
+  const shellMesh = new THREE.Mesh(shellGeo, shellMat);
+  fxGroup.add(shellMesh);
+
+  const ringGeo = new THREE.TorusGeometry(0.105, 0.0032, 8, 48);
+  const ringMat1 = new THREE.MeshBasicMaterial({
+    color: 0xff9a2e,
+    transparent: true,
+    opacity: 0,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+  const ringMat2 = ringMat1.clone();
+  ringMat2.color.setHex(0xffc966);
+  const ring1 = new THREE.Mesh(ringGeo, ringMat1);
+  const ring2 = new THREE.Mesh(ringGeo, ringMat2);
+  fxGroup.add(ring1, ring2);
+
+  const shockGeo = new THREE.RingGeometry(0.06, 0.088, 36);
+  const shockMat = new THREE.MeshBasicMaterial({
+    color: 0xffa63d,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+  });
+  const shockMesh = new THREE.Mesh(shockGeo, shockMat);
+  fxGroup.add(shockMesh);
+
+  const particleCount = 96;
+  const positions = new Float32Array(particleCount * 3);
+  const colors = new Float32Array(particleCount * 3);
+  const particles = Array.from({ length: particleCount }, (_, i) => {
+    const angle = (i / particleCount) * Math.PI * 2 + Math.random() * 0.5;
+    const elev = (Math.random() - 0.5) * Math.PI;
+    return {
+      angle,
+      elev,
+      baseRadius: 0.07 + Math.random() * 0.14,
+      speed: (2.2 + Math.random() * 3.4) * (i % 2 === 0 ? 1 : -1),
+      phase: Math.random() * Math.PI * 2,
+      burstDir: new THREE.Vector3(
+        Math.cos(angle) * Math.cos(elev),
+        Math.sin(elev) * 0.85 + 0.15,
+        Math.sin(angle) * Math.cos(elev)
+      ).normalize(),
+      burstSpeed: 0.28 + Math.random() * 0.48,
+      warmth: Math.random(),
+    };
+  });
+
+  const pointsGeo = new THREE.BufferGeometry();
+  pointsGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  pointsGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  const pointsMat = new THREE.PointsMaterial({
+    size: 0.044,
+    map: sparkTex,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    sizeAttenuation: true,
+  });
+  const points = new THREE.Points(pointsGeo, pointsMat);
+  fxGroup.add(points);
+
+  const pointLight = new THREE.PointLight(0xff7a18, 0, 2.8, 1.5);
+  fxGroup.add(pointLight);
+
+  return {
+    fxGroup,
+    haloSprite,
+    haloMat,
+    coreMesh,
+    coreMat,
+    shellMesh,
+    shellUniforms,
+    ring1,
+    ring2,
+    ringMat1,
+    ringMat2,
+    shockMesh,
+    shockMat,
+    points,
+    pointsGeo,
+    pointsMat,
+    positions,
+    colors,
+    particles,
+    pointLight,
+    dispose() {
+      fxGroup.removeFromParent();
+      sparkTex.dispose();
+      coreGeo.dispose();
+      coreMat.dispose();
+      shellGeo.dispose();
+      shellMat.dispose();
+      ringGeo.dispose();
+      ringMat1.dispose();
+      ringMat2.dispose();
+      shockGeo.dispose();
+      shockMat.dispose();
+      pointsGeo.dispose();
+      pointsMat.dispose();
+      haloMat.dispose();
+    },
+  };
+}
+
+function createPowerSurgeAnimation() {
+  return {
+    id: 'powerSurge',
+    label: 'Power Surge / Summoning Energy',
+    duration: 7.4,
+    canPlay(rig) {
+      return rig.capabilities.hasArms;
+    },
+    createState(rig) {
+      const spearSide = rig.spear?.restSide || 'right';
+      const freeSide = spearSide === 'right' ? 'left' : 'right';
+      const freeArm = freeSide === 'left' ? rig.leftArm : rig.rightArm;
+      const sideSign = freeSide === 'left' ? 1 : -1;
+
+      rig.model.updateMatrixWorld(true);
+      const getShoulderModelPos = (arm) => {
+        if (arm?.upperArm) return rig.model.worldToLocal(arm.upperArm.getWorldPosition(new THREE.Vector3()));
+        return new THREE.Vector3(sideSign * 0.32, 0.9, 0);
+      };
+
+      const sF = getShoulderModelPos(freeArm);
+      const oppArm = freeSide === 'left' ? rig.rightArm : rig.leftArm;
+      const sO = getShoulderModelPos(oppArm);
+      const midX = (sF.x + sO.x) * 0.5;
+      const armLen = freeArm?.rest?.upperLength || 0.44;
+
+      const palmHandTargetModel = new THREE.Vector3(midX + sideSign * 0.16, sF.y - 0.08, sF.z + armLen * 0.88);
+
+      return {
+        freeArm,
+        sideSign,
+        palmHandTargetModel,
+        fx: createPowerSurgeEffects(),
+        time: 0,
+      };
+    },
+    onEnter(rig, state) {
+      rig.model.add(state.fx.fxGroup);
+    },
+    update(rig, state, t, dt, blend) {
+      state.time += dt;
+      const fx = state.fx;
+
+      const raiseU = easeInOutCubic(clamp(t / 1.25, 0, 1)) * (1 - easeInOutCubic(clamp((t - 6.05) / 1.30, 0, 1)));
+      const fingerOpenU = smoothstep(0.65, 1.40, t) * (1 - smoothstep(4.95, 5.25, t));
+      const fingerCloseU = smoothstep(5.00, 5.45, t) * (1 - smoothstep(6.05, 6.75, t));
+
+      const chargeBuild = smoothstep(1.30, 4.70, t) * (1 - smoothstep(5.05, 5.45, t));
+      const collapseFlash = Math.exp(-Math.pow((t - 5.32) / 0.16, 2));
+      const burstU = smoothstep(5.15, 5.35, t) * (1 - smoothstep(6.20, 6.90, t));
+      const burstProgress = clamp((t - 5.20) / 1.45, 0, 1);
+
+      if (rig.torso) {
+        const rt = rig.restPoses.get(rig.torso);
+        if (rt) {
+          const twist = state.sideSign * -0.08 * raiseU;
+          const lean = 0.03 * raiseU - 0.03 * collapseFlash;
+          _q1.setFromEuler(_e1.set(lean, twist, 0)).multiply(rt.quaternion);
+          rig.torso.quaternion.copy(rt.quaternion).slerp(_q1, blend);
+          if (rig.legs) {
+            const rl = rig.restPoses.get(rig.legs);
+            if (rl) {
+              _q2.setFromEuler(_e1.set(-lean * 0.85, -twist * 0.85, 0)).multiply(rl.quaternion);
+              rig.legs.quaternion.copy(rl.quaternion).slerp(_q2, blend);
+            }
+          }
+        }
+      }
+
+      if (rig.head) {
+        const rh = rig.restPoses.get(rig.head);
+        if (rh) {
+          const lookOrb = smoothstep(2.95, 3.65, t) * (1 - smoothstep(5.15, 5.85, t));
+          const pitch = 0.17 * lookOrb + 0.04 * raiseU;
+          const yaw = state.sideSign * 0.18 * lookOrb;
+          const roll = state.sideSign * -0.05 * lookOrb;
+          _q1.setFromEuler(_e1.set(pitch, yaw, roll)).multiply(rh.quaternion);
+          rig.head.quaternion.slerp(_q1, blend);
+        }
+      }
+
+      if (state.freeArm?.upperArm) {
+        const targetModel = state.palmHandTargetModel.clone();
+        targetModel.y += Math.sin(t * 2.5) * 0.010 * raiseU;
+        const targetWorld = rig.model.localToWorld(targetModel);
+        solveArmIK(
+          state.freeArm,
+          targetWorld,
+          new THREE.Vector3(state.sideSign * 0.5, -0.65, -0.5),
+          rig.restPoses,
+          raiseU * blend,
+          0
+        );
+
+        orientHandToWorld(
+          state.freeArm,
+          rig.restPoses,
+          new THREE.Vector3(state.sideSign * -0.30, 0.14, 0.94),
+          new THREE.Vector3(0, 0.92, 0.39),
+          raiseU * blend
+        );
+
+        const fingerAngle = -0.44 * fingerOpenU + 0.96 * fingerCloseU;
+        applyFingerCurl(state.freeArm, rig.restPoses, fingerAngle, raiseU * blend);
+      }
+
+      rig.model.updateMatrixWorld(true);
+      let orbModelPos = state.palmHandTargetModel.clone().add(new THREE.Vector3(0, 0.10, 0));
+      if (state.freeArm?.hand && state.freeArm.rest?.palmOffsetLocal && state.freeArm.rest?.palmNormalLocal) {
+        const handMat = state.freeArm.hand.matrixWorld;
+        const palmWorld = state.freeArm.rest.palmOffsetLocal.clone().applyMatrix4(handMat);
+        const palmNormalWorld = state.freeArm.rest.palmNormalLocal.clone().transformDirection(handMat).normalize();
+        const orbWorld = palmWorld.addScaledVector(palmNormalWorld, 0.088);
+        orbModelPos = rig.model.worldToLocal(orbWorld);
+      }
+      fx.fxGroup.position.copy(orbModelPos);
+
+      const pulse = 0.88 + 0.12 * Math.sin(t * 11.5) + 0.08 * Math.sin(t * 19.0);
+      const orbCollapse = 1 - smoothstep(5.05, 5.38, t);
+      const orbScale = clamp(chargeBuild * orbCollapse, 0, 1.35) * (0.35 + 0.65 * easeOutBack(clamp((t - 1.5) / 1.5, 0, 1), 0.6)) * pulse;
+
+      fx.coreMesh.scale.setScalar(Math.max(0.001, orbScale + collapseFlash * 0.6));
+      fx.coreMat.opacity = clamp((chargeBuild * 0.92 + collapseFlash * 0.85) * blend, 0, 1);
+
+      fx.shellMesh.scale.setScalar(Math.max(0.001, orbScale * (1 + collapseFlash * 0.35)));
+      fx.shellUniforms.uTime.value = state.time;
+      fx.shellUniforms.uCharge.value = clamp(chargeBuild + collapseFlash * 0.5, 0, 1.2);
+      fx.shellUniforms.uIntensity.value = clamp((chargeBuild + collapseFlash * 0.8) * blend, 0, 1.2);
+
+      fx.haloSprite.scale.setScalar(0.24 + 0.24 * orbScale + collapseFlash * 0.32);
+      fx.haloMat.opacity = clamp((chargeBuild * 0.72 + collapseFlash * 0.90) * blend, 0, 1);
+
+      const ringAlpha = clamp(chargeBuild * orbCollapse * 0.75 * blend, 0, 1);
+      fx.ringMat1.opacity = ringAlpha;
+      fx.ringMat2.opacity = ringAlpha * 0.85;
+      fx.ring1.scale.setScalar(Math.max(0.001, 0.45 + 0.65 * orbScale));
+      fx.ring2.scale.setScalar(Math.max(0.001, 0.38 + 0.58 * orbScale));
+      fx.ring1.rotation.set(0.65 + t * 2.4, t * 3.1, 0.3);
+      fx.ring2.rotation.set(-0.75 - t * 1.9, -t * 2.7, 0.9);
+
+      if (t >= 5.18 && t <= 6.20) {
+        const sw = clamp((t - 5.18) / 0.75, 0, 1);
+        fx.shockMesh.scale.setScalar(0.6 + sw * 4.2);
+        fx.shockMesh.lookAt(rig.model.worldToLocal(new THREE.Vector3(0, 0, 10)));
+        fx.shockMat.opacity = clamp((1 - sw) * 0.85 * blend, 0, 1);
+      } else {
+        fx.shockMat.opacity = 0;
+      }
+
+      fx.pointLight.intensity = clamp((chargeBuild * 2.2 * pulse + collapseFlash * 4.5) * blend, 0, 5.5);
+
+      const gatherPhase = smoothstep(0.90, 2.50, t);
+      const particleVis = clamp(
+        (smoothstep(0.90, 1.50, t) * (1 - smoothstep(5.05, 5.20, t)) + burstU) * blend,
+        0,
+        1
+      );
+      fx.pointsMat.opacity = particleVis * 0.95;
+
+      const posAttr = fx.pointsGeo.attributes.position;
+      const colAttr = fx.pointsGeo.attributes.color;
+      for (let i = 0; i < fx.particles.length; i++) {
+        const p = fx.particles[i];
+        let px, py, pz;
+
+        if (t < 5.18) {
+          const radius = THREE.MathUtils.lerp(p.baseRadius * 1.65, p.baseRadius * 0.68, gatherPhase) * (0.85 + 0.15 * Math.sin(t * 4.0 + p.phase));
+          const ang = p.angle + t * p.speed * (0.65 + 0.95 * chargeBuild);
+          const elev = p.elev + Math.sin(t * 2.2 + p.phase) * 0.35;
+          px = Math.cos(ang) * Math.cos(elev) * radius;
+          py = Math.sin(elev) * radius + (1 - gatherPhase) * -0.03;
+          pz = Math.sin(ang) * Math.cos(elev) * radius;
+        } else {
+          const dist = p.burstSpeed * (1 - Math.pow(1 - burstProgress, 2.2));
+          px = p.burstDir.x * dist;
+          py = p.burstDir.y * dist + burstProgress * 0.08;
+          pz = p.burstDir.z * dist;
+        }
+
+        fx.positions[i * 3] = px;
+        fx.positions[i * 3 + 1] = py;
+        fx.positions[i * 3 + 2] = pz;
+
+        const hot = p.warmth * (0.4 + 0.6 * chargeBuild + collapseFlash * 0.5);
+        fx.colors[i * 3] = 1.0;
+        fx.colors[i * 3 + 1] = clamp(0.32 + hot * 0.52, 0, 1);
+        fx.colors[i * 3 + 2] = clamp(0.03 + hot * 0.38, 0, 1);
+      }
+      posAttr.needsUpdate = true;
+      colAttr.needsUpdate = true;
+    },
+    onExit(rig, state) {
+      state.fx?.dispose();
+    },
+  };
+}
+
 /* ============================================================================
- * Priority-Aware Random Animation Controller
+ * Priority-Aware Random Animation Controller (7 Animations)
  * ========================================================================== */
 
 export class ValhallaAnimationController {
@@ -1522,6 +2696,10 @@ export class ValhallaAnimationController {
     this.registerAnimation(createSpearSpinAnimation());
     this.registerAnimation(createSurprisedReactionAnimation());
     this.registerAnimation(createCodingModeAnimation());
+    this.registerAnimation(createDeepThinkingAnimation());
+    this.registerAnimation(createVikingLaughAnimation());
+    this.registerAnimation(createCombatReadyAnimation());
+    this.registerAnimation(createPowerSurgeAnimation());
 
     this.state = 'IDLE';
     this.activeAnim = null;
