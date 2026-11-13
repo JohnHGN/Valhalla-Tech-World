@@ -3415,3 +3415,109 @@ body .hero.video-hero > .hero-note > i {
     border-radius: 6px 12px 6px 12px !important;
   }
 }
+
+
+/* ===== VALHALLA NAV: OPTICAL LIQUID GLASS / CAUSTIC REFRACTION ===== */
+body .topbar .top-nav > .vpn-tab,
+body .topbar .top-nav > .search-toggle,
+body .topbar .top-nav > .top-link {
+  position:relative !important;
+  isolation:isolate !important;
+  overflow:hidden !important;
+  min-height:47px !important;
+  padding:9px 17px !important;
+  gap:9px !important;
+  border:1px solid rgba(183,255,250,.68) !important;
+  border-radius:9px 16px 9px 16px !important;
+  background:
+    radial-gradient(ellipse at 14% 8%,rgba(231,255,255,.34),transparent 33%),
+    radial-gradient(ellipse at 88% 105%,rgba(255,52,174,.21),transparent 42%),
+    radial-gradient(ellipse at 4% 95%,rgba(36,235,255,.23),transparent 43%),
+    linear-gradient(132deg,rgba(183,255,250,.20),rgba(24,76,111,.23) 35%,rgba(6,17,35,.52) 68%,rgba(67,27,75,.28)) !important;
+  -webkit-backdrop-filter:blur(13px) saturate(195%) contrast(1.14) brightness(1.12) !important;
+  backdrop-filter:blur(13px) saturate(195%) contrast(1.14) brightness(1.12) !important;
+  box-shadow:
+    inset 0 1.5px 1px rgba(255,255,255,.78),
+    inset 0 -2px 3px rgba(0,5,24,.72),
+    inset 1.5px 0 2px rgba(133,255,249,.42),
+    inset -1.5px 0 2px rgba(255,111,204,.30),
+    0 0 0 1px rgba(66,238,255,.18),
+    0 5px 17px rgba(0,0,0,.42),
+    0 0 17px rgba(32,220,255,.13) !important;
+  color:#efffff !important;
+  text-shadow:0 1px 4px rgba(0,8,20,.9),0 0 9px rgba(163,255,250,.32) !important;
+  transition:transform .28s ease,box-shadow .28s ease,filter .28s ease !important;
+}
+body .topbar .top-nav > .vpn-tab::before,
+body .topbar .top-nav > .search-toggle::before,
+body .topbar .top-nav > .top-link::before {
+  content:"" !important;
+  position:absolute !important;
+  z-index:0 !important;
+  inset:1px !important;
+  border-radius:7px 14px 7px 14px !important;
+  pointer-events:none !important;
+  /* The warped bands imitate light bending through curved water/glass. */
+  background:
+    radial-gradient(ellipse at 50% -12%,rgba(255,255,255,.64),transparent 43%),
+    linear-gradient(108deg,transparent 3%,rgba(255,255,255,.10) 13%,rgba(185,255,255,.52) 17%,rgba(255,255,255,.05) 22%,transparent 31%),
+    linear-gradient(76deg,transparent 39%,rgba(70,255,247,.08) 46%,rgba(204,255,255,.32) 49%,rgba(255,93,197,.16) 52%,transparent 59%),
+    radial-gradient(ellipse at 98% 50%,rgba(255,78,185,.28),transparent 36%),
+    radial-gradient(ellipse at 0% 100%,rgba(38,241,255,.26),transparent 48%),
+    linear-gradient(180deg,rgba(255,255,255,.14),transparent 36%,rgba(0,0,0,.25)) !important;
+  filter:url(#valhalla-liquid-refraction) !important;
+  box-shadow:inset 0 0 0 1px rgba(230,255,255,.22),inset 0 -1px 0 rgba(73,255,240,.5) !important;
+  opacity:.96 !important;
+}
+body .topbar .top-nav > .vpn-tab::after,
+body .topbar .top-nav > .search-toggle::after,
+body .topbar .top-nav > .top-link::after {
+  content:"" !important;
+  position:absolute !important;
+  z-index:1 !important;
+  inset:-30% auto -30% -55% !important;
+  width:38% !important;
+  height:auto !important;
+  pointer-events:none !important;
+  transform:skewX(-24deg) !important;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.44) 36%,rgba(135,255,249,.34) 52%,rgba(255,255,255,.08) 72%,transparent) !important;
+  filter:blur(1.2px) !important;
+  opacity:.72 !important;
+  transition:left .75s cubic-bezier(.18,.72,.25,1) !important;
+}
+body .topbar .top-nav > .vpn-tab > *,
+body .topbar .top-nav > .search-toggle > *,
+body .topbar .top-nav > .top-link > * {position:relative !important;z-index:2 !important;}
+body .topbar .top-nav > .vpn-tab:hover,
+body .topbar .top-nav > .search-toggle:hover,
+body .topbar .top-nav > .top-link:hover,
+body .topbar .top-nav > .vpn-tab:focus-visible,
+body .topbar .top-nav > .search-toggle:focus-visible,
+body .topbar .top-nav > .top-link:focus-visible {
+  transform:translateY(-3px) !important;
+  filter:brightness(1.18) saturate(1.28) !important;
+  border-color:rgba(224,255,255,.98) !important;
+  box-shadow:
+    inset 0 2px 2px rgba(255,255,255,.82),
+    inset 0 -2px 3px rgba(0,5,24,.76),
+    inset 2px 0 3px rgba(95,255,249,.58),
+    inset -2px 0 3px rgba(255,82,188,.42),
+    0 0 0 1px rgba(90,248,255,.36),
+    0 0 21px rgba(38,236,255,.32),
+    0 0 31px rgba(255,53,174,.20),
+    0 10px 24px rgba(0,0,0,.48) !important;
+}
+body .topbar .top-nav > .vpn-tab:hover::after,
+body .topbar .top-nav > .search-toggle:hover::after,
+body .topbar .top-nav > .top-link:hover::after {left:125% !important;}
+body .topbar .top-nav > .vpn-tab > span,
+body .topbar .top-nav > .top-link .top-link-mark,
+body .topbar .top-nav > .search-toggle svg {
+  color:#a8fff4 !important;
+  filter:drop-shadow(0 0 5px rgba(80,255,239,.95)) drop-shadow(0 0 12px rgba(36,211,255,.65)) !important;
+}
+@media(max-width:680px){
+  body .topbar .top-nav > .vpn-tab,
+  body .topbar .top-nav > .search-toggle,
+  body .topbar .top-nav > .top-link {min-height:39px !important;padding:7px 10px !important;}
+}
