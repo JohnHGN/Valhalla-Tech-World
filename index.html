@@ -896,7 +896,7 @@
       })();
     </script>
 
-    <!-- ۳-ب. موتور رندر Three.js با OrbitControls، زوم جزئیات، رهگیری موس با حساسیت بالا و انیمیشن‌های تصادفی -->
+    <!-- ۳-ب. موتور رندر Three.js با OrbitControls، زوم جزئیات، بازگشت سر پس از ۷ ثانیه توقف موس و انیمیشن‌های تصادفی -->
     <script type="module">
       import * as THREE from 'https://esm.sh/three@0.160.0';
       import { GLTFLoader } from 'https://esm.sh/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
@@ -1030,6 +1030,13 @@
         let curYaw = 0;
         let curPitch = 0;
 
+        const POINTER_IDLE_MS = 7000;
+        let lastPointerX = null;
+        let lastPointerY = null;
+        let lastPointerMoveAt = performance.now();
+        let isPointerIdle = false;
+        let pointerIdleTimer = 0;
+
         const loader = new GLTFLoader();
         loader.load(
           './valhalla-bot.glb',
@@ -1109,10 +1116,15 @@
           }
 
           if (headGroup) {
+            if (!isPointerIdle && now - lastPointerMoveAt >= POINTER_IDLE_MS) {
+              isPointerIdle = true;
+              targetYaw = 0;
+              targetPitch = 0;
+            }
             const trackW = animController.getHeadTrackingWeight();
-            const desiredY = headTrackingEnabled ? targetYaw * trackW : 0;
-            const desiredX = headTrackingEnabled ? targetPitch * trackW : 0;
-            const factor = 1 - Math.exp(-16 * dt);
+            const desiredY = headTrackingEnabled && !isPointerIdle ? targetYaw * trackW : 0;
+            const desiredX = headTrackingEnabled && !isPointerIdle ? targetPitch * trackW : 0;
+            const factor = 1 - Math.exp(-(isPointerIdle ? 6 : 16) * dt);
             curYaw += (desiredY - curYaw) * factor;
             curPitch += (desiredX - curPitch) * factor;
 
@@ -1145,9 +1157,14 @@
             renderDirty = false;
             stepFrame();
             renderer.render(scene, camera);
+            const trackW = animController.getHeadTrackingWeight();
+            const desiredY = headTrackingEnabled && !isPointerIdle ? targetYaw * trackW : 0;
+            const desiredX = headTrackingEnabled && !isPointerIdle ? targetPitch * trackW : 0;
+            const headStillEasing =
+              Math.abs(desiredY - curYaw) > 0.002 || Math.abs(desiredX - curPitch) > 0.002;
             setTimeout(() => {
               renderBusy = false;
-              if (renderDirty || animController.needsContinuousRender()) requestRender();
+              if (renderDirty || animController.needsContinuousRender() || headStillEasing) requestRender();
             }, 40);
           });
         }
@@ -1167,6 +1184,25 @@
 
         function updatePointer(clientX, clientY) {
           if (!headTrackingEnabled) return;
+          if (
+            lastPointerX !== null &&
+            lastPointerY !== null &&
+            Math.hypot(clientX - lastPointerX, clientY - lastPointerY) < 1
+          ) {
+            return;
+          }
+          lastPointerX = clientX;
+          lastPointerY = clientY;
+          lastPointerMoveAt = performance.now();
+          isPointerIdle = false;
+          clearTimeout(pointerIdleTimer);
+          pointerIdleTimer = setTimeout(() => {
+            isPointerIdle = true;
+            targetYaw = 0;
+            targetPitch = 0;
+            requestRender();
+          }, POINTER_IDLE_MS);
+
           const rect = renderer.domElement.getBoundingClientRect();
           if (rect.width <= 0 || rect.height <= 0) return;
 
@@ -1191,6 +1227,10 @@
         }
 
         function resetPointer() {
+          clearTimeout(pointerIdleTimer);
+          lastPointerX = null;
+          lastPointerY = null;
+          isPointerIdle = true;
           targetYaw = 0;
           targetPitch = 0;
           requestRender();
@@ -1226,6 +1266,7 @@
 
         function destroy() {
           active = false;
+          clearTimeout(pointerIdleTimer);
           cancelAnimationFrame(frameId);
           animController.destroy();
           controls.dispose();
