@@ -169,7 +169,6 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
     explicitRefs.neckGroup ||
     findBest([/^neckgroup$/i, /^mixamorig.*neck$/i, /^neck$/i, /\bneck\b/i], (n) => n !== head);
 
-  // Exclude ChestArmorGroup/plate pieces so rotating torso moves the whole upper body cleanly
   const torso =
     findByOverride(RIG_OVERRIDES.torso) ||
     findBest(
@@ -354,7 +353,6 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
     findByOverride(RIG_OVERRIDES.beard) ||
     findBest([/^beardgroup$/i, /^beard$/i, /beard/i, /mustache/i]);
 
-  // Face screen display mesh MUST be found before eyes so LedFaceDisplay is never misclassified as an eye!
   const headSearchRoot = head || model;
   let faceMeshes = findByOverride(RIG_OVERRIDES.faceMeshes) || [];
   let useFullFaceMesh = false;
@@ -386,7 +384,6 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
 
   const faceSet = new Set(faceMeshes);
 
-  // Exclude raven eyes, helmet plates, and face display screen from individual eye meshes
   let eyes = findByOverride(RIG_OVERRIDES.eyes) || [];
   if (!eyes.length) {
     const rawEyes = [];
@@ -400,7 +397,6 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
     eyes = deduplicateRoots(rawEyes);
   }
 
-  // Exclude armor wing plates (BrowWingPlate*) so helmet armor isn't detached
   let brows = findByOverride(RIG_OVERRIDES.brows) || [];
   if (!brows.length) {
     const rawBrows = [];
@@ -563,7 +559,7 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
 
 /**
  * Aims an arm cleanly toward a world-space hand target.
- * Supports both 2-bone (upperArm + forearm) and 1-piece shoulder-pivoted arm groups (ValhallaGuardian),
+ * Supports both 2-bone (upperArm + forearm) and 1-piece shoulder-pivoted arm groups,
  * and stabilizes any shoulder-mounted raven so it stays perched upright.
  */
 function solveArmIK(arm, targetWorldPos, poleWorldDir, restPoses, blend, fingerCurl = 0) {
@@ -654,7 +650,6 @@ function solveArmIK(arm, targetWorldPos, poleWorldDir, restPoses, blend, fingerC
     upper.updateMatrixWorld(true);
   }
 
-  // Stabilize shoulder raven so it remains upright while the arm swings
   if (arm.shoulderRaven) {
     const restRaven = restPoses.get(arm.shoulderRaven);
     if (restRaven) {
@@ -929,7 +924,6 @@ class HolographicFaceDisplay {
     const w = this.canvas.width;
     const h = this.canvas.height;
 
-    // Deep glossy dark LED visor background
     ctx.fillStyle = '#040912';
     ctx.fillRect(0, 0, w, h);
 
@@ -939,13 +933,12 @@ class HolographicFaceDisplay {
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, w, h);
 
-    const dartX = Math.sin(time * 3.1) * 8;
+    const dartX = Math.sin(time * 2.4) * 9;
     const eyeY = h * 0.44;
     const leftEyeX = w * 0.34;
     const rightEyeX = w * 0.66;
     const eyeR = 44 + 8 * clamp(intensity, 0, 1);
 
-    // High-arched surprised digital eyebrows
     ctx.strokeStyle = '#7bf5ff';
     ctx.lineWidth = 10;
     ctx.lineCap = 'round';
@@ -960,14 +953,12 @@ class HolographicFaceDisplay {
     ctx.arc(rightEyeX, eyeY - 40, 44, Math.PI * 1.18, Math.PI * 1.82);
     ctx.stroke();
 
-    // Wide shocked cyan LED eyes
     [leftEyeX, rightEyeX].forEach((ex) => {
       ctx.fillStyle = '#5cf2ff';
       ctx.beginPath();
       ctx.ellipse(ex, eyeY, eyeR * 0.88, eyeR * 1.15, 0, 0, Math.PI * 2);
       ctx.fill();
 
-      // Inner bright white-cyan ring & darting pupil
       ctx.fillStyle = '#03111c';
       ctx.beginPath();
       ctx.arc(ex + dartX, eyeY, eyeR * 0.36, 0, Math.PI * 2);
@@ -979,14 +970,12 @@ class HolographicFaceDisplay {
       ctx.fill();
     });
 
-    // Cute shocked 'o' LED mouth
     ctx.strokeStyle = '#6cf4ff';
     ctx.lineWidth = 9;
     ctx.beginPath();
     ctx.ellipse(w * 0.5, h * 0.63, 20, 26, 0, 0, Math.PI * 2);
     ctx.stroke();
 
-    // Subtle exclamation/question telemetry
     ctx.fillStyle = '#ff9838';
     ctx.shadowColor = 'rgba(255, 140, 40, 0.9)';
     ctx.font = 'bold 28px ui-monospace, Menlo, monospace';
@@ -1026,7 +1015,6 @@ class HolographicFaceDisplay {
       ctx.stroke();
     }
 
-    // Safe padded viewport area so all code sits clearly inside the visible helmet visor
     const padX = 56;
     ctx.font = 'bold 16px ui-monospace, SFMono-Regular, Menlo, monospace';
     ctx.fillStyle = '#ff8a2b';
@@ -1101,19 +1089,17 @@ class HolographicFaceDisplay {
 }
 
 /* ============================================================================
- * Built-in Cinematic Animations
+ * Built-in Cinematic Animations (Extended Durations)
  * ========================================================================== */
 
 /**
- * 1. Hand-Locked Spear Spin & Front Chest Transfer
- * The spear always stays gripped inside the moving hand(s) and both hands meet
- * cleanly in front of the chest during the transfer.
+ * 1. Hand-Locked Spear Spin & Front Chest Transfer (11.0s)
  */
 function createSpearSpinAnimation() {
   return {
     id: 'spearSpin',
     label: 'Hand-Driven Spear Spin & Transfer',
-    duration: 6.4,
+    duration: 11.0,
     canPlay(rig) {
       return rig.capabilities.hasSpear && rig.capabilities.hasArms;
     },
@@ -1143,7 +1129,6 @@ function createSpearSpinAnimation() {
       const shoulderZ = (sR.z + sL.z) * 0.5;
       const armLen = Math.max(rightArm?.rest?.upperLength || 0.44, leftArm?.rest?.upperLength || 0.44);
 
-      // Hand poses relative to actual shoulders (guaranteed reachable without clipping armor!)
       const rightRestHandModel = getHandModelPos(rightArm);
       const leftRestHandModel = getHandModelPos(leftArm);
       const rightSpinHandModel = new THREE.Vector3(sR.x + 0.07, shoulderY - 0.03, shoulderZ + armLen * 0.94);
@@ -1153,7 +1138,6 @@ function createSpearSpinAnimation() {
       const rightGuardHandModel = new THREE.Vector3(sR.x - 0.04, shoulderY - 0.22, shoulderZ + armLen * 0.65);
       const leftGuardHandModel = new THREE.Vector3(sL.x + 0.04, shoulderY - 0.22, shoulderZ + armLen * 0.65);
 
-      // Compute exact rest grip anchor on spear matching RightHand's world position
       const restGripWorld = spear.localGripCenter.clone().applyMatrix4(spear.node.matrixWorld);
       const restAnchorModel =
         startSide === 'right' && rightArm?.hand
@@ -1162,7 +1146,6 @@ function createSpearSpinAnimation() {
           ? leftRestHandModel.clone()
           : rig.model.worldToLocal(restGripWorld.clone());
 
-      // Build front-facing pivot orientation so spinning around local +Z always twirls cleanly in front of the camera
       const worldShaftDir = spear.localShaftAxis.clone().transformDirection(spear.node.matrixWorld);
       const modelQuatInv = rig.model.getWorldQuaternion(new THREE.Quaternion()).invert();
       const upModel = worldShaftDir.applyQuaternion(modelQuatInv).normalize();
@@ -1214,51 +1197,40 @@ function createSpearSpinAnimation() {
       const domIsRight = state.startSide === 'right';
       const domSign = domIsRight ? -1 : 1;
 
-      // 1. Timeline weights
-      // Raise into front ready: 0.0 -> 0.85
-      // Spin in dominant hand (3 crisp turns): 0.85 -> 2.55
-      // Bring both hands together & pass: 2.55 -> 3.45
-      // Spin in opposite hand (2 crisp turns): 3.45 -> 4.85
-      // Pass back to dominant hand: 4.85 -> 5.65
-      // Lower cleanly to idle: 5.65 -> 6.40
-      const raiseU = smoothstep(0.0, 0.85, t);
-      const returnU = smoothstep(5.60, 6.40, t);
+      const raiseU = smoothstep(0.0, 0.95, t);
+      const returnU = smoothstep(9.80, 11.00, t);
       const stageBlend = raiseU * (1 - returnU);
 
-      // Compute hand-to-hand transfer alpha (0 = dominant hand, 1 = opposite hand)
       let handAlpha = 0;
-      if (t >= 2.75 && t < 3.35) {
-        handAlpha = easeInOutCubic((t - 2.75) / 0.60);
-      } else if (t >= 3.35 && t < 5.05) {
+      if (t >= 4.55 && t < 5.25) {
+        handAlpha = easeInOutCubic((t - 4.55) / 0.70);
+      } else if (t >= 5.25 && t < 8.85) {
         handAlpha = 1;
-      } else if (t >= 5.05 && t < 5.60) {
-        handAlpha = 1 - easeInOutCubic((t - 5.05) / 0.55);
+      } else if (t >= 8.85 && t < 9.55) {
+        handAlpha = 1 - easeInOutCubic((t - 8.85) / 0.70);
       }
 
-      // Compute meeting blend when hands converge in front of chest for handoff
-      const meet1 = smoothstep(2.35, 2.80, t) * (1 - smoothstep(3.25, 3.70, t));
-      const meet2 = smoothstep(4.70, 5.10, t) * (1 - smoothstep(5.45, 5.85, t));
+      const meet1 = smoothstep(4.10, 4.60, t) * (1 - smoothstep(5.20, 5.70, t));
+      const meet2 = smoothstep(8.45, 8.90, t) * (1 - smoothstep(9.50, 9.95, t));
       const meetBlend = clamp(meet1 + meet2, 0, 1);
 
-      // Smooth continuous cumulative spin angle ending on an exact multiple of 2*PI (5 total turns)
-      const p1 = easeInOutCubic(clamp((t - 0.85) / 1.70, 0, 1)) * (Math.PI * 4);
-      const passSpin = easeInOutCubic(clamp((t - 2.75) / 0.60, 0, 1)) * (Math.PI * 2);
-      const p2 = easeInOutCubic(clamp((t - 3.45) / 1.40, 0, 1)) * (Math.PI * 4);
-      const passBackSpin = easeInOutCubic(clamp((t - 5.05) / 0.55, 0, 1)) * (Math.PI * 2);
+      // 4 full turns in dominant hand + 1 pass turn + 4 full turns in opposite hand + 1 pass-back turn
+      const p1 = easeInOutCubic(clamp((t - 0.95) / 3.40, 0, 1)) * (Math.PI * 8);
+      const passSpin = easeInOutCubic(clamp((t - 4.55) / 0.70, 0, 1)) * (Math.PI * 2);
+      const p2 = easeInOutCubic(clamp((t - 5.25) / 3.45, 0, 1)) * (Math.PI * 8);
+      const passBackSpin = easeInOutCubic(clamp((t - 8.85) / 0.70, 0, 1)) * (Math.PI * 2);
       const effectiveSpin = (p1 + passSpin + p2 + passBackSpin) * domSign;
 
       const spinVel =
-        (smoothstep(0.85, 1.15, t) * (1 - smoothstep(2.30, 2.55, t))) +
-        (smoothstep(3.45, 3.75, t) * (1 - smoothstep(4.65, 4.88, t)));
+        (smoothstep(0.95, 1.35, t) * (1 - smoothstep(4.05, 4.35, t))) +
+        (smoothstep(5.25, 5.65, t) * (1 - smoothstep(8.40, 8.70, t)));
 
-      // 2. Drive Left & Right Arms FIRST so hands move to exact target positions
       const rightSpinTarget = state.rightSpinHandModel.clone().lerp(state.rightMeetHandModel, meetBlend);
       const leftSpinTarget = state.leftSpinHandModel.clone().lerp(state.leftMeetHandModel, meetBlend);
 
       const rightTargetModel = rightSpinTarget.clone().lerp(state.rightGuardHandModel, clamp(handAlpha * (1 - meetBlend), 0, 1));
       const leftTargetModel = leftSpinTarget.clone().lerp(state.leftGuardHandModel, clamp((1 - handAlpha) * (1 - meetBlend), 0, 1));
 
-      // Subtle circular wrist-pump on the active hand synced with the spin so arm clearly drives the twirl
       if (spinVel > 0.01) {
         const pumpX = Math.cos(effectiveSpin) * 0.022 * spinVel;
         const pumpY = Math.sin(effectiveSpin) * 0.022 * spinVel;
@@ -1271,7 +1243,6 @@ function createSpearSpinAnimation() {
         }
       }
 
-      // Subtle grounded torso twist toward active side
       if (rig.torso) {
         const rt = rig.restPoses.get(rig.torso);
         if (rt) {
@@ -1311,7 +1282,6 @@ function createSpearSpinAnimation() {
         solveArmIK(rig.leftArm, leftWorld, new THREE.Vector3(0.5, -0.7, -0.4), rig.restPoses, leftArmWeight, 0.8);
       }
 
-      // Synchronized wrist motion on active hand so wrist visibly twirls the spear
       const applyWristTwirl = (arm, activeAmount) => {
         if (!arm) return;
         const wNode = arm.hand || arm.wristJoint;
@@ -1328,7 +1298,6 @@ function createSpearSpinAnimation() {
       applyWristTwirl(rig.rightArm, 1 - handAlpha);
       applyWristTwirl(rig.leftArm, handAlpha);
 
-      // 3. LOCK Spear Pivot directly to the live world positions of the moving hands!
       rig.model.updateMatrixWorld(true);
       const getLiveHandModel = (arm, fallback) => {
         if (arm?.hand) return rig.model.worldToLocal(arm.hand.getWorldPosition(new THREE.Vector3()));
@@ -1343,7 +1312,6 @@ function createSpearSpinAnimation() {
 
       state.pivot.position.lerpVectors(state.restAnchorModel, activeGripModel, stageBlend * blend);
 
-      // Tilt spin plane ~16 deg forward so spear clears helmet/ravens cleanly while held in hand
       const spinTiltQuat = _q1.setFromEuler(_e1.set(0.28 * stageBlend, 0, 0));
       const spinRollQuat = _q2.setFromAxisAngle(_v2.set(0, 0, 1), effectiveSpin);
       const animPivotQuat = state.restPivotQuat.clone().multiply(spinTiltQuat).multiply(spinRollQuat);
@@ -1379,15 +1347,13 @@ function createSpearSpinAnimation() {
 }
 
 /**
- * 2. Surprised / Amazed Reaction ("Wait... What?!")
- * Moves whole TorsoGroup (with Legs counter-stabilized), preserves all armor plates,
- * drives an expressive shocked LED face on LedFaceDisplay, and raises the free hand to chin!
+ * 2. Surprised / Amazed Reaction (8.0s)
  */
 function createSurprisedReactionAnimation() {
   return {
     id: 'surprisedReaction',
     label: 'Surprised / Amazed Reaction',
-    duration: 4.3,
+    duration: 8.0,
     canPlay() {
       return true;
     },
@@ -1413,24 +1379,22 @@ function createSurprisedReactionAnimation() {
     update(rig, state, t, dt, blend, context) {
       state.time += dt;
 
-      const shockSnap = easeOutBack(clamp(t / 0.42, 0, 1), 1.25) * (1 - easeInOutCubic(clamp((t - 3.05) / 1.10, 0, 1)));
-      const handReach = easeInOutCubic(clamp((t - 0.15) / 0.65, 0, 1)) * (1 - easeInOutCubic(clamp((t - 2.95) / 0.90, 0, 1)));
-      const strokeActive = smoothstep(0.80, 1.15, t) * (1 - smoothstep(2.65, 3.05, t));
-      const strokeWave = Math.sin(t * 5.2) * strokeActive;
+      const shockSnap = easeOutBack(clamp(t / 0.45, 0, 1), 1.25) * (1 - easeInOutCubic(clamp((t - 6.65) / 1.25, 0, 1)));
+      const handReach = easeInOutCubic(clamp((t - 0.18) / 0.72, 0, 1)) * (1 - easeInOutCubic(clamp((t - 6.40) / 1.15, 0, 1)));
+      const strokeActive = smoothstep(0.90, 1.35, t) * (1 - smoothstep(6.20, 6.65, t));
+      const strokeWave = Math.sin(t * 4.4) * strokeActive;
 
-      // Head startles slightly upward with curious tilt
       if (rig.head) {
         const rh = rig.restPoses.get(rig.head);
         if (rh) {
           const pitch = (-0.15 + strokeWave * 0.025) * shockSnap;
-          const yaw = (state.sideSign * -0.15 + Math.sin(t * 2.1) * 0.03) * shockSnap;
-          const roll = state.sideSign * 0.10 * shockSnap;
+          const yaw = (state.sideSign * -0.15 + Math.sin(t * 1.6) * 0.07) * shockSnap;
+          const roll = (state.sideSign * 0.10 + Math.sin(t * 1.1) * 0.03) * shockSnap;
           _q1.setFromEuler(_e1.set(pitch, yaw, roll)).multiply(rh.quaternion);
           rig.head.quaternion.slerp(_q1, blend);
         }
       }
 
-      // Whole TorsoGroup recoils softly backward while LegsGroup keeps feet grounded
       if (rig.torso) {
         const rt = rig.restPoses.get(rig.torso);
         if (rt) {
@@ -1450,7 +1414,6 @@ function createSurprisedReactionAnimation() {
         context.modelGroup.rotation.x = -0.05 * shockSnap * blend;
       }
 
-      // Expressive face via morphs (if any) + LedFaceDisplay shocked eyes/mouth (without breaking armor!)
       const exprLevel = clamp(shockSnap * blend, 0, 1);
       for (const m of rig.morphBindings.eyeWide) m.mesh.morphTargetInfluences[m.index] = 0.95 * exprLevel;
       for (const m of rig.morphBindings.browUp) m.mesh.morphTargetInfluences[m.index] = 0.92 * exprLevel;
@@ -1458,7 +1421,6 @@ function createSurprisedReactionAnimation() {
 
       context.faceDisplay?.update(dt, state.time, 0, 0, exprLevel);
 
-      // Free arm lifts naturally toward chin/cheek in a "Wait... what?!" gesture
       if (state.freeArm?.upperArm) {
         const targetModel = state.chinTargetModel.clone();
         targetModel.y += strokeWave * 0.020;
@@ -1491,14 +1453,13 @@ function createSurprisedReactionAnimation() {
 }
 
 /**
- * 3. Holographic Coding / Hacker Mode
- * Projects glowing neon-orange & cyan terminal code directly onto LedFaceDisplay.
+ * 3. Holographic Coding / Hacker Mode (12.5s)
  */
 function createCodingModeAnimation() {
   return {
     id: 'codingMode',
     label: 'Holographic Coding / Hacker Mode',
-    duration: 6.6,
+    duration: 12.5,
     canPlay(rig) {
       return rig.capabilities.hasFaceDisplay;
     },
@@ -1513,8 +1474,8 @@ function createCodingModeAnimation() {
     update(rig, state, t, dt, blend, context) {
       state.time += dt;
 
-      const enterU = smoothstep(0.05, 0.85, t);
-      const exitU = 1 - smoothstep(5.60, 6.45, t);
+      const enterU = smoothstep(0.05, 0.90, t);
+      const exitU = 1 - smoothstep(11.35, 12.35, t);
       const codeMix = clamp(enterU * exitU * blend, 0, 1);
 
       const pulsePhase = (t * 0.85) % 1;
@@ -1523,8 +1484,8 @@ function createCodingModeAnimation() {
       if (rig.head) {
         const rh = rig.restPoses.get(rig.head);
         if (rh) {
-          const focusNod = (0.06 + Math.sin(t * 1.4) * 0.015) * codeMix;
-          const microScan = Math.sin(t * 2.3) * 0.025 * codeMix;
+          const focusNod = (0.06 + Math.sin(t * 1.2) * 0.018) * codeMix;
+          const microScan = Math.sin(t * 1.9) * 0.032 * codeMix;
           _q1.setFromEuler(_e1.set(focusNod, microScan, 0)).multiply(rh.quaternion);
           rig.head.quaternion.slerp(_q1, blend);
         }
