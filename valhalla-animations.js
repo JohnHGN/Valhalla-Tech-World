@@ -9,13 +9,14 @@ export const RIG_OVERRIDES = {
   head: null,
   neck: null,
   torso: null,
+  legs: null,
   spear: null,
   beard: null,
-  eyes: null, // e.g. ['Eye_L', 'Eye_R']
+  eyes: null,
   brows: null,
   faceMeshes: null,
-  leftArm: { shoulder: null, upperArm: null, forearm: null, hand: null, fingers: null },
-  rightArm: { shoulder: null, upperArm: null, forearm: null, hand: null, fingers: null },
+  leftArm: { shoulder: null, upperArm: null, forearm: null, wristJoint: null, hand: null, shoulderRaven: null, fingers: null },
+  rightArm: { shoulder: null, upperArm: null, forearm: null, wristJoint: null, hand: null, shoulderRaven: null, fingers: null },
   debugLog: false,
 };
 
@@ -29,9 +30,9 @@ const _q1 = new THREE.Quaternion();
 const _q2 = new THREE.Quaternion();
 const _q3 = new THREE.Quaternion();
 const _q4 = new THREE.Quaternion();
+const _q5 = new THREE.Quaternion();
 const _e1 = new THREE.Euler();
 const _m1 = new THREE.Matrix4();
-const _m2 = new THREE.Matrix4();
 
 function clamp(v, min, max) {
   return Math.max(min, Math.min(max, v));
@@ -104,7 +105,7 @@ function measureObjectBoxInSpace(rootNode, targetSpaceNode, excludeSet = null) {
 }
 
 /**
- * Inspects the loaded GLB scene graph, skeleton bones, morph targets, and meshes.
+ * Inspects the loaded GLB scene graph, groups, bones, morph targets, and meshes.
  */
 export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
   model.updateMatrixWorld(true);
@@ -112,7 +113,6 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
   const allNodes = [];
   const bones = [];
   const meshes = [];
-  const skinnedMeshes = [];
   const morphBindings = {
     eyeWide: [],
     browUp: [],
@@ -125,7 +125,6 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
     if (obj.isBone) bones.push(obj);
     if (obj.isMesh) {
       meshes.push(obj);
-      if (obj.isSkinnedMesh) skinnedMeshes.push(obj);
       if (obj.morphTargetDictionary && obj.morphTargetInfluences) {
         for (const [key, idx] of Object.entries(obj.morphTargetDictionary)) {
           if (/eye.*wide|wide.*eye|eyes?open/i.test(key)) morphBindings.eyeWide.push({ mesh: obj, index: idx, key });
@@ -170,40 +169,54 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
     explicitRefs.neckGroup ||
     findBest([/^neckgroup$/i, /^mixamorig.*neck$/i, /^neck$/i, /\bneck\b/i], (n) => n !== head);
 
+  // Exclude ChestArmorGroup/plate pieces so rotating torso moves the whole upper body cleanly
   const torso =
     findByOverride(RIG_OVERRIDES.torso) ||
     findBest(
       [
+        /^torsogroup$/i,
+        /^torso$/i,
         /upper.?chest/i,
-        /chest/i,
         /spine.?0?2/i,
         /spine.?0?1/i,
         /^spine$/i,
-        /torso/i,
         /upper.?body/i,
         /^bodygroup$/i,
         /^body$/i,
+        /chest/i,
       ],
-      (n) => n !== head && n !== neck
+      (n) => n !== head && n !== neck && !/armor|plate|pauldron|shield/i.test(n.name)
     );
+
+  const legs =
+    findByOverride(RIG_OVERRIDES.legs) ||
+    findBest([/^legsgroup$/i, /^legs$/i, /pelvis/i, /^hips$/i]);
 
   function resolveArmSide(side) {
     const ov = RIG_OVERRIDES[`${side}Arm`] || {};
     const sideRegex =
       side === 'left'
-        ? /(?:^|[_\s.-]|mixamorig)(?:left|l)(?:[_\s.-]|(?=[A-Z]))|(?:\.l$|_l$)/i
-        : /(?:^|[_\s.-]|mixamorig)(?:right|r)(?:[_\s.-]|(?=[A-Z]))|(?:\.r$|_r$)/i;
+        ? /(?:^|[_\s.-]|mixamorig)(?:left|l)(?:[_\s.-]|(?=[A-Z]))|(?:\.l$|_l$)|^left/i
+        : /(?:^|[_\s.-]|mixamorig)(?:right|r)(?:[_\s.-]|(?=[A-Z]))|(?:\.r$|_r$)|^right/i;
 
-    const excludeArmor = (n) => !/armor|pauldron|shield|raven|feather|collar|fur|spear|gungnir/i.test(n.name) && n !== torso;
+    const excludeArmor = (n) =>
+      !/armor|pauldron|shield|raven|feather|collar|fur|spear|gungnir|cuff|rivet/i.test(n.name) && n !== torso;
 
     const shoulder =
       findByOverride(ov.shoulder) ||
-      findBest([/clavicle/i, /collar.?bone/i, /shoulder/i], (n) => sideRegex.test(n.name) && excludeArmor(n));
+      findBest([/clavicle/i, /collar.?bone/i, /shoulder(?!.*raven)/i], (n) => sideRegex.test(n.name) && excludeArmor(n));
 
     const upperArm =
       findByOverride(ov.upperArm) ||
       findBest(
-        [/upper.?arm(?!or)/i, /arm(?!or)[_\s.-]?(?:upper|top)/i, /mixamorig.*arm$/i, /bicep/i, /\barm(?!or)\b/i],
+        [
+          /^(?:left|right)armgroup$/i,
+          /upper.?arm(?!or)/i,
+          /arm(?!or)[_\s.-]?(?:upper|top|group)/i,
+          /mixamorig.*arm$/i,
+          /bicep/i,
+          /\barm(?!or)\b/i,
+        ],
         (n) => sideRegex.test(n.name) && excludeArmor(n) && n !== shoulder
       );
 
@@ -214,12 +227,20 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
         (n) => sideRegex.test(n.name) && excludeArmor(n) && n !== upperArm
       );
 
+    const wristJoint =
+      findByOverride(ov.wristJoint) ||
+      findBest([/wrist.?joint/i], (n) => sideRegex.test(n.name));
+
     const hand =
       findByOverride(ov.hand) ||
       findBest(
-        [/hand(?!le)/i, /wrist/i, /palm/i],
-        (n) => sideRegex.test(n.name) && excludeArmor(n) && n !== forearm
+        [/^(?:left|right)hand$/i, /hand(?!le)/i, /wrist(?!.*cuff|.*joint)/i, /palm/i],
+        (n) => sideRegex.test(n.name) && excludeArmor(n) && n !== forearm && n !== wristJoint
       );
+
+    const shoulderRaven =
+      findByOverride(ov.shoulderRaven) ||
+      findBest([/shoulderraven/i, /raven/i], (n) => sideRegex.test(n.name) && !/red.?eye|head|saddle|cradle/i.test(n.name));
 
     let fingers = findByOverride(ov.fingers) || [];
     if (!fingers.length && hand) {
@@ -238,33 +259,27 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
       const pE = forearm ? forearm.getWorldPosition(new THREE.Vector3()) : hand ? hand.getWorldPosition(new THREE.Vector3()) : null;
       const pH = hand ? hand.getWorldPosition(new THREE.Vector3()) : null;
 
-      if (pE) {
+      if (forearm && pE) {
         rest.upperLength = pS.distanceTo(pE);
         rest.upperLocalDir = upperArm.worldToLocal(pE.clone()).normalize();
-      }
-      if (forearm && pH) {
-        rest.forearmLength = pE.distanceTo(pH);
-        rest.forearmLocalDir = forearm.worldToLocal(pH.clone()).normalize();
-      } else if (upperArm && pH && !forearm) {
+        if (pH) {
+          rest.forearmLength = pE.distanceTo(pH);
+          rest.forearmLocalDir = forearm.worldToLocal(pH.clone()).normalize();
+        }
+      } else if (pH) {
         rest.upperLength = pS.distanceTo(pH);
         rest.upperLocalDir = upperArm.worldToLocal(pH.clone()).normalize();
+      } else {
+        rest.upperLength = 0.42;
+        rest.upperLocalDir = new THREE.Vector3(0, -1, 0);
       }
 
       if (hand) {
-        if (fingers.length) {
-          const avgFingerWorld = new THREE.Vector3();
-          fingers.forEach((f) => avgFingerWorld.add(f.getWorldPosition(new THREE.Vector3())));
-          avgFingerWorld.divideScalar(fingers.length);
-          const localAim = hand.worldToLocal(avgFingerWorld.clone());
-          rest.handForwardLocal = localAim.lengthSq() > 1e-6 ? localAim.normalize() : new THREE.Vector3(0, 1, 0);
-        } else {
-          rest.handForwardLocal = new THREE.Vector3(0, 1, 0);
-        }
-        rest.gripOffsetLocal = new THREE.Vector3(0, (rest.forearmLength || 0.25) * 0.14, 0);
+        rest.handOffsetModel = model.worldToLocal(pH.clone()).sub(model.worldToLocal(pS.clone()));
       }
     }
 
-    return { side, shoulder, upperArm, forearm, hand, fingers, rest };
+    return { side, shoulder, upperArm, forearm, wristJoint, hand, shoulderRaven, fingers, rest };
   }
 
   const leftArm = resolveArmSide('left');
@@ -272,7 +287,7 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
 
   let spear =
     findByOverride(RIG_OVERRIDES.spear) ||
-    findBest([/gungnir/i, /spear/i, /lance/i, /halberd/i, /javelin/i, /pike/i, /polearm/i, /staff/i, /weapon/i]);
+    findBest([/^speargroup$/i, /gungnir/i, /spear/i, /lance/i, /halberd/i, /javelin/i, /pike/i, /polearm/i, /staff/i, /weapon/i]);
 
   if (!spear) {
     const totalBox = new THREE.Box3().setFromObject(model);
@@ -339,56 +354,27 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
     findByOverride(RIG_OVERRIDES.beard) ||
     findBest([/^beardgroup$/i, /^beard$/i, /beard/i, /mustache/i]);
 
+  // Face screen display mesh MUST be found before eyes so LedFaceDisplay is never misclassified as an eye!
   const headSearchRoot = head || model;
-  let eyes = findByOverride(RIG_OVERRIDES.eyes) || [];
-  if (!eyes.length) {
-    const rawEyes = [];
-    headSearchRoot.traverse((obj) => {
-      if (obj === headSearchRoot) return;
-      if (/(?:eye(?!brow|lash|lid)|pupil|iris|led)/i.test(obj.name) && !/brow|visor|screen/i.test(obj.name)) {
-        rawEyes.push(obj);
-      }
-    });
-    eyes = deduplicateRoots(rawEyes);
-  }
-
-  let brows = findByOverride(RIG_OVERRIDES.brows) || [];
-  if (!brows.length) {
-    const rawBrows = [];
-    headSearchRoot.traverse((obj) => {
-      if (obj === headSearchRoot) return;
-      if (/brow|eyebrow/i.test(obj.name)) rawBrows.push(obj);
-    });
-    brows = deduplicateRoots(rawBrows);
-  }
-
   let faceMeshes = findByOverride(RIG_OVERRIDES.faceMeshes) || [];
   let useFullFaceMesh = false;
   if (!faceMeshes.length) {
-    const eyeSet = new Set(eyes);
-    const browSet = new Set(brows);
-    const beardSet = beard ? new Set([beard]) : new Set();
-
-    const isInside = (node, set) => {
-      let cur = node;
-      while (cur) {
-        if (set.has(cur)) return true;
-        cur = cur.parent;
-      }
-      return false;
-    };
-
     const headMeshes = [];
     headSearchRoot.traverse((obj) => {
       if (!obj.isMesh) return;
-      if (isInside(obj, eyeSet) || isInside(obj, browSet) || isInside(obj, beardSet)) return;
-      if (/horn|wing|raven|spear|gungnir|fur|collar|hair|crown|shield/i.test(obj.name)) return;
+      if (/horn|wing|raven|spear|gungnir|fur|collar|hair|crown|shield|rivet|occiput|lame|trim|temple|emblem|bezel|crest|saddle|cradle/i.test(obj.name)) {
+        return;
+      }
       headMeshes.push(obj);
     });
 
-    const dedicated = headMeshes.filter((m) => /face|visor|screen|display|head.?skin|skin|mask/i.test(m.name));
-    if (dedicated.length) {
-      faceMeshes = dedicated;
+    const ledDisplays = headMeshes.filter((m) => /led.?face.?display|face.?display|visor|screen/i.test(m.name));
+    const maskMeshes = headMeshes.filter((m) => /face.?mask|face|head.?skin|skin/i.test(m.name));
+    if (ledDisplays.length) {
+      faceMeshes = ledDisplays;
+      useFullFaceMesh = true;
+    } else if (maskMeshes.length) {
+      faceMeshes = maskMeshes;
       useFullFaceMesh = true;
     } else {
       faceMeshes = headMeshes.length ? headMeshes : meshes.slice(0, 1);
@@ -398,11 +384,39 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
     useFullFaceMesh = true;
   }
 
+  const faceSet = new Set(faceMeshes);
+
+  // Exclude raven eyes, helmet plates, and face display screen from individual eye meshes
+  let eyes = findByOverride(RIG_OVERRIDES.eyes) || [];
+  if (!eyes.length) {
+    const rawEyes = [];
+    headSearchRoot.traverse((obj) => {
+      if (obj === headSearchRoot || faceSet.has(obj)) return;
+      if (/raven|brow|visor|screen|display|face/i.test(obj.name)) return;
+      if (/(?:eye(?!brow|lash|lid)|pupil|iris)/i.test(obj.name)) {
+        rawEyes.push(obj);
+      }
+    });
+    eyes = deduplicateRoots(rawEyes);
+  }
+
+  // Exclude armor wing plates (BrowWingPlate*) so helmet armor isn't detached
+  let brows = findByOverride(RIG_OVERRIDES.brows) || [];
+  if (!brows.length) {
+    const rawBrows = [];
+    headSearchRoot.traverse((obj) => {
+      if (obj === headSearchRoot) return;
+      if (/plate|wing|armor|helmet|trim/i.test(obj.name)) return;
+      if (/brow|eyebrow/i.test(obj.name)) rawBrows.push(obj);
+    });
+    brows = deduplicateRoots(rawBrows);
+  }
+
   const headRef = head || model;
   const excludeSpearSet = spear ? new Set([spear]) : null;
   const bodyModelBox = measureObjectBoxInSpace(model, model, excludeSpearSet) || new THREE.Box3().setFromObject(model);
 
-  const faceBounds = { center: new THREE.Vector3(0, 0, 0.08), halfSize: new THREE.Vector3(0.18, 0.20, 0.16) };
+  const faceBounds = { center: new THREE.Vector3(0, 0.08, 0.16), halfSize: new THREE.Vector3(0.18, 0.21, 0.16) };
   if (faceMeshes.length) {
     const headInv = new THREE.Matrix4();
     headRef.updateMatrixWorld(true);
@@ -421,20 +435,9 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
       const ctr = fBox.getCenter(new THREE.Vector3());
       if (useFullFaceMesh) {
         faceBounds.center.copy(ctr);
-        faceBounds.halfSize.copy(sz).multiplyScalar(0.52);
+        faceBounds.halfSize.copy(sz).multiplyScalar(0.5);
       } else {
-        let eyeCenterY = ctr.y + sz.y * 0.04;
-        if (eyes.length) {
-          const eyeBox = new THREE.Box3();
-          eyes.forEach((e) => {
-            const b = measureObjectBoxInSpace(e, headRef);
-            if (b) eyeBox.union(b);
-          });
-          if (!eyeBox.isEmpty()) {
-            eyeCenterY = eyeBox.getCenter(new THREE.Vector3()).y - sz.y * 0.05;
-          }
-        }
-        faceBounds.center.set(ctr.x, eyeCenterY, ctr.z + sz.z * 0.20);
+        faceBounds.center.set(ctr.x, ctr.y + sz.y * 0.04, ctr.z + sz.z * 0.20);
         faceBounds.halfSize.set(sz.x * 0.34, sz.y * 0.32, sz.z * 0.32);
       }
     }
@@ -450,10 +453,10 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
     });
   };
 
-  [head, neck, torso, beard, ...eyes, ...brows].forEach(trackNode);
+  [head, neck, torso, legs, beard, ...eyes, ...brows].forEach(trackNode);
   [leftArm, rightArm].forEach((arm) => {
     if (!arm) return;
-    [arm.shoulder, arm.upperArm, arm.forearm, arm.hand, ...arm.fingers].forEach(trackNode);
+    [arm.shoulder, arm.upperArm, arm.forearm, arm.wristJoint, arm.hand, arm.shoulderRaven, ...arm.fingers].forEach(trackNode);
   });
 
   const eyeMaterials = [];
@@ -475,6 +478,7 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
     head,
     neck,
     torso,
+    legs,
     leftArm,
     rightArm,
     spear: spearMeta,
@@ -497,7 +501,7 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
       hasSpear: Boolean(spearMeta),
       hasFaceDisplay: faceMeshes.length > 0,
       hasMorphs: Object.values(morphBindings).some((arr) => arr.length > 0),
-      hasEyesOrBrows: eyes.length > 0 || brows.length > 0,
+      hasEyesOrBrows: eyes.length > 0 || brows.length > 0 || faceMeshes.length > 0,
     },
     dumpTree() {
       const lines = [];
@@ -517,18 +521,23 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
         head: head?.name || null,
         neck: neck?.name || null,
         torso: torso?.name || null,
+        legs: legs?.name || null,
         leftArm: {
           shoulder: leftArm.shoulder?.name || null,
           upperArm: leftArm.upperArm?.name || null,
           forearm: leftArm.forearm?.name || null,
+          wristJoint: leftArm.wristJoint?.name || null,
           hand: leftArm.hand?.name || null,
+          shoulderRaven: leftArm.shoulderRaven?.name || null,
           fingers: leftArm.fingers.map((f) => f.name),
         },
         rightArm: {
           shoulder: rightArm.shoulder?.name || null,
           upperArm: rightArm.upperArm?.name || null,
           forearm: rightArm.forearm?.name || null,
+          wristJoint: rightArm.wristJoint?.name || null,
           hand: rightArm.hand?.name || null,
+          shoulderRaven: rightArm.shoulderRaven?.name || null,
           fingers: rightArm.fingers.map((f) => f.name),
         },
         spear: spearMeta ? { name: spearMeta.node.name, side: spearMeta.restSide, isBone: spearMeta.isBone, length: +spearMeta.length.toFixed(3) } : null,
@@ -553,7 +562,9 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
 }
 
 /**
- * Analytical 2-bone IK solver driving world-space bone directions independently of bone local axes.
+ * Aims an arm cleanly toward a world-space hand target.
+ * Supports both 2-bone (upperArm + forearm) and 1-piece shoulder-pivoted arm groups (ValhallaGuardian),
+ * and stabilizes any shoulder-mounted raven so it stays perched upright.
  */
 function solveArmIK(arm, targetWorldPos, poleWorldDir, restPoses, blend, fingerCurl = 0) {
   if (!arm || !arm.upperArm || blend <= 0.001) return;
@@ -577,8 +588,11 @@ function solveArmIK(arm, targetWorldPos, poleWorldDir, restPoses, blend, fingerC
 
   upper.parent.updateMatrixWorld(true);
   const pShoulder = upper.getWorldPosition(_v1);
-  const L1 = arm.rest.upperLength || 0.26;
+  const L1 = arm.rest.upperLength || 0.42;
   const L2 = arm.rest.forearmLength || 0.24;
+
+  const parentWorldQuatS = upper.parent.getWorldQuaternion(_q1);
+  const restWorldQuatS = _q2.copy(parentWorldQuatS).multiply(restUpper.quaternion);
 
   if (fore) {
     const toTarget = _v2.copy(targetWorldPos).sub(pShoulder);
@@ -603,10 +617,7 @@ function solveArmIK(arm, targetWorldPos, poleWorldDir, restPoses, blend, fingerC
     const dirSE_desired = _v5.copy(pElbowTarget).sub(pShoulder).normalize();
     const dirEH_desired = _v3.copy(targetWorldPos).sub(pElbowTarget).normalize();
 
-    const parentWorldQuatS = upper.parent.getWorldQuaternion(_q1);
-    const restWorldQuatS = _q2.copy(parentWorldQuatS).multiply(restUpper.quaternion);
     const dirSE_restWorld = arm.rest.upperLocalDir.clone().applyQuaternion(restWorldQuatS).normalize();
-
     const deltaS = _q3.setFromUnitVectors(dirSE_restWorld, dirSE_desired);
     const targetWorldQuatS = deltaS.multiply(restWorldQuatS);
     const targetLocalQuatS = parentWorldQuatS.clone().invert().multiply(targetWorldQuatS);
@@ -628,14 +639,33 @@ function solveArmIK(arm, targetWorldPos, poleWorldDir, restPoses, blend, fingerC
       fore.updateMatrixWorld(true);
     }
   } else {
-    const dirDesired = _v2.copy(targetWorldPos).sub(pShoulder).normalize();
-    const parentWorldQuatS = upper.parent.getWorldQuaternion(_q1);
-    const restWorldQuatS = _q2.copy(parentWorldQuatS).multiply(restUpper.quaternion);
-    const dirSE_restWorld = (arm.rest.upperLocalDir || new THREE.Vector3(0, -1, 0)).clone().applyQuaternion(restWorldQuatS).normalize();
+    const dirDesired = _v2.copy(targetWorldPos).sub(pShoulder);
+    if (dirDesired.lengthSq() < 1e-8) dirDesired.set(0, -1, 0.3);
+    dirDesired.normalize();
+
+    const dirSE_restWorld = (arm.rest.upperLocalDir || new THREE.Vector3(0, -1, 0))
+      .clone()
+      .applyQuaternion(restWorldQuatS)
+      .normalize();
     const deltaS = _q3.setFromUnitVectors(dirSE_restWorld, dirDesired);
-    const targetLocalQuatS = parentWorldQuatS.clone().invert().multiply(deltaS.multiply(restWorldQuatS));
+    const targetWorldQuatS = deltaS.multiply(restWorldQuatS);
+    const targetLocalQuatS = parentWorldQuatS.clone().invert().multiply(targetWorldQuatS);
     upper.quaternion.copy(restUpper.quaternion).slerp(targetLocalQuatS, blend);
     upper.updateMatrixWorld(true);
+  }
+
+  // Stabilize shoulder raven so it remains upright while the arm swings
+  if (arm.shoulderRaven) {
+    const restRaven = restPoses.get(arm.shoulderRaven);
+    if (restRaven) {
+      const armCurWorld = upper.getWorldQuaternion(_q4);
+      const ravenRestWorld = _q5.copy(restWorldQuatS).multiply(restRaven.quaternion);
+      const ravenFollowWorld = _q3.copy(armCurWorld).multiply(restRaven.quaternion);
+      const desiredRavenWorld = ravenRestWorld.slerp(ravenFollowWorld, 0.22);
+      const desiredRavenLocal = armCurWorld.clone().invert().multiply(desiredRavenWorld);
+      arm.shoulderRaven.quaternion.copy(restRaven.quaternion).slerp(desiredRavenLocal, blend);
+      arm.shoulderRaven.updateMatrixWorld(true);
+    }
   }
 
   if (hand && arm.fingers.length) {
@@ -651,7 +681,8 @@ function solveArmIK(arm, targetWorldPos, poleWorldDir, restPoses, blend, fingerC
 }
 
 /**
- * Procedural Cyber-Viking Terminal Renderer & Curved Facial Geometry Shader Patch.
+ * Procedural Cyber-Viking LED Face & Terminal Renderer.
+ * Supports MeshBasicMaterial (used by LedFaceDisplay) as well as Standard/Physical materials.
  */
 class HolographicFaceDisplay {
   constructor(rig) {
@@ -685,24 +716,23 @@ class HolographicFaceDisplay {
     this.patchFaceMaterials();
 
     this._codeScripts = [
-      { prefix: '$ ', text: 'valhalla --neural-sync --core=gungnir', color: 'orange' },
-      { prefix: '0x7F9A ', text: 'ALLOC_MATRIX [4096x256] OK', color: 'cyan' },
-      { prefix: 'fn ', text: 'decodeRunes(stream: &[u8]) -> Matrix {', color: 'orange' },
-      { prefix: '  let ', text: 'hash = 0xAE49_F10C ^ ODIN_KEY;', color: 'amber' },
-      { prefix: '  if ', text: 'sync > 0.994 { emitPulse(0xFF6B00); }', color: 'orange' },
-      { prefix: '>> ', text: 'SYS_BUS: 0x00C4  0x8E3B  0xFA12  0x19D0', color: 'cyan' },
-      { prefix: 'exec ', text: 'bifrost_route --encrypt AES-GCM', color: 'orange' },
-      { prefix: '0x4B21 ', text: 'NEURAL_WEIGHTS: CONVERGED [99.98%]', color: 'cyan' },
-      { prefix: 'const ', text: 'visor = gl.shaderPatch(HEAD_SPACE);', color: 'amber' },
-      { prefix: '  return ', text: 'Status::READY_FOR_COMBAT;', color: 'orange' },
-      { prefix: '} ', text: '// RUNE_CHECKSUM: 0x9C72A1FF', color: 'dim' },
-      { prefix: '$ ', text: 'ping -c 1 asgard.core // 0.34ms', color: 'cyan' },
+      { prefix: '$ ', text: 'valhalla --neural-sync', color: 'orange' },
+      { prefix: '0x7F ', text: 'ALLOC_MATRIX [OK]', color: 'cyan' },
+      { prefix: 'fn ', text: 'decodeRunes(buf) {', color: 'orange' },
+      { prefix: '  let ', text: 'k = 0xAE49 ^ ODIN;', color: 'amber' },
+      { prefix: '  if ', text: 'sync > 0.99 { run(); }', color: 'orange' },
+      { prefix: '>> ', text: '0x00C4  0x8E3B  0xFA12', color: 'cyan' },
+      { prefix: 'exec ', text: 'bifrost --aes-gcm', color: 'orange' },
+      { prefix: '0x4B ', text: 'WEIGHTS: [99.98%]', color: 'cyan' },
+      { prefix: 'const ', text: 'visor = shaderPatch();', color: 'amber' },
+      { prefix: '  ret ', text: 'Status::COMBAT_READY', color: 'orange' },
+      { prefix: '} ', text: '// CHECK: 0x9C72A1FF', color: 'dim' },
+      { prefix: '$ ', text: 'ping asgard // 0.3ms', color: 'cyan' },
     ];
 
     this.lines = [];
     this.cursorLineIdx = 0;
     this.charProgress = 0;
-    this.scrollOffset = 0;
     this.renderAccum = 0;
     this.resetTerminal();
   }
@@ -717,122 +747,121 @@ class HolographicFaceDisplay {
         const mat = srcMat.clone();
         cloned.set(srcMat, mat);
 
-        if (mat.isMeshStandardMaterial || mat.isMeshPhysicalMaterial) {
-          mat.customProgramCacheKey = () => `valhalla-face-display-v1-${mat.type}`;
-          mat.onBeforeCompile = (shader) => {
-            Object.assign(shader.uniforms, this.uniforms);
+        const isStandard = Boolean(mat.isMeshStandardMaterial || mat.isMeshPhysicalMaterial);
+        const isBasic = Boolean(mat.isMeshBasicMaterial);
+        if (!isStandard && !isBasic) return mat;
 
-            shader.vertexShader = shader.vertexShader
-              .replace(
-                '#include <common>',
-                `#include <common>
-                uniform mat4 uValhallaHeadInv;
-                varying vec3 vValhallaHeadPos;
-                varying vec3 vValhallaHeadNormal;`
-              )
-              .replace(
-                '#include <project_vertex>',
-                `#include <project_vertex>
-                {
-                  vec4 vhlWorldPos = modelMatrix * vec4( transformed, 1.0 );
-                  vValhallaHeadPos = ( uValhallaHeadInv * vhlWorldPos ).xyz;
-                  vec3 vhlWorldNorm = normalize( mat3( modelMatrix ) * objectNormal );
-                  vValhallaHeadNormal = normalize( mat3( uValhallaHeadInv ) * vhlWorldNorm );
-                }`
-              );
+        mat.customProgramCacheKey = () => `valhalla-face-display-v2-${mat.type}`;
+        mat.onBeforeCompile = (shader) => {
+          Object.assign(shader.uniforms, this.uniforms);
 
-            shader.fragmentShader = shader.fragmentShader
-              .replace(
-                '#include <common>',
-                `#include <common>
-                uniform float uValhallaCodeMix;
-                uniform float uValhallaCodePulse;
-                uniform float uValhallaSurpriseMix;
-                uniform float uValhallaTime;
-                uniform sampler2D uValhallaCodeTex;
-                uniform vec3 uValhallaFaceCenter;
-                uniform vec3 uValhallaFaceHalfSize;
-                uniform float uValhallaUseFullMesh;
-                varying vec3 vValhallaHeadPos;
-                varying vec3 vValhallaHeadNormal;
+          shader.vertexShader = shader.vertexShader
+            .replace(
+              '#include <common>',
+              `#include <common>
+              uniform mat4 uValhallaHeadInv;
+              varying vec3 vValhallaHeadPos;`
+            )
+            .replace(
+              '#include <project_vertex>',
+              `#include <project_vertex>
+              {
+                vec4 vhlWorldPos = modelMatrix * vec4( transformed, 1.0 );
+                vValhallaHeadPos = ( uValhallaHeadInv * vhlWorldPos ).xyz;
+              }`
+            );
 
-                float valhallaComputeFaceMask(out vec2 faceUV, out float rimFactor) {
-                  vec3 safeHalf = max(uValhallaFaceHalfSize, vec3(0.001));
-                  vec3 rel = (vValhallaHeadPos - uValhallaFaceCenter) / safeHalf;
-                  faceUV = clamp(rel.xy * 0.5 + 0.5, 0.0, 1.0);
-                  rimFactor = 0.0;
-                  if (uValhallaCodeMix <= 0.001 && uValhallaSurpriseMix <= 0.001) return 0.0;
+          let frag = shader.fragmentShader
+            .replace(
+              '#include <common>',
+              `#include <common>
+              uniform float uValhallaCodeMix;
+              uniform float uValhallaCodePulse;
+              uniform float uValhallaSurpriseMix;
+              uniform float uValhallaTime;
+              uniform sampler2D uValhallaCodeTex;
+              uniform vec3 uValhallaFaceCenter;
+              uniform vec3 uValhallaFaceHalfSize;
+              uniform float uValhallaUseFullMesh;
+              varying vec3 vValhallaHeadPos;
 
-                  vec3 n = normalize(vValhallaHeadNormal);
-                  float frontFacing = smoothstep(0.10, 0.48, n.z);
+              float valhallaComputeFaceMask(out vec2 faceUV, out float rimFactor) {
+                vec3 safeHalf = max(uValhallaFaceHalfSize, vec3(0.001));
+                vec3 rel = (vValhallaHeadPos - uValhallaFaceCenter) / safeHalf;
+                vec2 visorUV = vec2(rel.x / 0.72, (rel.y - 0.04) / 0.72) * 0.5 + 0.5;
+                faceUV = clamp(visorUV, 0.0, 1.0);
+                rimFactor = 0.0;
+                if (uValhallaCodeMix <= 0.001 && uValhallaSurpriseMix <= 0.001) return 0.0;
 
-                  float shapeMask = 1.0;
-                  if (uValhallaUseFullMesh < 0.5) {
-                    float ovalDist = length(vec2(rel.x * 1.06, (rel.y - 0.04) * 1.02));
-                    float oval = 1.0 - smoothstep(0.72, 0.96, ovalDist);
-                    float zCut = smoothstep(-0.22, 0.18, rel.z);
-                    shapeMask = oval * zCut;
-                    rimFactor = smoothstep(0.68, 0.85, ovalDist) * (1.0 - smoothstep(0.85, 0.97, ovalDist)) * zCut;
-                  } else {
-                    float edgeDist = max(abs(rel.x), abs(rel.y));
-                    rimFactor = smoothstep(0.80, 0.98, edgeDist);
-                    shapeMask = smoothstep(-0.45, 0.05, rel.z);
-                  }
+                float shapeMask = 1.0;
+                if (uValhallaUseFullMesh < 0.5) {
+                  float ovalDist = length(vec2(rel.x * 1.06, (rel.y - 0.04) * 1.02));
+                  float oval = 1.0 - smoothstep(0.72, 0.96, ovalDist);
+                  float zCut = smoothstep(-0.22, 0.18, rel.z);
+                  shapeMask = oval * zCut;
+                  rimFactor = smoothstep(0.68, 0.85, ovalDist) * (1.0 - smoothstep(0.85, 0.97, ovalDist)) * zCut;
+                } else {
+                  float edgeDist = max(abs(rel.x), abs(rel.y));
+                  rimFactor = smoothstep(0.76, 0.96, edgeDist);
+                  shapeMask = smoothstep(-0.45, 0.08, rel.z);
+                }
 
-                  return clamp(shapeMask * frontFacing, 0.0, 1.0);
-                }`
-              )
-              .replace(
-                '#include <color_fragment>',
-                `#include <color_fragment>
-                vec2 vhlFaceUV = vec2(0.0);
-                float vhlRim = 0.0;
-                float vhlFaceMask = valhallaComputeFaceMask(vhlFaceUV, vhlRim);
-                float vhlScreenMix = smoothstep(0.0, 0.55, uValhallaCodeMix) * vhlFaceMask;
-                if (vhlScreenMix > 0.001) {
-                  diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.008, 0.010, 0.014), vhlScreenMix);
-                }`
-              )
+                return clamp(shapeMask, 0.0, 1.0);
+              }`
+            )
+            .replace(
+              '#include <color_fragment>',
+              `#include <color_fragment>
+              vec2 vhlFaceUV = vec2(0.0);
+              float vhlRim = 0.0;
+              float vhlFaceMask = valhallaComputeFaceMask(vhlFaceUV, vhlRim);
+              float vhlActiveMix = max(smoothstep(0.0, 0.50, uValhallaCodeMix), smoothstep(0.0, 0.35, uValhallaSurpriseMix)) * vhlFaceMask;
+              if (vhlActiveMix > 0.001) {
+                vec4 vhlTex = texture2D(uValhallaCodeTex, vhlFaceUV);
+                float vhlScan = 0.90 + 0.10 * sin(vhlFaceUV.y * 180.0 - uValhallaTime * 8.0);
+                float vhlSweepY = fract(uValhallaTime * 0.42);
+                float vhlBar = exp(-abs(vhlFaceUV.y - vhlSweepY) * 24.0) * 0.30 * smoothstep(0.1, 0.9, uValhallaCodeMix);
+                vec3 vhlOrange = vec3(1.0, 0.45, 0.08);
+                vec3 vhlCyan = vec3(0.24, 0.92, 1.0);
+                vec3 vhlScreenRgb = mix(vec3(0.010, 0.014, 0.022), vhlTex.rgb * (1.38 + 0.45 * uValhallaCodePulse) * vhlScan, 1.0)
+                  + mix(vhlOrange, vhlCyan, 0.30) * vhlBar
+                  + mix(vhlOrange, vhlCyan, 0.40) * vhlRim * 0.22 * smoothstep(0.1, 0.9, uValhallaCodeMix);
+                diffuseColor.rgb = mix(diffuseColor.rgb, vhlScreenRgb, vhlActiveMix);
+                diffuseColor.a = mix(diffuseColor.a, 1.0, vhlActiveMix);
+              }`
+            );
+
+          if (isStandard) {
+            frag = frag
               .replace(
                 '#include <roughnessmap_fragment>',
                 `#include <roughnessmap_fragment>
-                if (vhlScreenMix > 0.001) {
-                  roughnessFactor = mix(roughnessFactor, 0.065, vhlScreenMix);
+                if (vhlActiveMix > 0.001) {
+                  roughnessFactor = mix(roughnessFactor, 0.08, vhlActiveMix);
                 }`
               )
               .replace(
                 '#include <metalnessmap_fragment>',
                 `#include <metalnessmap_fragment>
-                if (vhlScreenMix > 0.001) {
-                  metalnessFactor = mix(metalnessFactor, 0.28, vhlScreenMix);
+                if (vhlActiveMix > 0.001) {
+                  metalnessFactor = mix(metalnessFactor, 0.22, vhlActiveMix);
                 }`
               )
               .replace(
                 '#include <emissivemap_fragment>',
                 `#include <emissivemap_fragment>
-                if (vhlScreenMix > 0.001) {
-                  float vhlCodeVis = smoothstep(0.22, 0.92, uValhallaCodeMix) * vhlFaceMask;
-                  vec4 codeSample = texture2D(uValhallaCodeTex, vhlFaceUV);
-                  float scanline = 0.90 + 0.10 * sin(vhlFaceUV.y * 190.0 - uValhallaTime * 8.0);
-                  float sweepY = fract(uValhallaTime * 0.42);
-                  float scanBar = exp(-abs(vhlFaceUV.y - sweepY) * 26.0) * 0.42;
-                  vec3 orange = vec3(1.0, 0.44, 0.07);
-                  vec3 cyan = vec3(0.22, 0.92, 1.0);
-                  vec3 scanGlow = mix(orange, cyan, 0.28) * scanBar;
-                  vec3 edgeGlow = mix(orange, cyan, 0.32) * vhlRim * (0.24 + 0.38 * uValhallaCodePulse);
-                  vec3 digitalEmissive = (codeSample.rgb * (1.28 + 0.55 * uValhallaCodePulse) * scanline + scanGlow + edgeGlow) * vhlCodeVis;
-                  totalEmissiveRadiance = mix(totalEmissiveRadiance, vec3(0.0), vhlScreenMix * 0.95) + digitalEmissive;
-                }
-                if (uValhallaSurpriseMix > 0.001 && vhlFaceMask > 0.001) {
-                  float eyeBand = exp(-pow((vhlFaceUV.y - 0.56) * 8.5, 2.0));
-                  float eyePair = exp(-pow((abs(vhlFaceUV.x - 0.5) - 0.18) * 11.0, 2.0));
-                  totalEmissiveRadiance += vec3(0.35, 0.95, 1.0) * eyeBand * eyePair * uValhallaSurpriseMix * 0.35 * vhlFaceMask;
+                if (vhlActiveMix > 0.001) {
+                  vec4 vhlEmTex = texture2D(uValhallaCodeTex, vhlFaceUV);
+                  totalEmissiveRadiance = mix(totalEmissiveRadiance, vec3(0.0), vhlActiveMix * 0.95)
+                    + vhlEmTex.rgb * (1.35 + 0.45 * uValhallaCodePulse) * vhlActiveMix;
                 }`
               );
-          };
-          mat.needsUpdate = true;
-          this.patchedMaterials.push(mat);
-        }
+          }
+
+          shader.fragmentShader = frag;
+        };
+        mat.needsUpdate = true;
+        this.patchedMaterials.push(mat);
         return mat;
       });
       mesh.material = Array.isArray(mesh.material) ? nextMats : nextMats[0];
@@ -860,12 +889,18 @@ class HolographicFaceDisplay {
     this.uniforms.uValhallaSurpriseMix.value = surpriseMix;
     this.uniforms.uValhallaTime.value = time;
 
-    if (codeMix <= 0.01) return;
+    if (codeMix <= 0.01 && surpriseMix <= 0.01) return;
 
     this.renderAccum += dt;
     if (this.renderAccum < 1 / 26) return;
     const stepDt = this.renderAccum;
     this.renderAccum = 0;
+
+    if (surpriseMix > codeMix) {
+      this.drawSurprisedFaceCanvas(time, surpriseMix);
+      this.texture.needsUpdate = true;
+      return;
+    }
 
     const active = this.lines[this.lines.length - 1];
     const fullLen = active.prefix.length + active.text.length;
@@ -881,7 +916,7 @@ class HolographicFaceDisplay {
       active.flash = 1.0;
       this.cursorLineIdx = (this.cursorLineIdx + 1) % this._codeScripts.length;
       this.lines.push({ ...this._codeScripts[this.cursorLineIdx], typed: 0, flash: 0 });
-      if (this.lines.length > 17) this.lines.shift();
+      if (this.lines.length > 14) this.lines.shift();
       this.charProgress = 0;
     }
 
@@ -889,57 +924,131 @@ class HolographicFaceDisplay {
     this.texture.needsUpdate = true;
   }
 
+  drawSurprisedFaceCanvas(time, intensity) {
+    const ctx = this.ctx;
+    const w = this.canvas.width;
+    const h = this.canvas.height;
+
+    // Deep glossy dark LED visor background
+    ctx.fillStyle = '#040912';
+    ctx.fillRect(0, 0, w, h);
+
+    const glow = ctx.createRadialGradient(w * 0.5, h * 0.45, 20, w * 0.5, h * 0.45, w * 0.55);
+    glow.addColorStop(0, 'rgba(55, 230, 255, 0.14)');
+    glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, w, h);
+
+    const dartX = Math.sin(time * 3.1) * 8;
+    const eyeY = h * 0.44;
+    const leftEyeX = w * 0.34;
+    const rightEyeX = w * 0.66;
+    const eyeR = 44 + 8 * clamp(intensity, 0, 1);
+
+    // High-arched surprised digital eyebrows
+    ctx.strokeStyle = '#7bf5ff';
+    ctx.lineWidth = 10;
+    ctx.lineCap = 'round';
+    ctx.shadowBlur = 18;
+    ctx.shadowColor = 'rgba(72, 232, 255, 0.9)';
+
+    ctx.beginPath();
+    ctx.arc(leftEyeX, eyeY - 40, 44, Math.PI * 1.18, Math.PI * 1.82);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(rightEyeX, eyeY - 40, 44, Math.PI * 1.18, Math.PI * 1.82);
+    ctx.stroke();
+
+    // Wide shocked cyan LED eyes
+    [leftEyeX, rightEyeX].forEach((ex) => {
+      ctx.fillStyle = '#5cf2ff';
+      ctx.beginPath();
+      ctx.ellipse(ex, eyeY, eyeR * 0.88, eyeR * 1.15, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Inner bright white-cyan ring & darting pupil
+      ctx.fillStyle = '#03111c';
+      ctx.beginPath();
+      ctx.arc(ex + dartX, eyeY, eyeR * 0.36, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(ex + dartX - 7, eyeY - 8, 8, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Cute shocked 'o' LED mouth
+    ctx.strokeStyle = '#6cf4ff';
+    ctx.lineWidth = 9;
+    ctx.beginPath();
+    ctx.ellipse(w * 0.5, h * 0.63, 20, 26, 0, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Subtle exclamation/question telemetry
+    ctx.fillStyle = '#ff9838';
+    ctx.shadowColor = 'rgba(255, 140, 40, 0.9)';
+    ctx.font = 'bold 28px ui-monospace, Menlo, monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('?!', w * 0.5, h * 0.25);
+    ctx.textAlign = 'left';
+    ctx.shadowBlur = 0;
+  }
+
   drawTerminalCanvas(time, pulse) {
     const ctx = this.ctx;
     const w = this.canvas.width;
     const h = this.canvas.height;
 
-    ctx.fillStyle = '#020305';
+    ctx.fillStyle = '#020306';
     ctx.fillRect(0, 0, w, h);
 
-    const grad = ctx.createRadialGradient(w * 0.5, h * 0.48, 12, w * 0.5, h * 0.5, w * 0.65);
-    grad.addColorStop(0, `rgba(255, 110, 20, ${0.11 + pulse * 0.12})`);
-    grad.addColorStop(0.55, `rgba(38, 215, 255, ${0.04 + pulse * 0.05})`);
+    const grad = ctx.createRadialGradient(w * 0.5, h * 0.48, 12, w * 0.5, h * 0.5, w * 0.62);
+    grad.addColorStop(0, `rgba(255, 110, 20, ${0.14 + pulse * 0.14})`);
+    grad.addColorStop(0.55, `rgba(38, 215, 255, ${0.06 + pulse * 0.06})`);
     grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, w, h);
 
-    ctx.strokeStyle = 'rgba(255, 130, 45, 0.06)';
+    ctx.strokeStyle = 'rgba(255, 130, 45, 0.08)';
     ctx.lineWidth = 1;
-    for (let x = 32; x < w; x += 32) {
+    for (let x = 40; x < w; x += 36) {
       ctx.beginPath();
       ctx.moveTo(x, 0);
       ctx.lineTo(x, h);
       ctx.stroke();
     }
-    for (let y = 32; y < h; y += 32) {
+    for (let y = 40; y < h; y += 36) {
       ctx.beginPath();
       ctx.moveTo(0, y);
       ctx.lineTo(w, y);
       ctx.stroke();
     }
 
-    ctx.font = 'bold 14px ui-monospace, SFMono-Regular, Menlo, monospace';
+    // Safe padded viewport area so all code sits clearly inside the visible helmet visor
+    const padX = 56;
+    ctx.font = 'bold 16px ui-monospace, SFMono-Regular, Menlo, monospace';
     ctx.fillStyle = '#ff8a2b';
-    ctx.fillText('VALHALLA // NEURAL_EXEC', 34, 48);
+    ctx.fillText('VALHALLA // EXEC', padX, 86);
     ctx.fillStyle = '#48e8ff';
     const hexClock = Math.floor(time * 256).toString(16).toUpperCase().padStart(4, '0');
-    ctx.fillText(`0x${hexClock}`, w - 102, 48);
+    ctx.fillText(`0x${hexClock}`, w - padX - 66, 86);
 
-    ctx.fillStyle = 'rgba(255, 128, 32, 0.38)';
-    ctx.fillRect(34, 58, w - 68, 1.5);
+    ctx.fillStyle = 'rgba(255, 128, 32, 0.45)';
+    ctx.fillRect(padX, 98, w - padX * 2, 2);
 
-    const startY = 92;
-    const lineH = 29;
-    ctx.font = '600 15.5px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+    const startY = 136;
+    const lineH = 31;
+    ctx.font = 'bold 17.5px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
 
     this.lines.forEach((line, idx) => {
       const y = startY + idx * lineH;
-      if (y > h - 48) return;
+      if (y > h - 92) return;
 
       if (line.flash > 0.02) {
-        ctx.fillStyle = `rgba(255, 122, 24, ${line.flash * 0.22})`;
-        ctx.fillRect(28, y - 18, w - 56, 24);
+        ctx.fillStyle = `rgba(255, 122, 24, ${line.flash * 0.24})`;
+        ctx.fillRect(padX - 6, y - 20, w - padX * 2 + 12, 26);
       }
 
       const full = line.prefix + line.text;
@@ -947,41 +1056,41 @@ class HolographicFaceDisplay {
       const visiblePrefix = line.prefix.slice(0, Math.min(line.prefix.length, visibleCount));
       const visibleBody = line.text.slice(0, Math.max(0, visibleCount - line.prefix.length));
 
-      ctx.shadowBlur = 8;
-      ctx.shadowColor = line.color === 'cyan' ? 'rgba(60, 232, 255, 0.7)' : 'rgba(255, 118, 22, 0.75)';
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = line.color === 'cyan' ? 'rgba(60, 232, 255, 0.85)' : 'rgba(255, 118, 22, 0.9)';
 
       ctx.fillStyle = line.color === 'cyan' ? '#4deaff' : '#ff6b1a';
-      ctx.fillText(visiblePrefix, 34, y);
+      ctx.fillText(visiblePrefix, padX, y);
 
       const prefixW = ctx.measureText(visiblePrefix).width;
       ctx.fillStyle =
         line.color === 'cyan'
-          ? '#8bf3ff'
+          ? '#96f6ff'
           : line.color === 'amber'
-          ? '#ffbe6b'
+          ? '#ffc370'
           : line.color === 'dim'
-          ? '#a9744d'
-          : '#ff9638';
-      ctx.fillText(visibleBody, 34 + prefixW, y);
+          ? '#c08556'
+          : '#ff9b42';
+      ctx.fillText(visibleBody, padX + prefixW, y);
 
       if (idx === this.lines.length - 1 && Math.floor(time * 7) % 2 === 0) {
         const totalW = prefixW + ctx.measureText(visibleBody).width;
         ctx.fillStyle = '#ff7b1c';
-        ctx.fillRect(38 + totalW, y - 14, 9, 17);
+        ctx.fillRect(padX + 4 + totalW, y - 16, 10, 19);
       }
       ctx.shadowBlur = 0;
     });
 
-    ctx.fillStyle = 'rgba(72, 232, 255, 0.65)';
-    ctx.font = '12px ui-monospace, Menlo, monospace';
-    const bars = Array.from({ length: 14 }, (_, i) => {
+    ctx.fillStyle = 'rgba(72, 232, 255, 0.78)';
+    ctx.font = 'bold 13px ui-monospace, Menlo, monospace';
+    const bars = Array.from({ length: 10 }, (_, i) => {
       const val = Math.floor((0.5 + 0.5 * Math.sin(time * 5.2 + i * 0.7)) * 255)
         .toString(16)
         .toUpperCase()
         .padStart(2, '0');
       return val;
     }).join(' ');
-    ctx.fillText(bars, 34, h - 24);
+    ctx.fillText(bars, padX, h - 60);
   }
 
   dispose() {
@@ -995,55 +1104,103 @@ class HolographicFaceDisplay {
  * Built-in Cinematic Animations
  * ========================================================================== */
 
+/**
+ * 1. Hand-Locked Spear Spin & Front Chest Transfer
+ * The spear always stays gripped inside the moving hand(s) and both hands meet
+ * cleanly in front of the chest during the transfer.
+ */
 function createSpearSpinAnimation() {
   return {
     id: 'spearSpin',
-    label: 'One-Handed Spear Spin & Transfer',
-    duration: 6.5,
+    label: 'Hand-Driven Spear Spin & Transfer',
+    duration: 6.4,
     canPlay(rig) {
-      return rig.capabilities.hasSpear;
+      return rig.capabilities.hasSpear && rig.capabilities.hasArms;
     },
     createState(rig) {
       const spear = rig.spear;
       const startSide = spear.restSide || 'right';
-      const otherSide = startSide === 'right' ? 'left' : 'right';
-      const bodyMaxZ = rig.bodyModelBox.max.z;
-      const bodySize = rig.bodyModelBox.getSize(new THREE.Vector3());
-      const clearanceZ = bodyMaxZ + Math.max(0.18, bodySize.z * 0.28);
-      const centerY = rig.bodyModelBox.min.y + bodySize.y * 0.56;
-      const handSpanX = Math.max(0.24, bodySize.x * 0.30);
+      const rightArm = rig.rightArm;
+      const leftArm = rig.leftArm;
 
       rig.model.updateMatrixWorld(true);
-      const restGripWorld = spear.localGripCenter.clone().applyMatrix4(spear.node.matrixWorld);
-      const restGripModel = rig.model.worldToLocal(restGripWorld.clone());
-      const restSpearWorldQuat = spear.node.getWorldQuaternion(new THREE.Quaternion());
-      const modelWorldQuatInv = rig.model.getWorldQuaternion(new THREE.Quaternion()).invert();
-      const restSpearModelQuat = modelWorldQuatInv.multiply(restSpearWorldQuat);
 
-      const qShaftToY = new THREE.Quaternion().setFromUnitVectors(spear.localShaftAxis, new THREE.Vector3(0, 1, 0));
-      const restPivotQuat = restSpearModelQuat.clone().multiply(qShaftToY.clone().invert());
+      const getHandModelPos = (arm) => {
+        if (arm?.hand) return rig.model.worldToLocal(arm.hand.getWorldPosition(new THREE.Vector3()));
+        if (arm?.upperArm) return rig.model.worldToLocal(arm.upperArm.getWorldPosition(new THREE.Vector3()));
+        return new THREE.Vector3(arm?.side === 'left' ? 0.35 : -0.35, 0.5, 0.15);
+      };
+
+      const getShoulderModelPos = (arm) => {
+        if (arm?.upperArm) return rig.model.worldToLocal(arm.upperArm.getWorldPosition(new THREE.Vector3()));
+        return new THREE.Vector3(arm?.side === 'left' ? 0.32 : -0.32, 0.9, 0);
+      };
+
+      const sR = getShoulderModelPos(rightArm);
+      const sL = getShoulderModelPos(leftArm);
+      const midX = (sR.x + sL.x) * 0.5;
+      const shoulderY = (sR.y + sL.y) * 0.5;
+      const shoulderZ = (sR.z + sL.z) * 0.5;
+      const armLen = Math.max(rightArm?.rest?.upperLength || 0.44, leftArm?.rest?.upperLength || 0.44);
+
+      // Hand poses relative to actual shoulders (guaranteed reachable without clipping armor!)
+      const rightRestHandModel = getHandModelPos(rightArm);
+      const leftRestHandModel = getHandModelPos(leftArm);
+      const rightSpinHandModel = new THREE.Vector3(sR.x + 0.07, shoulderY - 0.03, shoulderZ + armLen * 0.94);
+      const leftSpinHandModel = new THREE.Vector3(sL.x - 0.07, shoulderY - 0.03, shoulderZ + armLen * 0.94);
+      const rightMeetHandModel = new THREE.Vector3(midX - 0.07, shoulderY - 0.02, shoulderZ + armLen * 0.88);
+      const leftMeetHandModel = new THREE.Vector3(midX + 0.07, shoulderY - 0.02, shoulderZ + armLen * 0.88);
+      const rightGuardHandModel = new THREE.Vector3(sR.x - 0.04, shoulderY - 0.22, shoulderZ + armLen * 0.65);
+      const leftGuardHandModel = new THREE.Vector3(sL.x + 0.04, shoulderY - 0.22, shoulderZ + armLen * 0.65);
+
+      // Compute exact rest grip anchor on spear matching RightHand's world position
+      const restGripWorld = spear.localGripCenter.clone().applyMatrix4(spear.node.matrixWorld);
+      const restAnchorModel =
+        startSide === 'right' && rightArm?.hand
+          ? rightRestHandModel.clone()
+          : startSide === 'left' && leftArm?.hand
+          ? leftRestHandModel.clone()
+          : rig.model.worldToLocal(restGripWorld.clone());
+
+      // Build front-facing pivot orientation so spinning around local +Z always twirls cleanly in front of the camera
+      const worldShaftDir = spear.localShaftAxis.clone().transformDirection(spear.node.matrixWorld);
+      const modelQuatInv = rig.model.getWorldQuaternion(new THREE.Quaternion()).invert();
+      const upModel = worldShaftDir.applyQuaternion(modelQuatInv).normalize();
+      const fwdModel = new THREE.Vector3(0, 0, 1);
+      fwdModel.addScaledVector(upModel, -fwdModel.dot(upModel));
+      if (fwdModel.lengthSq() < 1e-5) fwdModel.set(0, 0, 1);
+      fwdModel.normalize();
+      const rightModel = new THREE.Vector3().crossVectors(upModel, fwdModel).normalize();
+      const frontBasis = new THREE.Matrix4().makeBasis(rightModel, upModel, fwdModel);
+      const restPivotQuat = new THREE.Quaternion().setFromRotationMatrix(frontBasis);
 
       const pivot = new THREE.Group();
       pivot.name = '__ValhallaSpearAnimPivot';
 
       return {
         startSide,
-        otherSide,
-        clearanceZ,
-        centerY,
-        handSpanX,
-        restGripModel,
+        sR,
+        sL,
+        midX,
+        rightRestHandModel,
+        leftRestHandModel,
+        rightSpinHandModel,
+        leftSpinHandModel,
+        rightMeetHandModel,
+        leftMeetHandModel,
+        rightGuardHandModel,
+        leftGuardHandModel,
+        restAnchorModel,
         restPivotQuat,
         pivot,
         attached: false,
-        spinAngle: 0,
       };
     },
     onEnter(rig, state) {
       const sp = rig.spear;
       rig.model.updateMatrixWorld(true);
       rig.model.add(state.pivot);
-      state.pivot.position.copy(state.restGripModel);
+      state.pivot.position.copy(state.restAnchorModel);
       state.pivot.quaternion.copy(state.restPivotQuat);
       state.pivot.updateMatrixWorld(true);
 
@@ -1054,55 +1211,141 @@ function createSpearSpinAnimation() {
     },
     update(rig, state, t, dt, blend) {
       const sp = rig.spear;
-      const domSign = state.startSide === 'right' ? -1 : 1;
-      const oppSign = -domSign;
+      const domIsRight = state.startSide === 'right';
+      const domSign = domIsRight ? -1 : 1;
 
-      let omega = 0;
-      if (t < 0.75) {
-        omega = 18.5 * easeInOutCubic(t / 0.75);
-      } else if (t < 4.70) {
-        omega = 18.5 + Math.sin(t * 2.5) * 1.1;
-      } else if (t < 5.65) {
-        const brake = 1 - easeInOutCubic((t - 4.70) / 0.95);
-        omega = 18.5 * brake;
-      }
-      state.spinAngle += omega * dt;
+      // 1. Timeline weights
+      // Raise into front ready: 0.0 -> 0.85
+      // Spin in dominant hand (3 crisp turns): 0.85 -> 2.55
+      // Bring both hands together & pass: 2.55 -> 3.45
+      // Spin in opposite hand (2 crisp turns): 3.45 -> 4.85
+      // Pass back to dominant hand: 4.85 -> 5.65
+      // Lower cleanly to idle: 5.65 -> 6.40
+      const raiseU = smoothstep(0.0, 0.85, t);
+      const returnU = smoothstep(5.60, 6.40, t);
+      const stageBlend = raiseU * (1 - returnU);
 
-      let effectiveSpin = state.spinAngle;
-      if (t >= 4.70) {
-        const catchU = smoothstep(4.70, 5.65, t);
-        const nearest2Pi = Math.round(state.spinAngle / (Math.PI * 2)) * (Math.PI * 2);
-        effectiveSpin = THREE.MathUtils.lerp(state.spinAngle, nearest2Pi, catchU);
-      }
-
+      // Compute hand-to-hand transfer alpha (0 = dominant hand, 1 = opposite hand)
       let handAlpha = 0;
-      let tossArc = 0;
-      if (t >= 2.25 && t < 3.15) {
-        handAlpha = easeInOutCubic((t - 2.25) / 0.90);
-        tossArc = Math.sin(Math.PI * handAlpha);
-      } else if (t >= 3.15 && t < 5.45) {
+      if (t >= 2.75 && t < 3.35) {
+        handAlpha = easeInOutCubic((t - 2.75) / 0.60);
+      } else if (t >= 3.35 && t < 5.05) {
         handAlpha = 1;
-      } else if (t >= 5.45) {
-        const returnU = easeInOutCubic((t - 5.45) / 0.95);
-        handAlpha = 1 - returnU;
-        tossArc = Math.sin(Math.PI * returnU) * 0.45;
+      } else if (t >= 5.05 && t < 5.60) {
+        handAlpha = 1 - easeInOutCubic((t - 5.05) / 0.55);
       }
 
-      const domPos = _v1.set(domSign * state.handSpanX, state.centerY + 0.04, state.clearanceZ);
-      const oppPos = _v2.set(oppSign * state.handSpanX, state.centerY + 0.06, state.clearanceZ + 0.02);
-      const activeGripModel = _v3.lerpVectors(domPos, oppPos, handAlpha);
-      activeGripModel.y += tossArc * 0.09;
-      activeGripModel.z += tossArc * 0.07;
+      // Compute meeting blend when hands converge in front of chest for handoff
+      const meet1 = smoothstep(2.35, 2.80, t) * (1 - smoothstep(3.25, 3.70, t));
+      const meet2 = smoothstep(4.70, 5.10, t) * (1 - smoothstep(5.45, 5.85, t));
+      const meetBlend = clamp(meet1 + meet2, 0, 1);
 
-      const spinActiveWeight = smoothstep(0.55, 0.95, t) * (1 - smoothstep(4.65, 5.45, t)) * (1 - tossArc * 0.85);
-      activeGripModel.x += Math.cos(effectiveSpin) * 0.024 * spinActiveWeight;
-      activeGripModel.y += Math.sin(effectiveSpin) * 0.024 * spinActiveWeight;
+      // Smooth continuous cumulative spin angle ending on an exact multiple of 2*PI (5 total turns)
+      const p1 = easeInOutCubic(clamp((t - 0.85) / 1.70, 0, 1)) * (Math.PI * 4);
+      const passSpin = easeInOutCubic(clamp((t - 2.75) / 0.60, 0, 1)) * (Math.PI * 2);
+      const p2 = easeInOutCubic(clamp((t - 3.45) / 1.40, 0, 1)) * (Math.PI * 4);
+      const passBackSpin = easeInOutCubic(clamp((t - 5.05) / 0.55, 0, 1)) * (Math.PI * 2);
+      const effectiveSpin = (p1 + passSpin + p2 + passBackSpin) * domSign;
 
-      const stageBlend = smoothstep(0.0, 0.70, t) * (1 - smoothstep(5.65, 6.45, t));
-      state.pivot.position.lerpVectors(state.restGripModel, activeGripModel, stageBlend * blend);
+      const spinVel =
+        (smoothstep(0.85, 1.15, t) * (1 - smoothstep(2.30, 2.55, t))) +
+        (smoothstep(3.45, 3.75, t) * (1 - smoothstep(4.65, 4.88, t)));
 
-      const spinTiltQuat = _q1.setFromEuler(_e1.set(0.18 * stageBlend, domSign * 0.10 * (1 - handAlpha * 2) * stageBlend, 0));
-      const spinRollQuat = _q2.setFromAxisAngle(_v4.set(0, 0, domSign), effectiveSpin);
+      // 2. Drive Left & Right Arms FIRST so hands move to exact target positions
+      const rightSpinTarget = state.rightSpinHandModel.clone().lerp(state.rightMeetHandModel, meetBlend);
+      const leftSpinTarget = state.leftSpinHandModel.clone().lerp(state.leftMeetHandModel, meetBlend);
+
+      const rightTargetModel = rightSpinTarget.clone().lerp(state.rightGuardHandModel, clamp(handAlpha * (1 - meetBlend), 0, 1));
+      const leftTargetModel = leftSpinTarget.clone().lerp(state.leftGuardHandModel, clamp((1 - handAlpha) * (1 - meetBlend), 0, 1));
+
+      // Subtle circular wrist-pump on the active hand synced with the spin so arm clearly drives the twirl
+      if (spinVel > 0.01) {
+        const pumpX = Math.cos(effectiveSpin) * 0.022 * spinVel;
+        const pumpY = Math.sin(effectiveSpin) * 0.022 * spinVel;
+        if (handAlpha < 0.5) {
+          rightTargetModel.x += pumpX;
+          rightTargetModel.y += pumpY;
+        } else {
+          leftTargetModel.x += pumpX;
+          leftTargetModel.y += pumpY;
+        }
+      }
+
+      // Subtle grounded torso twist toward active side
+      if (rig.torso) {
+        const rt = rig.restPoses.get(rig.torso);
+        if (rt) {
+          const twist = domSign * 0.10 * (1 - handAlpha * 2) * stageBlend;
+          const lean = -0.04 * stageBlend;
+          _q1.setFromEuler(_e1.set(lean, twist, 0)).multiply(rt.quaternion);
+          rig.torso.quaternion.copy(rt.quaternion).slerp(_q1, blend);
+          if (rig.legs) {
+            const rl = rig.restPoses.get(rig.legs);
+            if (rl) {
+              _q2.setFromEuler(_e1.set(-lean * 0.8, -twist * 0.8, 0)).multiply(rl.quaternion);
+              rig.legs.quaternion.copy(rl.quaternion).slerp(_q2, blend);
+            }
+          }
+        }
+      }
+
+      if (rig.head) {
+        const rh = rig.restPoses.get(rig.head);
+        if (rh) {
+          const lookYaw = domSign * 0.20 * (1 - handAlpha * 2) * stageBlend;
+          const lookPitch = 0.06 * stageBlend;
+          _q1.setFromEuler(_e1.set(lookPitch, lookYaw, 0)).multiply(rh.quaternion);
+          rig.head.quaternion.slerp(_q1, blend);
+        }
+      }
+
+      const rightArmWeight = stageBlend * blend;
+      const leftArmWeight = stageBlend * blend;
+
+      if (rig.rightArm?.upperArm) {
+        const rightWorld = rig.model.localToWorld(rightTargetModel.clone());
+        solveArmIK(rig.rightArm, rightWorld, new THREE.Vector3(-0.5, -0.7, -0.4), rig.restPoses, rightArmWeight, 0.8);
+      }
+      if (rig.leftArm?.upperArm) {
+        const leftWorld = rig.model.localToWorld(leftTargetModel.clone());
+        solveArmIK(rig.leftArm, leftWorld, new THREE.Vector3(0.5, -0.7, -0.4), rig.restPoses, leftArmWeight, 0.8);
+      }
+
+      // Synchronized wrist motion on active hand so wrist visibly twirls the spear
+      const applyWristTwirl = (arm, activeAmount) => {
+        if (!arm) return;
+        const wNode = arm.hand || arm.wristJoint;
+        if (!wNode) return;
+        const rw = rig.restPoses.get(wNode);
+        if (!rw) return;
+        const twirl = Math.sin(effectiveSpin) * 0.34 * activeAmount * spinVel;
+        const nod = Math.cos(effectiveSpin) * 0.22 * activeAmount * spinVel;
+        const lift = -0.35 * stageBlend * activeAmount;
+        _q1.setFromEuler(_e1.set(lift + nod, twirl, 0)).multiply(rw.quaternion);
+        wNode.quaternion.copy(rw.quaternion).slerp(_q1, blend);
+      };
+
+      applyWristTwirl(rig.rightArm, 1 - handAlpha);
+      applyWristTwirl(rig.leftArm, handAlpha);
+
+      // 3. LOCK Spear Pivot directly to the live world positions of the moving hands!
+      rig.model.updateMatrixWorld(true);
+      const getLiveHandModel = (arm, fallback) => {
+        if (arm?.hand) return rig.model.worldToLocal(arm.hand.getWorldPosition(new THREE.Vector3()));
+        return fallback.clone();
+      };
+      const liveRightModel = getLiveHandModel(rig.rightArm, rightTargetModel);
+      const liveLeftModel = getLiveHandModel(rig.leftArm, leftTargetModel);
+
+      const domLiveModel = domIsRight ? liveRightModel : liveLeftModel;
+      const oppLiveModel = domIsRight ? liveLeftModel : liveRightModel;
+      const activeGripModel = _v1.lerpVectors(domLiveModel, oppLiveModel, handAlpha);
+
+      state.pivot.position.lerpVectors(state.restAnchorModel, activeGripModel, stageBlend * blend);
+
+      // Tilt spin plane ~16 deg forward so spear clears helmet/ravens cleanly while held in hand
+      const spinTiltQuat = _q1.setFromEuler(_e1.set(0.28 * stageBlend, 0, 0));
+      const spinRollQuat = _q2.setFromAxisAngle(_v2.set(0, 0, 1), effectiveSpin);
       const animPivotQuat = state.restPivotQuat.clone().multiply(spinTiltQuat).multiply(spinRollQuat);
       state.pivot.quaternion.copy(state.restPivotQuat).slerp(animPivotQuat, blend);
       state.pivot.updateMatrixWorld(true);
@@ -1110,56 +1353,12 @@ function createSpearSpinAnimation() {
       if (sp.isBone) {
         sp.node.parent.updateMatrixWorld(true);
         const parentInv = _m1.copy(sp.node.parent.matrixWorld).invert();
-        const desiredWorldPos = state.pivot.getWorldPosition(_v4);
+        const desiredWorldPos = state.pivot.getWorldPosition(_v3);
         const offsetWorld = sp.localGripCenter.clone().applyQuaternion(state.pivot.getWorldQuaternion(_q3));
         desiredWorldPos.sub(offsetWorld);
         sp.node.position.copy(desiredWorldPos.applyMatrix4(parentInv));
         const parentQuatInv = sp.node.parent.getWorldQuaternion(_q4).invert();
         sp.node.quaternion.copy(parentQuatInv.multiply(state.pivot.getWorldQuaternion(_q3)));
-      }
-
-      const torsoTwist = (domSign * 0.16 * (1 - handAlpha * 2)) * stageBlend;
-      const torsoLean = -0.06 * stageBlend;
-      if (rig.torso) {
-        const rt = rig.restPoses.get(rig.torso);
-        if (rt) {
-          _q1.setFromEuler(_e1.set(torsoLean, torsoTwist, 0)).multiply(rt.quaternion);
-          rig.torso.quaternion.copy(rt.quaternion).slerp(_q1, blend);
-        }
-      }
-      if (rig.head) {
-        const rh = rig.restPoses.get(rig.head);
-        if (rh) {
-          const lookYaw = domSign * 0.24 * (1 - handAlpha * 2) * stageBlend;
-          const lookPitch = 0.08 * stageBlend;
-          _q1.setFromEuler(_e1.set(lookPitch, lookYaw, 0)).multiply(rh.quaternion);
-          rig.head.quaternion.slerp(_q1, blend);
-        }
-      }
-
-      const domArm = state.startSide === 'right' ? rig.rightArm : rig.leftArm;
-      const oppArm = state.startSide === 'right' ? rig.leftArm : rig.rightArm;
-
-      const gripWorld = state.pivot.getWorldPosition(new THREE.Vector3());
-      const domReadyWorld = rig.model.localToWorld(domPos.clone());
-      const oppReadyWorld = rig.model.localToWorld(oppPos.clone());
-
-      const domHold = 1 - smoothstep(0.18, 0.58, handAlpha);
-      const domReturn = smoothstep(5.30, 6.25, t);
-      const domWeight = clamp(stageBlend * Math.max(domHold, domReturn), 0, 1) * blend;
-      const domTarget = domReadyWorld.clone().lerp(gripWorld, domHold);
-      const domCurl = domHold > 0.3 ? 0.85 : 0.12;
-
-      const oppCatch = smoothstep(0.28, 0.88, handAlpha) * (1 - smoothstep(5.35, 6.10, t));
-      const oppGuardWeight = stageBlend * blend;
-      const oppTarget = oppReadyWorld.clone().lerp(gripWorld, oppCatch);
-      const oppCurl = oppCatch > 0.5 ? 0.85 : 0.25;
-
-      if (domArm?.upperArm) {
-        solveArmIK(domArm, domTarget, new THREE.Vector3(domSign * 0.55, -0.7, -0.45), rig.restPoses, domWeight, domCurl);
-      }
-      if (oppArm?.upperArm) {
-        solveArmIK(oppArm, oppTarget, new THREE.Vector3(oppSign * 0.55, -0.7, -0.45), rig.restPoses, oppGuardWeight * Math.max(0.45, oppCatch), oppCurl);
       }
     },
     onExit(rig, state) {
@@ -1179,11 +1378,16 @@ function createSpearSpinAnimation() {
   };
 }
 
+/**
+ * 2. Surprised / Amazed Reaction ("Wait... What?!")
+ * Moves whole TorsoGroup (with Legs counter-stabilized), preserves all armor plates,
+ * drives an expressive shocked LED face on LedFaceDisplay, and raises the free hand to chin!
+ */
 function createSurprisedReactionAnimation() {
   return {
     id: 'surprisedReaction',
     label: 'Surprised / Amazed Reaction',
-    duration: 4.4,
+    duration: 4.3,
     canPlay() {
       return true;
     },
@@ -1194,124 +1398,113 @@ function createSurprisedReactionAnimation() {
       const sideSign = freeSide === 'left' ? 1 : -1;
 
       rig.model.updateMatrixWorld(true);
-      let beardTargetModel = new THREE.Vector3(sideSign * 0.08, 0.22, 0.28);
-      if (rig.beard) {
-        const bBox = measureObjectBoxInSpace(rig.beard, rig.model);
-        if (bBox) {
-          const ctr = bBox.getCenter(new THREE.Vector3());
-          const sz = bBox.getSize(new THREE.Vector3());
-          beardTargetModel.set(ctr.x + sideSign * sz.x * 0.20, ctr.y + sz.y * 0.05, bBox.max.z + 0.038);
-        }
-      } else if (rig.head) {
+      let chinTargetModel = new THREE.Vector3(sideSign * 0.10, 1.05, 0.34);
+      if (rig.head) {
         const hBox = measureObjectBoxInSpace(rig.head, rig.model);
         if (hBox) {
           const ctr = hBox.getCenter(new THREE.Vector3());
           const sz = hBox.getSize(new THREE.Vector3());
-          beardTargetModel.set(ctr.x + sideSign * sz.x * 0.12, hBox.min.y + sz.y * 0.22, hBox.max.z + 0.035);
+          chinTargetModel.set(ctr.x + sideSign * sz.x * 0.14, hBox.min.y + sz.y * 0.16, hBox.max.z - sz.z * 0.04);
         }
       }
 
-      return { freeArm, sideSign, beardTargetModel };
+      return { freeArm, sideSign, chinTargetModel, time: 0 };
     },
     update(rig, state, t, dt, blend, context) {
-      const shockSnap = easeOutBack(clamp(t / 0.44, 0, 1), 1.25) * (1 - easeInOutCubic(clamp((t - 3.05) / 1.15, 0, 1)));
-      const handReach = easeInOutCubic(clamp((t - 0.18) / 0.72, 0, 1)) * (1 - easeInOutCubic(clamp((t - 2.95) / 0.90, 0, 1)));
-      const strokeActive = smoothstep(0.85, 1.20, t) * (1 - smoothstep(2.70, 3.05, t));
-      const strokeWave = Math.sin(t * 5.4) * strokeActive;
+      state.time += dt;
 
+      const shockSnap = easeOutBack(clamp(t / 0.42, 0, 1), 1.25) * (1 - easeInOutCubic(clamp((t - 3.05) / 1.10, 0, 1)));
+      const handReach = easeInOutCubic(clamp((t - 0.15) / 0.65, 0, 1)) * (1 - easeInOutCubic(clamp((t - 2.95) / 0.90, 0, 1)));
+      const strokeActive = smoothstep(0.80, 1.15, t) * (1 - smoothstep(2.65, 3.05, t));
+      const strokeWave = Math.sin(t * 5.2) * strokeActive;
+
+      // Head startles slightly upward with curious tilt
       if (rig.head) {
         const rh = rig.restPoses.get(rig.head);
         if (rh) {
           const pitch = (-0.15 + strokeWave * 0.025) * shockSnap;
-          const yaw = (state.sideSign * -0.18 + Math.sin(t * 2.1) * 0.03) * shockSnap;
+          const yaw = (state.sideSign * -0.15 + Math.sin(t * 2.1) * 0.03) * shockSnap;
           const roll = state.sideSign * 0.10 * shockSnap;
           _q1.setFromEuler(_e1.set(pitch, yaw, roll)).multiply(rh.quaternion);
           rig.head.quaternion.slerp(_q1, blend);
         }
       }
 
+      // Whole TorsoGroup recoils softly backward while LegsGroup keeps feet grounded
       if (rig.torso) {
         const rt = rig.restPoses.get(rig.torso);
         if (rt) {
-          _q1.setFromEuler(_e1.set(-0.08 * shockSnap, state.sideSign * -0.07 * shockSnap, 0)).multiply(rt.quaternion);
+          const leanBack = -0.055 * shockSnap;
+          const twist = state.sideSign * -0.07 * shockSnap;
+          _q1.setFromEuler(_e1.set(leanBack, twist, 0)).multiply(rt.quaternion);
           rig.torso.quaternion.copy(rt.quaternion).slerp(_q1, blend);
+          if (rig.legs) {
+            const rl = rig.restPoses.get(rig.legs);
+            if (rl) {
+              _q2.setFromEuler(_e1.set(-leanBack * 0.85, -twist * 0.85, 0)).multiply(rl.quaternion);
+              rig.legs.quaternion.copy(rl.quaternion).slerp(_q2, blend);
+            }
+          }
         }
       } else if (context.modelGroup) {
-        context.modelGroup.rotation.x = -0.06 * shockSnap * blend;
+        context.modelGroup.rotation.x = -0.05 * shockSnap * blend;
       }
 
-      const exprLevel = shockSnap * blend;
+      // Expressive face via morphs (if any) + LedFaceDisplay shocked eyes/mouth (without breaking armor!)
+      const exprLevel = clamp(shockSnap * blend, 0, 1);
       for (const m of rig.morphBindings.eyeWide) m.mesh.morphTargetInfluences[m.index] = 0.95 * exprLevel;
       for (const m of rig.morphBindings.browUp) m.mesh.morphTargetInfluences[m.index] = 0.92 * exprLevel;
       for (const m of rig.morphBindings.surprise) m.mesh.morphTargetInfluences[m.index] = 0.88 * exprLevel;
 
-      for (const eye of rig.eyes) {
-        const re = rig.restPoses.get(eye);
-        if (!re) continue;
-        eye.scale.set(
-          re.scale.x * (1 + 0.18 * exprLevel),
-          re.scale.y * (1 + 0.44 * exprLevel),
-          re.scale.z * (1 + 0.14 * exprLevel)
-        );
-      }
-      for (const em of rig.eyeMaterials) {
-        em.material.emissiveIntensity = em.emissiveIntensity * (1 + 0.55 * exprLevel);
-      }
+      context.faceDisplay?.update(dt, state.time, 0, 0, exprLevel);
 
-      for (const brow of rig.brows) {
-        const rb = rig.restPoses.get(brow);
-        if (!rb) continue;
-        brow.position.y = rb.position.y + 0.022 * exprLevel;
-        _q1.setFromEuler(_e1.set(0, 0, 0.12 * exprLevel)).multiply(rb.quaternion);
-        brow.quaternion.copy(rb.quaternion).slerp(_q1, blend);
-      }
-
-      if (rig.beard) {
-        const rbd = rig.restPoses.get(rig.beard);
-        if (rbd) {
-          _q1.setFromEuler(_e1.set(0.02 * strokeWave, 0.04 * strokeWave, 0)).multiply(rbd.quaternion);
-          rig.beard.quaternion.copy(rbd.quaternion).slerp(_q1, blend);
-        }
-      }
-
-      if (!rig.capabilities.hasMorphs && !rig.capabilities.hasEyesOrBrows && context.faceDisplay) {
-        context.faceDisplay.uniforms.uValhallaSurpriseMix.value = exprLevel;
-      }
-
+      // Free arm lifts naturally toward chin/cheek in a "Wait... what?!" gesture
       if (state.freeArm?.upperArm) {
-        const targetModel = state.beardTargetModel.clone();
-        targetModel.y += strokeWave * 0.018;
-        targetModel.x += strokeWave * state.sideSign * 0.008;
+        const targetModel = state.chinTargetModel.clone();
+        targetModel.y += strokeWave * 0.020;
+        targetModel.x += strokeWave * state.sideSign * 0.010;
         const targetWorld = rig.model.localToWorld(targetModel);
         solveArmIK(
           state.freeArm,
           targetWorld,
-          new THREE.Vector3(state.sideSign * 0.52, -0.65, -0.55),
+          new THREE.Vector3(state.sideSign * 0.5, -0.65, -0.5),
           rig.restPoses,
           handReach * blend,
-          0.55 + 0.22 * strokeWave
+          0.6
         );
+
+        const wNode = state.freeArm.hand || state.freeArm.wristJoint;
+        if (wNode) {
+          const rw = rig.restPoses.get(wNode);
+          if (rw) {
+            _q1.setFromEuler(_e1.set(-0.35 * handReach, state.sideSign * 0.25 * handReach, strokeWave * 0.14)).multiply(rw.quaternion);
+            wNode.quaternion.copy(rw.quaternion).slerp(_q1, blend);
+          }
+        }
       }
     },
     onExit(rig, state, context) {
       if (context.modelGroup) context.modelGroup.rotation.x = 0;
-      if (context.faceDisplay) context.faceDisplay.uniforms.uValhallaSurpriseMix.value = 0;
+      context.faceDisplay?.update(0, 0, 0, 0, 0);
     },
   };
 }
 
+/**
+ * 3. Holographic Coding / Hacker Mode
+ * Projects glowing neon-orange & cyan terminal code directly onto LedFaceDisplay.
+ */
 function createCodingModeAnimation() {
   return {
     id: 'codingMode',
     label: 'Holographic Coding / Hacker Mode',
-    duration: 6.8,
+    duration: 6.6,
     canPlay(rig) {
       return rig.capabilities.hasFaceDisplay;
     },
     createState() {
       return {
         time: 0,
-        lastPulseTrigger: 0,
       };
     },
     onEnter(rig, state, context) {
@@ -1320,8 +1513,8 @@ function createCodingModeAnimation() {
     update(rig, state, t, dt, blend, context) {
       state.time += dt;
 
-      const enterU = smoothstep(0.05, 0.90, t);
-      const exitU = 1 - smoothstep(5.70, 6.55, t);
+      const enterU = smoothstep(0.05, 0.85, t);
+      const exitU = 1 - smoothstep(5.60, 6.45, t);
       const codeMix = clamp(enterU * exitU * blend, 0, 1);
 
       const pulsePhase = (t * 0.85) % 1;
@@ -1330,29 +1523,17 @@ function createCodingModeAnimation() {
       if (rig.head) {
         const rh = rig.restPoses.get(rig.head);
         if (rh) {
-          const focusNod = (0.065 + Math.sin(t * 1.4) * 0.015) * codeMix;
+          const focusNod = (0.06 + Math.sin(t * 1.4) * 0.015) * codeMix;
           const microScan = Math.sin(t * 2.3) * 0.025 * codeMix;
           _q1.setFromEuler(_e1.set(focusNod, microScan, 0)).multiply(rh.quaternion);
           rig.head.quaternion.slerp(_q1, blend);
         }
       }
 
-      const eyeFade = 1 - smoothstep(0.05, 0.45, codeMix);
-      for (const em of rig.eyeMaterials) {
-        em.material.emissiveIntensity = em.emissiveIntensity * eyeFade;
-        em.material.transparent = true;
-        em.material.opacity = THREE.MathUtils.lerp(0.04, em.opacity, eyeFade);
-      }
-
       context.faceDisplay?.update(dt, state.time, codeMix, pulse, 0);
     },
     onExit(rig, state, context) {
       context.faceDisplay?.update(0, 0, 0, 0, 0);
-      for (const em of rig.eyeMaterials) {
-        em.material.emissiveIntensity = em.emissiveIntensity;
-        em.material.opacity = em.opacity;
-        em.material.transparent = em.transparent;
-      }
     },
   };
 }
