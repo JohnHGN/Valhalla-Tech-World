@@ -3297,3 +3297,121 @@ body .hero.video-hero > .hero-note > i {
   .top-nav .search-toggle,
   .top-nav .top-link { transition: none !important; }
 }
+
+
+/* VALHALLA NAV — DEEP LIQUID GLASS / ROG HUD REVISION */
+.top-nav .vpn-tab,
+.top-nav .search-toggle,
+.top-nav .top-link {
+  min-height: 48px !important;
+  padding: 0 18px !important;
+  border: 1px solid rgba(175,255,250,.76) !important;
+  border-radius: 7px 15px 7px 15px !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  background:
+    radial-gradient(ellipse at 18% -20%, rgba(255,255,255,.56), transparent 38%),
+    radial-gradient(ellipse at 95% 110%, rgba(255,48,155,.24), transparent 42%),
+    radial-gradient(ellipse at 0% 100%, rgba(35,242,255,.28), transparent 44%),
+    linear-gradient(112deg, rgba(160,255,250,.24) 0%, rgba(27,105,139,.17) 24%, rgba(9,24,47,.42) 54%, rgba(76,34,83,.26) 100%),
+    linear-gradient(180deg, rgba(242,255,255,.28), rgba(9,23,41,.44)) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(220%) contrast(1.18) brightness(1.08) !important;
+  backdrop-filter: blur(24px) saturate(220%) contrast(1.18) brightness(1.08) !important;
+  box-shadow:
+    inset 0 2px 1px rgba(255,255,255,.68),
+    inset 0 -2px 2px rgba(7,14,35,.72),
+    inset 1px 0 1px rgba(185,255,255,.52),
+    inset -1px 0 1px rgba(255,105,205,.35),
+    0 0 0 1px rgba(74,242,255,.22),
+    0 5px 18px rgba(0,0,0,.42),
+    0 0 19px rgba(36,235,255,.14) !important;
+  color: #efffff !important;
+  text-shadow: 0 1px 4px #00101b, 0 0 9px rgba(117,255,246,.38) !important;
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease, filter .28s ease !important;
+}
+.top-nav .vpn-tab::before,
+.top-nav .search-toggle::before,
+.top-nav .top-link::before {
+  content: "" !important;
+  position: absolute !important;
+  z-index: 0 !important;
+  inset: 1px !important;
+  border-radius: 5px 13px 5px 13px !important;
+  pointer-events: none !important;
+  background:
+    linear-gradient(118deg, transparent 8%, rgba(255,255,255,.34) 19%, transparent 31%),
+    linear-gradient(105deg, transparent 38%, rgba(104,255,247,.18) 49%, rgba(255,255,255,.12) 52%, transparent 64%),
+    radial-gradient(ellipse at 45% 0%, rgba(255,255,255,.22), transparent 55%),
+    linear-gradient(180deg, rgba(255,255,255,.13), transparent 42%, rgba(0,0,0,.18)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.65),
+    inset 0 -1px 0 rgba(93,246,255,.32) !important;
+}
+.top-nav .vpn-tab::after,
+.top-nav .search-toggle::after,
+.top-nav .top-link::after {
+  content: "" !important;
+  position: absolute !important;
+  z-index: 1 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  left: -65% !important;
+  right: auto !important;
+  width: 42% !important;
+  height: auto !important;
+  opacity: .62 !important;
+  pointer-events: none !important;
+  background: linear-gradient(105deg, transparent, rgba(255,255,255,.5), rgba(104,255,248,.32), transparent) !important;
+  transform: skewX(-22deg) !important;
+  box-shadow: 0 0 18px rgba(107,255,247,.22) !important;
+  transition: left .65s cubic-bezier(.2,.7,.2,1), opacity .3s ease !important;
+}
+.top-nav .vpn-tab > *,
+.top-nav .search-toggle > *,
+.top-nav .top-link > * {
+  position: relative !important;
+  z-index: 2 !important;
+}
+.top-nav .vpn-tab:hover,
+.top-nav .search-toggle:hover,
+.top-nav .top-link:hover,
+.top-nav .vpn-tab:focus-visible,
+.top-nav .search-toggle:focus-visible,
+.top-nav .top-link:focus-visible,
+.top-nav .vpn-tab[aria-current="page"],
+.top-nav .search-toggle[aria-expanded="true"] {
+  transform: translateY(-3px) !important;
+  filter: brightness(1.2) saturate(1.25) !important;
+  border-color: rgba(220,255,255,.98) !important;
+  box-shadow:
+    inset 0 2px 1px rgba(255,255,255,.85),
+    inset 0 -2px 3px rgba(4,12,35,.75),
+    inset 1px 0 2px rgba(126,255,250,.65),
+    inset -1px 0 2px rgba(255,92,190,.5),
+    0 0 0 1px rgba(76,244,255,.38),
+    0 0 18px rgba(44,242,255,.34),
+    0 0 34px rgba(255,53,174,.2),
+    0 10px 26px rgba(0,0,0,.48) !important;
+}
+.top-nav .vpn-tab:hover::after,
+.top-nav .search-toggle:hover::after,
+.top-nav .top-link:hover::after {
+  left: 125% !important;
+  opacity: .95 !important;
+}
+.top-nav .vpn-tab > span,
+.top-nav .top-link-mark,
+.top-nav .search-toggle svg {
+  color: #a4fff4 !important;
+  filter: drop-shadow(0 0 5px rgba(91,255,240,.9)) drop-shadow(0 0 11px rgba(38,220,255,.5)) !important;
+  text-shadow: 0 0 10px rgba(91,255,240,.85) !important;
+}
+@media (max-width:680px) {
+  .top-nav .vpn-tab,
+  .top-nav .search-toggle,
+  .top-nav .top-link {
+    min-height: 41px !important;
+    padding: 0 11px !important;
+    border-radius: 6px 12px 6px 12px !important;
+  }
+}
