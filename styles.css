@@ -3176,3 +3176,124 @@ body .hero.video-hero > .hero-note > i {
   }
 }
 
+
+
+/* =========================================================
+   VALHALLA TOP NAV — LIQUID METAL / CYBERPUNK CONTROLS
+   Match the hero CTA: layered glass, machined bevels and cyan-magenta energy.
+   ========================================================= */
+.top-nav .vpn-tab,
+.top-nav .search-toggle,
+.top-nav .top-link {
+  position: relative !important;
+  isolation: isolate !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 9px !important;
+  min-height: 46px !important;
+  padding: 0 17px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(157, 239, 246, .58) !important;
+  border-radius: 13px 13px 13px 5px !important;
+  background:
+    linear-gradient(112deg, rgba(112,245,235,.20), transparent 30%, rgba(255,75,166,.12) 76%, rgba(74,206,255,.16)),
+    linear-gradient(180deg, rgba(238,255,255,.25) 0%, rgba(105,151,174,.13) 22%, rgba(8,27,45,.76) 100%) !important;
+  color: #eaffff !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.58),
+    inset 0 -1px 0 rgba(78,229,242,.24),
+    inset 1px 0 0 rgba(255,255,255,.14),
+    0 5px 16px rgba(0,0,0,.28),
+    0 0 0 1px rgba(76,218,231,.10) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(175%) !important;
+  backdrop-filter: blur(18px) saturate(175%) !important;
+  text-decoration: none !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: .01em !important;
+  text-shadow: 0 1px 5px rgba(0,0,0,.7), 0 0 10px rgba(108,255,245,.18) !important;
+  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease, filter .25s ease !important;
+}
+.top-nav .vpn-tab::before,
+.top-nav .search-toggle::before,
+.top-nav .top-link::before {
+  content: "" !important;
+  position: absolute !important;
+  z-index: -1 !important;
+  inset: 1px !important;
+  border-radius: 11px 11px 11px 4px !important;
+  background:
+    linear-gradient(120deg, rgba(255,255,255,.20), transparent 22%, transparent 68%, rgba(255,255,255,.09)),
+    linear-gradient(180deg, rgba(210,255,255,.08), rgba(4,18,34,.12)) !important;
+  pointer-events: none !important;
+}
+.top-nav .vpn-tab::after,
+.top-nav .search-toggle::after,
+.top-nav .top-link::after {
+  content: "" !important;
+  position: absolute !important;
+  z-index: 1 !important;
+  top: 1px !important;
+  left: 13% !important;
+  right: 13% !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent, rgba(206,255,255,.9), rgba(91,255,235,.72), rgba(255,83,176,.62), transparent) !important;
+  box-shadow: 0 0 9px rgba(94,255,240,.48) !important;
+  pointer-events: none !important;
+}
+.top-nav .vpn-tab:hover,
+.top-nav .search-toggle:hover,
+.top-nav .top-link:hover,
+.top-nav .vpn-tab:focus-visible,
+.top-nav .search-toggle:focus-visible,
+.top-nav .top-link:focus-visible {
+  transform: translateY(-3px) !important;
+  border-color: rgba(194,255,250,.96) !important;
+  filter: brightness(1.16) saturate(1.12) !important;
+  box-shadow:
+    inset 0 1.5px 0 rgba(255,255,255,.78),
+    inset 0 -1px 0 rgba(84,255,239,.42),
+    0 0 0 1px rgba(93,255,240,.22),
+    0 0 22px rgba(60,235,224,.28),
+    0 0 34px rgba(255,65,166,.12),
+    0 9px 24px rgba(0,0,0,.38) !important;
+}
+.top-nav .vpn-tab:active,
+.top-nav .search-toggle:active,
+.top-nav .top-link:active {
+  transform: translateY(-1px) scale(.98) !important;
+}
+.top-nav .vpn-tab > span,
+.top-nav .top-link-mark {
+  position: relative !important;
+  z-index: 2 !important;
+  color: #8effed !important;
+  text-shadow: 0 0 8px rgba(83,255,230,.85), 0 0 17px rgba(83,255,230,.4) !important;
+}
+.top-nav .search-toggle svg {
+  position: relative !important;
+  z-index: 2 !important;
+  width: 17px !important;
+  height: 17px !important;
+  color: #8effed !important;
+  filter: drop-shadow(0 0 5px rgba(83,255,230,.75)) !important;
+}
+.top-nav .vpn-tab,
+.top-nav .search-toggle,
+.top-nav .top-link { white-space: nowrap !important; }
+
+@media (max-width: 680px) {
+  .top-nav .vpn-tab,
+  .top-nav .search-toggle,
+  .top-nav .top-link {
+    min-height: 39px !important;
+    padding: 0 10px !important;
+    border-radius: 11px 11px 11px 4px !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .top-nav .vpn-tab,
+  .top-nav .search-toggle,
+  .top-nav .top-link { transition: none !important; }
+}
