@@ -28,7 +28,7 @@ jobs:
       - name: Prepare static site
         run: |
           mkdir -p _site/assets
-          cp index.html styles.css script.js _site/
+          cp index.html styles.css script.js valhalla-animations.js _site/
           cp valhalla-bot.glb _site/
           cp -R assets/. _site/assets/
           mkdir -p _site/audio-player
