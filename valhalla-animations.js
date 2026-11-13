@@ -150,7 +150,6 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
     for (const pattern of patterns) {
       const matches = candidates.filter((node) => node !== model && node.name && pattern.test(node.name) && filter(node));
       if (matches.length) {
-        // Prefer Bones first, then non-Mesh Groups, then Meshes
         matches.sort((a, b) => {
           const score = (n) => (n.isBone ? 0 : !n.isMesh ? 1 : 2);
           return score(a) - score(b);
@@ -233,7 +232,6 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
       fingers = deduplicateRoots(fList);
     }
 
-    // Measure rest segment vectors and lengths in model space
     const rest = {};
     if (upperArm) {
       const pS = upperArm.getWorldPosition(new THREE.Vector3());
@@ -272,13 +270,11 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
   const leftArm = resolveArmSide('left');
   const rightArm = resolveArmSide('right');
 
-  // Resolve Spear / Gungnir
   let spear =
     findByOverride(RIG_OVERRIDES.spear) ||
     findBest([/gungnir/i, /spear/i, /lance/i, /halberd/i, /javelin/i, /pike/i, /polearm/i, /staff/i, /weapon/i]);
 
   if (!spear) {
-    // Heuristic fallback: thin elongated mesh >= 52% of total model height, excluding skinned bodies & head
     const totalBox = new THREE.Box3().setFromObject(model);
     const totalHeight = totalBox.getSize(new THREE.Vector3()).y || 1.94;
     let bestScore = 0;
@@ -318,7 +314,6 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
       if (sz.x >= sz.y && sz.x >= sz.z) localAxis.set(1, 0, 0);
       else if (sz.z >= sz.x && sz.z >= sz.y) localAxis.set(0, 0, 1);
 
-      // Ensure +localAxis points upward in world space (+Y)
       const worldAxis = localAxis.clone().transformDirection(spear.matrixWorld);
       if (worldAxis.y < 0) localAxis.negate();
 
@@ -340,12 +335,10 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
     }
   }
 
-  // Beard
   const beard =
     findByOverride(RIG_OVERRIDES.beard) ||
     findBest([/^beardgroup$/i, /^beard$/i, /beard/i, /mustache/i]);
 
-  // Eyes & Brows (inside HeadGroup if present, otherwise whole model)
   const headSearchRoot = head || model;
   let eyes = findByOverride(RIG_OVERRIDES.eyes) || [];
   if (!eyes.length) {
@@ -369,7 +362,6 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
     brows = deduplicateRoots(rawBrows);
   }
 
-  // Face meshes (for Holographic Coding Mode)
   let faceMeshes = findByOverride(RIG_OVERRIDES.faceMeshes) || [];
   let useFullFaceMesh = false;
   if (!faceMeshes.length) {
@@ -399,7 +391,6 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
       faceMeshes = dedicated;
       useFullFaceMesh = true;
     } else {
-      // Fallback: pick largest front head mesh(es)
       faceMeshes = headMeshes.length ? headMeshes : meshes.slice(0, 1);
       useFullFaceMesh = false;
     }
@@ -407,7 +398,6 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
     useFullFaceMesh = true;
   }
 
-  // Measure body front clearance and facial local bounds in Head space
   const headRef = head || model;
   const excludeSpearSet = spear ? new Set([spear]) : null;
   const bodyModelBox = measureObjectBoxInSpace(model, model, excludeSpearSet) || new THREE.Box3().setFromObject(model);
@@ -433,7 +423,6 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
         faceBounds.center.copy(ctr);
         faceBounds.halfSize.copy(sz).multiplyScalar(0.52);
       } else {
-        // Isolate front facial region inside a unified helmet/head mesh
         let eyeCenterY = ctr.y + sz.y * 0.04;
         if (eyes.length) {
           const eyeBox = new THREE.Box3();
@@ -451,7 +440,6 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
     }
   }
 
-  // Record exact rest transforms for every manipulable node
   const restPoses = new Map();
   const trackNode = (node) => {
     if (!node || restPoses.has(node)) return;
@@ -468,12 +456,10 @@ export function inspectValhallaRig(model, gltf = null, explicitRefs = {}) {
     [arm.shoulder, arm.upperArm, arm.forearm, arm.hand, ...arm.fingers].forEach(trackNode);
   });
 
-  // Record rest material states for eyes so Coding Mode / Surprise can restore identically
   const eyeMaterials = [];
   eyes.forEach((eyeRoot) => {
     eyeRoot.traverse((obj) => {
       if (!obj.isMesh || !obj.material) return;
-      // Clone material once so fading eyes never affects non-eye meshes
       obj.material = obj.material.clone();
       eyeMaterials.push({
         material: obj.material,
@@ -578,7 +564,6 @@ function solveArmIK(arm, targetWorldPos, poleWorldDir, restPoses, blend, fingerC
   const restUpper = restPoses.get(upper);
   if (!restUpper) return;
 
-  // Apply gentle clavicle follow if shoulder node exists
   if (arm.shoulder) {
     const restSh = restPoses.get(arm.shoulder);
     if (restSh) {
@@ -618,7 +603,6 @@ function solveArmIK(arm, targetWorldPos, poleWorldDir, restPoses, blend, fingerC
     const dirSE_desired = _v5.copy(pElbowTarget).sub(pShoulder).normalize();
     const dirEH_desired = _v3.copy(targetWorldPos).sub(pElbowTarget).normalize();
 
-    // Rotate upper arm from its rest direction toward dirSE_desired
     const parentWorldQuatS = upper.parent.getWorldQuaternion(_q1);
     const restWorldQuatS = _q2.copy(parentWorldQuatS).multiply(restUpper.quaternion);
     const dirSE_restWorld = arm.rest.upperLocalDir.clone().applyQuaternion(restWorldQuatS).normalize();
@@ -630,7 +614,6 @@ function solveArmIK(arm, targetWorldPos, poleWorldDir, restPoses, blend, fingerC
     upper.quaternion.copy(restUpper.quaternion).slerp(targetLocalQuatS, blend);
     upper.updateMatrixWorld(true);
 
-    // Rotate forearm from its rest direction toward dirEH_desired
     const restFore = restPoses.get(fore);
     if (restFore && arm.rest.forearmLocalDir) {
       const parentWorldQuatE = fore.parent.getWorldQuaternion(_q1);
@@ -645,7 +628,6 @@ function solveArmIK(arm, targetWorldPos, poleWorldDir, restPoses, blend, fingerC
       fore.updateMatrixWorld(true);
     }
   } else {
-    // Single-bone arm fallback
     const dirDesired = _v2.copy(targetWorldPos).sub(pShoulder).normalize();
     const parentWorldQuatS = upper.parent.getWorldQuaternion(_q1);
     const restWorldQuatS = _q2.copy(parentWorldQuatS).multiply(restUpper.quaternion);
@@ -656,7 +638,6 @@ function solveArmIK(arm, targetWorldPos, poleWorldDir, restPoses, blend, fingerC
     upper.updateMatrixWorld(true);
   }
 
-  // Curl fingers inward around palm if finger nodes exist
   if (hand && arm.fingers.length) {
     const curlAngle = fingerCurl * 0.92 * blend * (arm.side === 'left' ? 1 : -1);
     for (const finger of arm.fingers) {
@@ -866,7 +847,7 @@ class HolographicFaceDisplay {
     this.cursorLineIdx = this._codeScripts.length % this._codeScripts.length;
     this.lines.push({ ...this._codeScripts[this.cursorLineIdx], typed: 0, flash: 0 });
     this.charProgress = 0;
-    this.renderAccum = 1; // force first draw
+    this.renderAccum = 1;
   }
 
   update(dt, time, codeMix, pulse, surpriseMix = 0) {
@@ -879,7 +860,6 @@ class HolographicFaceDisplay {
     this.uniforms.uValhallaSurpriseMix.value = surpriseMix;
     this.uniforms.uValhallaTime.value = time;
 
-    // Only redraw the dynamic terminal texture while visible
     if (codeMix <= 0.01) return;
 
     this.renderAccum += dt;
@@ -887,7 +867,6 @@ class HolographicFaceDisplay {
     const stepDt = this.renderAccum;
     this.renderAccum = 0;
 
-    // Advance typing and scrolling buffer
     const active = this.lines[this.lines.length - 1];
     const fullLen = active.prefix.length + active.text.length;
     this.charProgress += stepDt * 34;
@@ -915,11 +894,9 @@ class HolographicFaceDisplay {
     const w = this.canvas.width;
     const h = this.canvas.height;
 
-    // Deep glossy black background
     ctx.fillStyle = '#020305';
     ctx.fillRect(0, 0, w, h);
 
-    // Subtle orange/cyan atmospheric core gradient
     const grad = ctx.createRadialGradient(w * 0.5, h * 0.48, 12, w * 0.5, h * 0.5, w * 0.65);
     grad.addColorStop(0, `rgba(255, 110, 20, ${0.11 + pulse * 0.12})`);
     grad.addColorStop(0.55, `rgba(38, 215, 255, ${0.04 + pulse * 0.05})`);
@@ -927,7 +904,6 @@ class HolographicFaceDisplay {
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, w, h);
 
-    // Subtle micro-grid
     ctx.strokeStyle = 'rgba(255, 130, 45, 0.06)';
     ctx.lineWidth = 1;
     for (let x = 32; x < w; x += 32) {
@@ -943,7 +919,6 @@ class HolographicFaceDisplay {
       ctx.stroke();
     }
 
-    // Header telemetry bar
     ctx.font = 'bold 14px ui-monospace, SFMono-Regular, Menlo, monospace';
     ctx.fillStyle = '#ff8a2b';
     ctx.fillText('VALHALLA // NEURAL_EXEC', 34, 48);
@@ -954,7 +929,6 @@ class HolographicFaceDisplay {
     ctx.fillStyle = 'rgba(255, 128, 32, 0.38)';
     ctx.fillRect(34, 58, w - 68, 1.5);
 
-    // Code lines
     const startY = 92;
     const lineH = 29;
     ctx.font = '600 15.5px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
@@ -976,7 +950,6 @@ class HolographicFaceDisplay {
       ctx.shadowBlur = 8;
       ctx.shadowColor = line.color === 'cyan' ? 'rgba(60, 232, 255, 0.7)' : 'rgba(255, 118, 22, 0.75)';
 
-      // Prefix in crisp cyan or bright orange
       ctx.fillStyle = line.color === 'cyan' ? '#4deaff' : '#ff6b1a';
       ctx.fillText(visiblePrefix, 34, y);
 
@@ -991,7 +964,6 @@ class HolographicFaceDisplay {
           : '#ff9638';
       ctx.fillText(visibleBody, 34 + prefixW, y);
 
-      // Blinking cursor on active last line
       if (idx === this.lines.length - 1 && Math.floor(time * 7) % 2 === 0) {
         const totalW = prefixW + ctx.measureText(visibleBody).width;
         ctx.fillStyle = '#ff7b1c';
@@ -1000,7 +972,6 @@ class HolographicFaceDisplay {
       ctx.shadowBlur = 0;
     });
 
-    // Bottom hex activity strip
     ctx.fillStyle = 'rgba(72, 232, 255, 0.65)';
     ctx.font = '12px ui-monospace, Menlo, monospace';
     const bars = Array.from({ length: 14 }, (_, i) => {
@@ -1024,9 +995,6 @@ class HolographicFaceDisplay {
  * Built-in Cinematic Animations
  * ========================================================================== */
 
-/**
- * 1. One-Handed Spear Spinning & Hand-to-Hand Transfer
- */
 function createSpearSpinAnimation() {
   return {
     id: 'spearSpin',
@@ -1045,7 +1013,6 @@ function createSpearSpinAnimation() {
       const centerY = rig.bodyModelBox.min.y + bodySize.y * 0.56;
       const handSpanX = Math.max(0.24, bodySize.x * 0.30);
 
-      // Compute exact spear grip rest position in model space
       rig.model.updateMatrixWorld(true);
       const restGripWorld = spear.localGripCenter.clone().applyMatrix4(spear.node.matrixWorld);
       const restGripModel = rig.model.worldToLocal(restGripWorld.clone());
@@ -1090,7 +1057,6 @@ function createSpearSpinAnimation() {
       const domSign = state.startSide === 'right' ? -1 : 1;
       const oppSign = -domSign;
 
-      // Angular velocity profile (continuous spin across the transfer!)
       let omega = 0;
       if (t < 0.75) {
         omega = 18.5 * easeInOutCubic(t / 0.75);
@@ -1102,7 +1068,6 @@ function createSpearSpinAnimation() {
       }
       state.spinAngle += omega * dt;
 
-      // Smoothly bring spinAngle to nearest 2*PI multiple during catch phase
       let effectiveSpin = state.spinAngle;
       if (t >= 4.70) {
         const catchU = smoothstep(4.70, 5.65, t);
@@ -1110,7 +1075,6 @@ function createSpearSpinAnimation() {
         effectiveSpin = THREE.MathUtils.lerp(state.spinAngle, nearest2Pi, catchU);
       }
 
-      // Compute transfer alpha: 0 = dominant hand, 1 = opposite hand, then back to 0 at end
       let handAlpha = 0;
       let tossArc = 0;
       if (t >= 2.25 && t < 3.15) {
@@ -1124,30 +1088,25 @@ function createSpearSpinAnimation() {
         tossArc = Math.sin(Math.PI * returnU) * 0.45;
       }
 
-      // Active grip point in model space (cleared safely in front of chest/shield)
       const domPos = _v1.set(domSign * state.handSpanX, state.centerY + 0.04, state.clearanceZ);
       const oppPos = _v2.set(oppSign * state.handSpanX, state.centerY + 0.06, state.clearanceZ + 0.02);
       const activeGripModel = _v3.lerpVectors(domPos, oppPos, handAlpha);
       activeGripModel.y += tossArc * 0.09;
       activeGripModel.z += tossArc * 0.07;
 
-      // Subtle wrist circular precession synchronized with rapid spin
       const spinActiveWeight = smoothstep(0.55, 0.95, t) * (1 - smoothstep(4.65, 5.45, t)) * (1 - tossArc * 0.85);
       activeGripModel.x += Math.cos(effectiveSpin) * 0.024 * spinActiveWeight;
       activeGripModel.y += Math.sin(effectiveSpin) * 0.024 * spinActiveWeight;
 
-      // Blend spear pivot position from restGripModel -> activeGripModel
       const stageBlend = smoothstep(0.0, 0.70, t) * (1 - smoothstep(5.65, 6.45, t));
       state.pivot.position.lerpVectors(state.restGripModel, activeGripModel, stageBlend * blend);
 
-      // Build spin plane orientation (slightly tilted forward away from torso to avoid clipping)
       const spinTiltQuat = _q1.setFromEuler(_e1.set(0.18 * stageBlend, domSign * 0.10 * (1 - handAlpha * 2) * stageBlend, 0));
       const spinRollQuat = _q2.setFromAxisAngle(_v4.set(0, 0, domSign), effectiveSpin);
       const animPivotQuat = state.restPivotQuat.clone().multiply(spinTiltQuat).multiply(spinRollQuat);
       state.pivot.quaternion.copy(state.restPivotQuat).slerp(animPivotQuat, blend);
       state.pivot.updateMatrixWorld(true);
 
-      // If spear is a skeleton Bone, copy pivot world transform back into bone local space
       if (sp.isBone) {
         sp.node.parent.updateMatrixWorld(true);
         const parentInv = _m1.copy(sp.node.parent.matrixWorld).invert();
@@ -1159,7 +1118,6 @@ function createSpearSpinAnimation() {
         sp.node.quaternion.copy(parentQuatInv.multiply(state.pivot.getWorldQuaternion(_q3)));
       }
 
-      // Torso & head athletic poise
       const torsoTwist = (domSign * 0.16 * (1 - handAlpha * 2)) * stageBlend;
       const torsoLean = -0.06 * stageBlend;
       if (rig.torso) {
@@ -1179,7 +1137,6 @@ function createSpearSpinAnimation() {
         }
       }
 
-      // Drive both arms via 2-bone IK to track the spear & transfer smoothly
       const domArm = state.startSide === 'right' ? rig.rightArm : rig.leftArm;
       const oppArm = state.startSide === 'right' ? rig.leftArm : rig.rightArm;
 
@@ -1187,14 +1144,12 @@ function createSpearSpinAnimation() {
       const domReadyWorld = rig.model.localToWorld(domPos.clone());
       const oppReadyWorld = rig.model.localToWorld(oppPos.clone());
 
-      // Dominant hand holds until transfer passes 0.35, then releases into ready guard
       const domHold = 1 - smoothstep(0.18, 0.58, handAlpha);
       const domReturn = smoothstep(5.30, 6.25, t);
       const domWeight = clamp(stageBlend * Math.max(domHold, domReturn), 0, 1) * blend;
       const domTarget = domReadyWorld.clone().lerp(gripWorld, domHold);
       const domCurl = domHold > 0.3 ? 0.85 : 0.12;
 
-      // Opposite hand waits in counter-guard, anticipates catch at transfer 0.35->1.0, holds until return
       const oppCatch = smoothstep(0.28, 0.88, handAlpha) * (1 - smoothstep(5.35, 6.10, t));
       const oppGuardWeight = stageBlend * blend;
       const oppTarget = oppReadyWorld.clone().lerp(gripWorld, oppCatch);
@@ -1224,9 +1179,6 @@ function createSpearSpinAnimation() {
   };
 }
 
-/**
- * 2. Surprised / Amazed Reaction ("Wait... What?!")
- */
 function createSurprisedReactionAnimation() {
   return {
     id: 'surprisedReaction',
@@ -1241,7 +1193,6 @@ function createSurprisedReactionAnimation() {
       const freeArm = freeSide === 'left' ? rig.leftArm : rig.rightArm;
       const sideSign = freeSide === 'left' ? 1 : -1;
 
-      // Measure beard front-side surface target in model space
       rig.model.updateMatrixWorld(true);
       let beardTargetModel = new THREE.Vector3(sideSign * 0.08, 0.22, 0.28);
       if (rig.beard) {
@@ -1263,13 +1214,11 @@ function createSurprisedReactionAnimation() {
       return { freeArm, sideSign, beardTargetModel };
     },
     update(rig, state, t, dt, blend, context) {
-      // Expressive envelopes
       const shockSnap = easeOutBack(clamp(t / 0.44, 0, 1), 1.25) * (1 - easeInOutCubic(clamp((t - 3.05) / 1.15, 0, 1)));
       const handReach = easeInOutCubic(clamp((t - 0.18) / 0.72, 0, 1)) * (1 - easeInOutCubic(clamp((t - 2.95) / 0.90, 0, 1)));
       const strokeActive = smoothstep(0.85, 1.20, t) * (1 - smoothstep(2.70, 3.05, t));
       const strokeWave = Math.sin(t * 5.4) * strokeActive;
 
-      // Head tilts slightly back + double-take angle
       if (rig.head) {
         const rh = rig.restPoses.get(rig.head);
         if (rh) {
@@ -1281,7 +1230,6 @@ function createSurprisedReactionAnimation() {
         }
       }
 
-      // Subtle torso recoil backward
       if (rig.torso) {
         const rt = rig.restPoses.get(rig.torso);
         if (rt) {
@@ -1292,7 +1240,6 @@ function createSurprisedReactionAnimation() {
         context.modelGroup.rotation.x = -0.06 * shockSnap * blend;
       }
 
-      // Facial Surprise: 1) Morph Targets, 2) Separate Eye/Brow/Beard Meshes, 3) Shader Fallback
       const exprLevel = shockSnap * blend;
       for (const m of rig.morphBindings.eyeWide) m.mesh.morphTargetInfluences[m.index] = 0.95 * exprLevel;
       for (const m of rig.morphBindings.browUp) m.mesh.morphTargetInfluences[m.index] = 0.92 * exprLevel;
@@ -1331,7 +1278,6 @@ function createSurprisedReactionAnimation() {
         context.faceDisplay.uniforms.uValhallaSurpriseMix.value = exprLevel;
       }
 
-      // Free arm moves up to touch and gently stroke the beard
       if (state.freeArm?.upperArm) {
         const targetModel = state.beardTargetModel.clone();
         targetModel.y += strokeWave * 0.018;
@@ -1354,9 +1300,6 @@ function createSurprisedReactionAnimation() {
   };
 }
 
-/**
- * 3. Holographic Coding / Hacker Mode
- */
 function createCodingModeAnimation() {
   return {
     id: 'codingMode',
@@ -1377,16 +1320,13 @@ function createCodingModeAnimation() {
     update(rig, state, t, dt, blend, context) {
       state.time += dt;
 
-      // Smooth fade-in (0.0-0.9s), active computing (0.9-5.7s), smooth fade-out (5.7-6.6s)
       const enterU = smoothstep(0.05, 0.90, t);
       const exitU = 1 - smoothstep(5.70, 6.55, t);
       const codeMix = clamp(enterU * exitU * blend, 0, 1);
 
-      // Periodic computational light pulses
       const pulsePhase = (t * 0.85) % 1;
       const pulse = Math.exp(-Math.pow((pulsePhase - 0.15) * 7.5, 2)) * 0.85 + Math.sin(t * 9.0) * 0.08 + 0.12;
 
-      // Focused computational posture: pauses normal fidgeting, levels head subtly downward
       if (rig.head) {
         const rh = rig.restPoses.get(rig.head);
         if (rh) {
@@ -1397,7 +1337,6 @@ function createCodingModeAnimation() {
         }
       }
 
-      // Dim separate LED eye meshes seamlessly so the black OLED code face reads cleanly
       const eyeFade = 1 - smoothstep(0.05, 0.45, codeMix);
       for (const em of rig.eyeMaterials) {
         em.material.emissiveIntensity = em.emissiveIntensity * eyeFade;
@@ -1405,7 +1344,6 @@ function createCodingModeAnimation() {
         em.material.opacity = THREE.MathUtils.lerp(0.04, em.opacity, eyeFade);
       }
 
-      // Drive the curved facial shader + offscreen terminal canvas
       context.faceDisplay?.update(dt, state.time, codeMix, pulse, 0);
     },
     onExit(rig, state, context) {
@@ -1443,7 +1381,7 @@ export class ValhallaAnimationController {
     this.registerAnimation(createSurprisedReactionAnimation());
     this.registerAnimation(createCodingModeAnimation());
 
-    this.state = 'IDLE'; // 'IDLE' | 'PERFORMING' | 'BLENDING_OUT'
+    this.state = 'IDLE';
     this.activeAnim = null;
     this.activeAnimState = null;
     this.elapsed = 0;
@@ -1494,7 +1432,6 @@ export class ValhallaAnimationController {
     const prev = this.priorityFlags[flag];
     this.priorityFlags[flag] = Boolean(value);
 
-    // High-priority user/AI interactions take immediate precedence over random animations
     const highPriorityActive = this.priorityFlags.thinking || this.priorityFlags.chatOpen || this.priorityFlags.modalOpen;
     if (highPriorityActive && !prev) {
       if (this.state === 'PERFORMING') {
@@ -1528,7 +1465,6 @@ export class ValhallaAnimationController {
   }
 
   getHeadTrackingWeight() {
-    // 1.0 in idle, smoothly fades to 0.0 during animations so pointer tracking & animation never fight
     return clamp(1 - this.blendWeight, 0, 1);
   }
 
@@ -1590,7 +1526,6 @@ export class ValhallaAnimationController {
   _restoreAllRestPoses() {
     if (!this.rig) return;
     for (const [node, rest] of this.rig.restPoses.entries()) {
-      // Leave head & neck smooth for pointer tracking if not explicitly reset
       if (node !== this.rig.head && node !== this.rig.neck) {
         node.position.copy(rest.position);
         node.quaternion.copy(rest.quaternion);

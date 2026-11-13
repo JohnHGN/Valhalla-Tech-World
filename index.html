@@ -896,7 +896,7 @@
       })();
     </script>
 
-    <!-- ۳-ب. موتور رندر Three.js با OrbitControls، زوم جزئیات، رهگیری موس و انیمیشن‌های تصادفی شخصیت -->
+    <!-- ۳-ب. موتور رندر Three.js با OrbitControls، زوم جزئیات، رهگیری موس با حساسیت بالا و انیمیشن‌های تصادفی -->
     <script type="module">
       import * as THREE from 'https://esm.sh/three@0.160.0';
       import { GLTFLoader } from 'https://esm.sh/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
@@ -1011,6 +1011,8 @@
 
         const animController = ValhallaAnimationController
           ? new ValhallaAnimationController({
+              minIntervalMs: 12000,
+              maxIntervalMs: 25000,
               isSoftwareGl,
               enableAutoRandom: options.enableAutoRandom !== false,
             })
@@ -1110,7 +1112,7 @@
             const trackW = animController.getHeadTrackingWeight();
             const desiredY = headTrackingEnabled ? targetYaw * trackW : 0;
             const desiredX = headTrackingEnabled ? targetPitch * trackW : 0;
-            const factor = 1 - Math.exp(-10 * dt);
+            const factor = 1 - Math.exp(-16 * dt);
             curYaw += (desiredY - curYaw) * factor;
             curPitch += (desiredX - curPitch) * factor;
 
@@ -1178,13 +1180,13 @@
           const anchorX = rect.left + ((_headWorld.x + 1) * 0.5) * rect.width;
           const anchorY = rect.top + ((-_headWorld.y + 1) * 0.5) * rect.height;
 
-          const halfW = Math.max(140, window.innerWidth * 0.42);
-          const halfH = Math.max(140, window.innerHeight * 0.42);
+          const halfW = Math.max(120, window.innerWidth * 0.26);
+          const halfH = Math.max(120, window.innerHeight * 0.26);
           const nx = Math.max(-1, Math.min(1, (clientX - anchorX) / halfW));
           const ny = Math.max(-1, Math.min(1, (clientY - anchorY) / halfH));
 
-          targetYaw = nx * 0.62;
-          targetPitch = ny * 0.35;
+          targetYaw = nx * 0.90;
+          targetPitch = ny * 0.58;
           requestRender();
         }
 
