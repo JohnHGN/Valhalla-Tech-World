@@ -1,47 +1,44 @@
 @charset "UTF-8";
 
 /* =========================================================
-   Valhalla Tech World — TweakFa Editorial Dark UI
-   Accent Palette: Deep Wine Red / Burgundy (قرمز شرابی)
+   Valhalla Tech World — Clean Minimal Dark UI (TweakFa Style)
+   No Glassmorphism | Matte Surfaces | Wine Red Accent
    ========================================================= */
 
 :root {
   color-scheme: dark;
 
-  /* بوم مشکی-ذغالی عمیق به سبک توییک‌فا با ته‌رنگ گرم بسیار ظریف */
-  --bg: #080608;
-  --bg-alt: #0d090c;
-  --surface: #130e12;
-  --surface-hover: #1a1318;
-  --surface-elevated: #191217;
-  --surface-inset: #0b080a;
+  /* سطوح مات و تفکیک‌شده بدون شیشه‌ای‌سازی */
+  --bg: #09090b;
+  --bg-alt: #0d0d10;
+  --surface: #121216;
+  --surface-hover: #18181e;
+  --surface-elevated: #16161b;
+  --surface-inset: #0c0c0f;
 
-  --border: rgba(255, 255, 255, 0.075);
-  --border-strong: rgba(255, 255, 255, 0.14);
-  --inner-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.055);
+  /* خطوط مرزی دقیق و مینیمال */
+  --border: #222228;
+  --border-strong: #303039;
 
-  /* پالت قرمز شرابی (Wine Red / Burgundy) جایگزین بنفش توییک‌فا */
+  /* پالت قرمز شرابی کنترل‌شده */
   --accent: #9f1239;
-  --accent-mid: #be123c;
-  --accent-bright: #fb7185;
-  --accent-vivid: #e11d48;
-  --accent-deep: #6b0f2a;
-  --accent-darkest: #4c0519;
+  --accent-hover: #be123c;
+  --accent-bright: #f43f5e;
+  --accent-text: #fda4af;
+  --accent-surface: #1f0d13;
+  --accent-surface-hover: #2b111a;
+  --accent-border: #5c182c;
 
-  --accent-soft: rgba(159, 18, 57, 0.16);
-  --accent-soft-hover: rgba(190, 18, 60, 0.24);
-  --accent-border: rgba(225, 29, 72, 0.36);
-  --accent-border-strong: rgba(251, 113, 133, 0.52);
-  --accent-glow: rgba(159, 18, 57, 0.36);
-
-  --text: #faf6f7;
-  --text-secondary: #b4a4ab;
-  --text-muted: #786770;
+  /* تایپوگرافی و خوانایی بالا */
+  --text: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
   --on-accent: #fff5f7;
 
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 22px;
+  /* انحنای مهندسی‌شده و یکپارچه */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
   --radius-pill: 999px;
 
   --font-fa: "Vazirmatn", system-ui, -apple-system, sans-serif;
@@ -49,8 +46,8 @@
   --font-en-heading: "Orbitron", "Inter", sans-serif;
 
   --container: 1120px;
-  --nav-h: 72px;
-  --transition: 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  --nav-h: 66px;
+  --transition: 0.18s ease;
 }
 
 *,
@@ -77,11 +74,10 @@ body {
 }
 
 ::selection {
-  background: rgba(190, 18, 60, 0.42);
+  background: var(--accent);
   color: #ffffff;
 }
 
-/* اسکرول‌بار مینیمال هماهنگ با تم شرابی */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -92,12 +88,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(159, 18, 57, 0.42);
-  border-radius: 999px;
+  background: #27272e;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(225, 29, 72, 0.65);
+  background: var(--accent);
 }
 
 a {
@@ -126,7 +122,7 @@ code,
 
 section[id],
 article[id] {
-  scroll-margin-top: calc(var(--nav-h) + 18px);
+  scroll-margin-top: calc(var(--nav-h) + 20px);
 }
 
 .visually-hidden {
@@ -142,39 +138,10 @@ article[id] {
   display: none !important;
 }
 
-/* =========================================================
-   پس‌زمینه محیطی توییک‌فا با هاله نور قرمز شرابی
-   ========================================================= */
-.bg-grid {
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.024) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.024) 1px, transparent 1px);
-  background-size: 54px 54px;
-  mask-image: radial-gradient(ellipse 72% 52% at 50% 0%, #000 18%, transparent 80%);
-  -webkit-mask-image: radial-gradient(ellipse 72% 52% at 50% 0%, #000 18%, transparent 80%);
-  pointer-events: none;
-}
-
+/* حذف شلوغی پس‌زمینه — فقط بوم تمیز و یکدست */
+.bg-grid,
 .bg-glow {
-  position: fixed;
-  top: -210px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 960px;
-  height: 540px;
-  z-index: -1;
-  background: radial-gradient(
-    circle,
-    rgba(159, 18, 57, 0.28) 0%,
-    rgba(136, 19, 55, 0.14) 38%,
-    rgba(76, 5, 25, 0.04) 62%,
-    transparent 76%
-  );
-  filter: blur(48px);
-  pointer-events: none;
+  display: none;
 }
 
 .container {
@@ -189,96 +156,98 @@ article[id] {
 }
 
 /* =========================================================
-   دکمه‌ها (سبک کپسولی و براق توییک‌فا با رنگ قرمز شرابی)
+   دکمه‌ها (مرتب، یک‌دست و بدون جلوه‌های شیشه‌ای یا نئونی)
    ========================================================= */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  padding: 10px 20px;
-  border-radius: var(--radius-pill);
+  height: 40px;
+  padding: 0 18px;
+  border-radius: var(--radius-sm);
   border: 1px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: transform var(--transition), background var(--transition), border-color var(--transition), box-shadow var(--transition), color var(--transition), filter var(--transition);
   white-space: nowrap;
+  transition: background-color var(--transition), border-color var(--transition), color var(--transition);
 }
 
 .btn-sm {
-  font-size: 0.83rem;
-  padding: 8px 15px;
+  height: 36px;
+  padding: 0 14px;
+  font-size: 0.82rem;
 }
 
 .btn-lg {
-  font-size: 0.95rem;
-  padding: 13px 26px;
+  height: 46px;
+  padding: 0 24px;
+  font-size: 0.92rem;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent-mid) 0%, var(--accent) 55%, var(--accent-deep) 100%);
-  border-color: rgba(251, 113, 133, 0.34);
+  background-color: var(--accent);
+  border-color: var(--accent);
   color: var(--on-accent);
   font-weight: 700;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    0 8px 26px -6px rgba(159, 18, 57, 0.65);
 }
 
 .btn-primary:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.09);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    0 12px 32px -6px rgba(225, 29, 72, 0.72);
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 
 .btn-outline {
-  background: rgba(255, 255, 255, 0.025);
+  background-color: var(--surface);
   border-color: var(--border-strong);
   color: var(--text);
-  box-shadow: var(--inner-highlight);
 }
 
 .btn-outline:hover {
-  background: var(--accent-soft);
+  background-color: var(--surface-hover);
   border-color: var(--accent-border);
-  color: var(--accent-bright);
-  transform: translateY(-1px);
+  color: var(--accent-text);
 }
 
 .btn-ghost {
-  background: rgba(159, 18, 57, 0.11);
-  border-color: var(--accent-border);
-  color: var(--text);
+  background-color: var(--surface);
+  border-color: var(--border);
+  color: var(--text-secondary);
 }
 
 .btn-ghost:hover {
-  background: var(--accent-soft-hover);
-  border-color: var(--accent-border-strong);
-  color: #ffffff;
+  background-color: var(--surface-hover);
+  border-color: var(--border-strong);
+  color: var(--text);
 }
 
 .btn-icon {
-  background: rgba(255, 255, 255, 0.025);
+  height: 36px;
+  padding: 0 12px;
+  background-color: var(--surface);
   border-color: var(--border);
   color: var(--text-secondary);
-  font-size: 0.84rem;
-  padding: 8px 13px;
+  font-size: 0.82rem;
 }
 
 .btn-icon svg {
-  width: 16px;
-  height: 16px;
-  color: var(--accent-bright);
+  width: 15px;
+  height: 15px;
+  color: var(--text-secondary);
+  transition: color var(--transition);
 }
 
 .btn-icon:hover,
 .btn-icon[aria-expanded="true"] {
+  background-color: var(--surface-hover);
   border-color: var(--accent-border);
-  background: var(--accent-soft);
   color: var(--text);
+}
+
+.btn-icon:hover svg,
+.btn-icon[aria-expanded="true"] svg {
+  color: var(--accent-text);
 }
 
 .nav-status-dot,
@@ -286,87 +255,78 @@ article[id] {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--accent-bright);
-  box-shadow: 0 0 9px var(--accent-vivid);
+  background-color: var(--accent-bright);
   display: inline-block;
+  flex-shrink: 0;
 }
 
 /* =========================================================
-   هدر و ناوبری شیشه‌ای چسبان (سبک توییک‌فا)
+   هدر و منو (تک‌خطی، مات و منظم مثل توییک‌فا)
    ========================================================= */
 .navbar {
   position: sticky;
   top: 0;
   z-index: 200;
-  background: rgba(8, 6, 8, 0.78);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background-color: var(--bg);
   border-bottom: 1px solid var(--border);
 }
 
 .nav-inner {
   position: relative;
   width: 100%;
-  max-width: 1360px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 0 18px;
+  padding: 0 20px;
   height: var(--nav-h);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 20px;
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 11px;
+  gap: 10px;
   flex-shrink: 0;
 }
 
 .brand-logo,
 .brand-svg {
-  height: 48px;
+  height: 40px;
   width: auto;
-  max-width: 56px;
+  max-width: 48px;
   object-fit: contain;
   background: transparent;
   border: none;
   border-radius: 0;
-  filter: drop-shadow(0 4px 14px rgba(159, 18, 57, 0.4));
-  transition: transform var(--transition);
-}
-
-.brand:hover .brand-logo,
-.brand:hover .brand-svg {
-  transform: scale(1.04);
 }
 
 .brand-copy,
 .brand-text {
   display: flex;
   flex-direction: column;
-  line-height: 1.22;
+  line-height: 1.2;
 }
 
 .brand-copy strong,
 .brand-name {
   font-family: var(--font-en-heading);
-  font-size: 0.94rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   color: var(--text);
 }
 
 .brand-copy > span,
 .brand-sub {
-  font-size: 0.66rem;
-  color: var(--accent-bright);
-  letter-spacing: 0.08em;
+  font-size: 0.64rem;
+  color: var(--accent-text);
+  letter-spacing: 0.06em;
 }
 
 .brand-copy small {
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   color: var(--text-muted);
 }
 
@@ -374,62 +334,46 @@ article[id] {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 6px;
 }
 
 .top-nav a,
 .nav-links a {
-  font-size: 0.89rem;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
   font-weight: 500;
   color: var(--text-secondary);
-  transition: color var(--transition);
-  position: relative;
+  transition: color var(--transition), background-color var(--transition);
 }
 
 .top-nav a:hover,
 .nav-links a:hover {
   color: var(--text);
-}
-
-.top-nav a::after,
-.nav-links a::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: -6px;
-  width: 0;
-  height: 2px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, var(--accent-bright), var(--accent));
-  transition: width var(--transition);
-}
-
-.top-nav a:hover::after,
-.nav-links a:hover::after {
-  width: 100%;
+  background-color: var(--surface);
 }
 
 .nav-actions {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .vpn-tab[aria-current="page"] {
-  box-shadow:
-    0 0 0 2px rgba(251, 113, 133, 0.42),
-    0 10px 28px -6px rgba(190, 18, 60, 0.75);
+  background-color: var(--accent-hover);
+  border-color: var(--accent-text);
 }
 
 .mobile-toggle {
   display: none;
   flex-direction: column;
   justify-content: center;
-  gap: 5px;
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: var(--surface);
+  gap: 4px;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
   border: 1px solid var(--border);
   cursor: pointer;
   padding: 0 9px;
@@ -437,22 +381,22 @@ article[id] {
 
 .mobile-toggle span {
   display: block;
-  height: 2px;
+  height: 1.8px;
   width: 100%;
-  background: var(--text);
+  background-color: var(--text);
   border-radius: 2px;
 }
 
 .mobile-menu {
   border-top: 1px solid var(--border);
-  background: rgba(13, 9, 12, 0.98);
+  background-color: var(--bg-alt);
 }
 
 .mobile-menu-inner {
   padding: 14px 20px 20px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .mobile-link {
@@ -460,36 +404,37 @@ article[id] {
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
   font-weight: 500;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
 }
 
 .mobile-link:hover {
-  background: var(--surface);
+  background-color: var(--surface);
   color: var(--text);
 }
 
 .mobile-menu-actions {
-  margin-top: 10px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
 /* =========================================================
-   جست‌وجوی سریع (Command Palette Style)
+   جست‌وجوی سریع (مات و منظم)
    ========================================================= */
 .quick-search {
   position: absolute;
   z-index: 250;
   top: calc(100% + 8px);
-  left: 18px;
-  width: min(460px, calc(100vw - 32px));
+  left: 20px;
+  width: min(440px, calc(100vw - 32px));
   padding: 10px;
-  border: 1px solid var(--accent-border);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-md);
-  background: rgba(15, 11, 14, 0.98);
-  box-shadow: 0 26px 64px rgba(0, 0, 0, 0.72), 0 0 0 1px rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px);
+  background-color: var(--surface);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.55);
 }
 
 .search-field {
@@ -497,21 +442,20 @@ article[id] {
   align-items: center;
   gap: 10px;
   padding: 0 12px;
-  min-height: 44px;
+  height: 42px;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
-  background: var(--surface);
+  background-color: var(--surface-inset);
 }
 
 .search-field:focus-within {
-  border-color: var(--accent-border-strong);
-  box-shadow: 0 0 0 3px rgba(159, 18, 57, 0.18);
+  border-color: var(--accent);
 }
 
 .search-field > svg {
-  width: 17px;
-  height: 17px;
-  color: var(--accent-bright);
+  width: 16px;
+  height: 16px;
+  color: var(--accent-text);
   flex-shrink: 0;
 }
 
@@ -521,7 +465,7 @@ article[id] {
   outline: 0;
   background: transparent;
   color: var(--text);
-  font-size: 0.88rem;
+  font-size: 0.875rem;
 }
 
 .search-field input::placeholder {
@@ -529,27 +473,27 @@ article[id] {
 }
 
 .search-close {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
   border: 1px solid var(--border);
-  background: transparent;
+  background-color: var(--surface);
   color: var(--text-secondary);
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   line-height: 1;
   cursor: pointer;
 }
 
 .search-close:hover {
-  color: var(--accent-bright);
-  border-color: var(--accent-border);
+  color: var(--text);
+  border-color: var(--border-strong);
 }
 
 .search-results {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  max-height: 340px;
+  max-height: 320px;
   overflow-y: auto;
   padding-top: 8px;
 }
@@ -564,23 +508,23 @@ article[id] {
   align-items: center;
   gap: 2px 10px;
   width: 100%;
-  padding: 9px 11px;
+  padding: 9px 10px;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   background: transparent;
   text-align: right;
   cursor: pointer;
-  transition: background var(--transition), border-color var(--transition);
+  transition: background-color var(--transition), border-color var(--transition);
 }
 
 .search-result:hover,
 .search-result[aria-selected="true"] {
-  background: var(--accent-soft);
+  background-color: var(--accent-surface);
   border-color: var(--accent-border);
 }
 
 .search-result strong {
-  font-size: 0.86rem;
+  font-size: 0.85rem;
   color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -599,7 +543,7 @@ article[id] {
 .search-result > span:last-child {
   grid-column: 2;
   grid-row: 1 / span 2;
-  color: var(--accent-bright);
+  color: var(--accent-text);
   font-size: 0.85rem;
 }
 
@@ -610,62 +554,58 @@ article[id] {
 }
 
 /* =========================================================
-   بخش ۱: هیرو (ساختار متمرکز و مینیمال توییک‌فا)
+   بخش ۱: هیرو (ساده، متمرکز و شیک مثل توییک‌فا)
    ========================================================= */
 .hero {
-  padding: 96px 0 76px;
+  padding: 88px 0 72px;
   text-align: center;
+  border-bottom: 1px solid var(--border);
 }
 
 .hero-inner {
-  max-width: 800px;
+  max-width: 760px;
   margin: 0 auto;
 }
 
 .eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  padding: 6px 15px;
+  gap: 8px;
+  padding: 5px 14px;
   border-radius: var(--radius-pill);
-  background: var(--accent-soft);
+  background-color: var(--accent-surface);
   border: 1px solid var(--accent-border);
-  color: var(--accent-bright);
-  font-size: 0.81rem;
+  color: var(--accent-text);
+  font-size: 0.8rem;
   font-weight: 600;
-  margin-bottom: 24px;
-  box-shadow: 0 0 24px -8px var(--accent-glow);
+  margin-bottom: 22px;
 }
 
 .eyebrow-dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: var(--accent-bright);
-  box-shadow: 0 0 10px var(--accent-vivid);
+  background-color: var(--accent-bright);
 }
 
 .hero-title {
-  font-size: clamp(2.15rem, 5vw, 3.45rem);
+  font-size: clamp(2rem, 4.6vw, 3.25rem);
   font-weight: 900;
-  line-height: 1.3;
-  letter-spacing: -0.025em;
-  margin-bottom: 18px;
+  line-height: 1.32;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
 }
 
 .text-gradient {
-  background: linear-gradient(125deg, #fda4af 0%, #fb7185 38%, #e11d48 75%, #9f1239 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--accent-text);
 }
 
 .hero-description,
 .hero-desc {
-  font-size: 1.02rem;
+  font-size: 1rem;
   color: var(--text-secondary);
-  max-width: 650px;
-  margin: 0 auto 32px;
+  max-width: 620px;
+  margin: 0 auto 30px;
   line-height: 1.9;
 }
 
@@ -675,45 +615,45 @@ article[id] {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 40px;
+  gap: 10px;
+  margin-bottom: 36px;
 }
 
-/* نوار میان‌بر سریع زیر دکمه‌های هیرو (امضای طراحی توییک‌فا) */
+/* نوار میان‌برهای سریع زیر دکمه‌های اصلی */
 .quick-bar {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 9px;
-  margin-bottom: 30px;
+  gap: 8px;
+  margin-bottom: 26px;
 }
 
 .quick-pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 9px 15px;
-  border-radius: var(--radius-pill);
-  background: rgba(19, 14, 18, 0.9);
+  gap: 7px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
   border: 1px solid var(--border);
-  box-shadow: var(--inner-highlight);
   color: var(--text-secondary);
-  font-size: 0.83rem;
+  font-size: 0.82rem;
   font-weight: 500;
-  transition: all var(--transition);
+  transition: border-color var(--transition), background-color var(--transition), color var(--transition);
 }
 
 .quick-pill svg {
-  color: var(--accent-bright);
+  width: 15px;
+  height: 15px;
+  color: var(--accent-text);
 }
 
 .quick-pill:hover {
   border-color: var(--accent-border);
-  background: var(--surface-hover);
+  background-color: var(--surface-hover);
   color: var(--text);
-  transform: translateY(-1px);
-  box-shadow: 0 8px 22px -10px var(--accent-glow);
 }
 
 .hero-motto {
@@ -722,13 +662,13 @@ article[id] {
   gap: 10px;
   direction: ltr;
   font-family: var(--font-en-heading);
-  font-size: 0.7rem;
-  letter-spacing: 0.18em;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
   color: var(--text-muted);
 }
 
 .hero-motto span {
-  color: var(--accent-bright);
+  color: var(--accent-text);
 }
 
 .hero-motto i {
@@ -737,49 +677,49 @@ article[id] {
 }
 
 /* =========================================================
-   سکشن‌های عمومی (ریتم تایپوگرافی توییک‌فا)
+   سکشن‌های عمومی
    ========================================================= */
 .section {
-  padding: 84px 0;
+  padding: 76px 0;
 }
 
 .section-alt {
-  background: linear-gradient(180deg, rgba(19, 14, 18, 0.52) 0%, rgba(11, 8, 10, 0.82) 100%);
+  background-color: var(--bg-alt);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
 }
 
 .section-head {
   text-align: center;
-  max-width: 680px;
-  margin: 0 auto 42px;
+  max-width: 640px;
+  margin: 0 auto 40px;
 }
 
 .section-label {
   display: inline-block;
   font-family: var(--font-en-heading);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.18em;
-  color: var(--accent-bright);
-  margin-bottom: 10px;
+  letter-spacing: 0.16em;
+  color: var(--accent-text);
+  margin-bottom: 8px;
 }
 
 .section-title {
-  font-size: clamp(1.55rem, 3.2vw, 2.25rem);
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
   font-weight: 800;
-  line-height: 1.36;
+  line-height: 1.38;
   letter-spacing: -0.015em;
-  margin-bottom: 11px;
+  margin-bottom: 10px;
 }
 
 .section-sub {
   color: var(--text-secondary);
-  font-size: 0.96rem;
+  font-size: 0.94rem;
 }
 
 .inline-link {
-  color: var(--accent-bright);
+  color: var(--accent-text);
   font-weight: 600;
 }
 
@@ -788,37 +728,37 @@ article[id] {
 }
 
 /* =========================================================
-   بخش ۲: خدمات (کارت‌های Bento توییک‌فا + سیم‌کارت فیزیکی)
+   بخش ۲: کارت‌های خدمات و سیم‌کارت فیزیکی (کاملاً مات و منظم)
    ========================================================= */
 .offer-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  gap: 16px;
 }
 
 .offer-card {
-  position: relative;
-  background: var(--surface);
+  background-color: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 28px;
+  padding: 26px;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--inner-highlight);
-  transition: transform var(--transition), border-color var(--transition), background var(--transition), box-shadow var(--transition);
+  transition: border-color var(--transition), background-color var(--transition);
 }
 
 .offer-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--accent-border);
-  background: var(--surface-hover);
-  box-shadow: var(--inner-highlight), 0 18px 44px -24px rgba(159, 18, 57, 0.45);
+  border-color: var(--border-strong);
+  background-color: var(--surface-hover);
 }
 
 .offer-featured {
   grid-column: 1 / -1;
-  background: radial-gradient(circle at 12% 0%, rgba(159, 18, 57, 0.22) 0%, transparent 52%), var(--surface);
+  background-color: var(--surface);
   border-color: var(--accent-border);
+}
+
+.offer-featured:hover {
+  border-color: var(--accent);
 }
 
 .offer-topline {
@@ -826,7 +766,7 @@ article[id] {
   align-items: center;
   justify-content: space-between;
   font-family: var(--font-en-heading);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   letter-spacing: 0.14em;
   color: var(--text-muted);
   direction: ltr;
@@ -837,29 +777,28 @@ article[id] {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--accent-bright);
-  box-shadow: 0 0 12px var(--accent-vivid);
+  background-color: var(--accent-bright);
 }
 
 .offer-kicker {
   font-family: var(--font-en-heading);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: var(--accent-bright);
+  color: var(--accent-text);
   margin-bottom: 6px;
   direction: ltr;
   text-align: right;
 }
 
 .offer-card h3 {
-  font-size: 1.24rem;
+  font-size: 1.2rem;
   font-weight: 800;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .offer-description {
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   color: var(--text-secondary);
   margin-bottom: 18px;
   line-height: 1.85;
@@ -868,15 +807,15 @@ article[id] {
 .offer-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
+  gap: 6px;
   margin-bottom: 20px;
 }
 
 .offer-chips span {
-  font-size: 0.78rem;
-  padding: 4px 11px;
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.035);
+  font-size: 0.76rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background-color: var(--surface-inset);
   border: 1px solid var(--border);
   color: var(--text-secondary);
 }
@@ -885,7 +824,7 @@ article[id] {
   margin-top: auto;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
   padding-top: 16px;
   border-top: 1px solid var(--border);
 }
@@ -894,36 +833,43 @@ article[id] {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 15px;
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.03);
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-inset);
   border: 1px solid var(--border);
-  font-size: 0.84rem;
+  font-size: 0.83rem;
   font-weight: 600;
   color: var(--text);
-  transition: all var(--transition);
+  transition: background-color var(--transition), border-color var(--transition), color var(--transition);
 }
 
 .offer-link:hover {
   border-color: var(--accent-border);
-  background: var(--accent-soft);
-  color: var(--accent-bright);
+  background-color: var(--accent-surface);
+  color: var(--accent-text);
 }
 
 .offer-link-accent {
-  background: var(--accent-soft);
-  border-color: var(--accent-border);
-  color: var(--accent-bright);
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.offer-link-accent:hover {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: var(--on-accent);
 }
 
 .section-footnote {
   margin-top: 18px;
   text-align: center;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: var(--text-muted);
 }
 
-/* سیم‌کارت فیزیکی (تب‌های کپسولی سبک توییک‌فا) */
+/* سیم‌کارت فیزیکی (تب‌بندی منظم سگمنت‌دار) */
 .physical-sim-card {
   grid-column: 1 / -1;
 }
@@ -931,46 +877,47 @@ article[id] {
 .sim-tabs {
   display: inline-flex;
   flex-wrap: wrap;
-  gap: 6px;
-  padding: 5px;
-  border-radius: var(--radius-pill);
-  background: var(--surface-inset);
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  background-color: var(--surface-inset);
   border: 1px solid var(--border);
   margin-bottom: 20px;
 }
 
 .sim-tab {
-  padding: 8px 18px;
-  border-radius: var(--radius-pill);
+  height: 36px;
+  padding: 0 16px;
+  border-radius: var(--radius-sm);
   background: transparent;
   border: 1px solid transparent;
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition);
+  transition: background-color var(--transition), color var(--transition), border-color var(--transition);
 }
 
 .sim-tab:hover {
   color: var(--text);
+  background-color: var(--surface);
 }
 
 .sim-tab.is-active {
-  background: linear-gradient(135deg, var(--accent-mid), var(--accent));
-  border-color: rgba(251, 113, 133, 0.35);
+  background-color: var(--accent);
+  border-color: var(--accent);
   color: var(--on-accent);
-  box-shadow: 0 6px 18px -6px var(--accent-glow);
 }
 
 .sim-panel {
   display: grid;
-  grid-template-columns: minmax(200px, 280px) minmax(0, 1fr);
-  gap: 26px;
+  grid-template-columns: minmax(200px, 270px) minmax(0, 1fr);
+  gap: 24px;
   align-items: start;
-  background: var(--surface-inset);
+  background-color: var(--surface-inset);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 22px;
+  padding: 20px;
 }
 
 .sim-product-image {
@@ -979,22 +926,22 @@ article[id] {
   object-fit: contain;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
-  background: var(--surface);
+  background-color: var(--surface);
   padding: 10px;
 }
 
 .sim-product-copy h4 {
-  font-size: 1.15rem;
+  font-size: 1.12rem;
   font-weight: 800;
   margin-bottom: 8px;
 }
 
 .sim-product-copy h4 bdi {
-  color: var(--accent-bright);
+  color: var(--accent-text);
 }
 
 .sim-product-copy p {
-  font-size: 0.9rem;
+  font-size: 0.89rem;
   color: var(--text-secondary);
   margin-bottom: 12px;
 }
@@ -1002,14 +949,14 @@ article[id] {
 .sim-product-copy ul {
   padding-inline-start: 20px;
   margin-bottom: 16px;
-  font-size: 0.86rem;
+  font-size: 0.85rem;
   color: var(--text);
   line-height: 2;
 }
 
 .sim-product-copy h5 {
-  font-size: 0.88rem;
-  color: var(--accent-bright);
+  font-size: 0.86rem;
+  color: var(--accent-text);
   margin-bottom: 10px;
 }
 
@@ -1022,9 +969,9 @@ article[id] {
 .sim-price-grid span {
   padding: 9px 12px;
   border-radius: var(--radius-sm);
-  background: var(--surface);
+  background-color: var(--surface);
   border: 1px solid var(--border);
-  font-size: 0.84rem;
+  font-size: 0.83rem;
   color: var(--text);
 }
 
@@ -1046,31 +993,32 @@ article[id] {
   margin-top: 18px;
   padding-top: 16px;
   border-top: 1px solid var(--border);
-  font-size: 0.88rem;
+  font-size: 0.87rem;
   color: var(--text-secondary);
 }
 
 /* =========================================================
-   بخش ۳: مقالات (فیلتر کپسولی + گرید تحریریه توییک‌فا)
+   بخش ۳: مقالات (فیلتر سگمنت‌دار + کارت‌های مات منظم)
    ========================================================= */
 .academy-filters {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 30px;
+  gap: 6px;
+  margin-bottom: 28px;
 }
 
 .academy-filter {
-  padding: 8px 18px;
-  border-radius: var(--radius-pill);
-  background: var(--surface);
+  height: 36px;
+  padding: 0 16px;
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
   border: 1px solid var(--border);
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition);
+  transition: background-color var(--transition), border-color var(--transition), color var(--transition);
 }
 
 .academy-filter:hover {
@@ -1079,35 +1027,31 @@ article[id] {
 }
 
 .academy-filter.is-active {
-  background: var(--accent-soft);
-  border-color: var(--accent-border);
-  color: var(--accent-bright);
-  box-shadow: 0 0 20px -8px var(--accent-glow);
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
 }
 
 .academy-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
+  gap: 14px;
 }
 
 .academy-card {
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 22px;
+  padding: 20px;
   border-radius: var(--radius-md);
-  background: var(--surface);
+  background-color: var(--surface);
   border: 1px solid var(--border);
-  box-shadow: var(--inner-highlight);
-  transition: transform var(--transition), border-color var(--transition), background var(--transition), box-shadow var(--transition);
+  transition: border-color var(--transition), background-color var(--transition);
 }
 
 .academy-card:hover {
-  transform: translateY(-2px);
   border-color: var(--accent-border);
-  background: var(--surface-hover);
-  box-shadow: var(--inner-highlight), 0 16px 36px -22px rgba(159, 18, 57, 0.45);
+  background-color: var(--surface-hover);
 }
 
 .academy-number {
@@ -1115,15 +1059,15 @@ article[id] {
   top: 18px;
   left: 18px;
   font-family: var(--font-en-heading);
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
 }
 
 .academy-type {
   font-family: var(--font-en-heading);
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   letter-spacing: 0.1em;
-  color: var(--accent-bright);
+  color: var(--accent-text);
   margin-bottom: 10px;
   direction: ltr;
   text-align: right;
@@ -1131,14 +1075,14 @@ article[id] {
 }
 
 .academy-card h3 {
-  font-size: 1.02rem;
+  font-size: 0.98rem;
   font-weight: 700;
   margin-bottom: 8px;
-  line-height: 1.48;
+  line-height: 1.5;
 }
 
 .academy-card p {
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   color: var(--text-secondary);
   line-height: 1.85;
   flex: 1;
@@ -1146,23 +1090,19 @@ article[id] {
 
 .academy-arrow {
   margin-top: 14px;
-  color: var(--accent-bright);
-  font-size: 0.9rem;
+  color: var(--accent-text);
+  font-size: 0.88rem;
   font-weight: 700;
   align-self: flex-end;
 }
 
 .academy-card-ai {
-  border-color: rgba(225, 29, 72, 0.28);
-  background: linear-gradient(145deg, rgba(159, 18, 57, 0.13) 0%, var(--surface) 62%);
+  border-color: var(--accent-border);
+  background-color: var(--surface);
 }
 
 .prompt-article {
   grid-column: span 3;
-}
-
-.prompt-article:hover {
-  transform: none;
 }
 
 .prompt-source-link {
@@ -1170,8 +1110,8 @@ article[id] {
   align-items: center;
   gap: 8px;
   margin-top: 14px;
-  color: var(--accent-bright);
-  font-size: 0.86rem;
+  color: var(--accent-text);
+  font-size: 0.85rem;
   font-weight: 700;
   width: fit-content;
 }
@@ -1190,20 +1130,21 @@ article[id] {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
-  border-radius: var(--radius-pill);
-  background: var(--accent-soft);
+  height: 36px;
+  padding: 0 15px;
+  border-radius: var(--radius-sm);
+  background-color: var(--accent-surface);
   border: 1px solid var(--accent-border);
-  color: var(--accent-bright);
-  font-size: 0.84rem;
+  color: var(--accent-text);
+  font-size: 0.83rem;
   font-weight: 600;
   cursor: pointer;
   list-style: none;
-  transition: background var(--transition);
+  transition: background-color var(--transition);
 }
 
 .pdf-reader summary:hover {
-  background: var(--accent-soft-hover);
+  background-color: var(--accent-surface-hover);
 }
 
 .pdf-reader summary::-webkit-details-marker {
@@ -1217,7 +1158,7 @@ article[id] {
   border-radius: var(--radius-sm);
   overflow: hidden;
   border: 1px solid var(--border-strong);
-  background: var(--surface-inset);
+  background-color: var(--surface-inset);
 }
 
 .pdf-reader-frame iframe {
@@ -1230,9 +1171,9 @@ article[id] {
 .pdf-download-link {
   display: inline-flex;
   margin-top: 10px;
-  font-size: 0.84rem;
+  font-size: 0.83rem;
   font-weight: 600;
-  color: var(--accent-bright);
+  color: var(--accent-text);
 }
 
 /* =========================================================
@@ -1246,8 +1187,7 @@ article[id] {
   border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid var(--border);
-  background: var(--surface);
-  box-shadow: var(--inner-highlight);
+  background-color: var(--surface);
 }
 
 .podcast-player-frame iframe {
@@ -1264,8 +1204,8 @@ article[id] {
 .contact-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-  max-width: 880px;
+  gap: 12px;
+  max-width: 860px;
   margin: 0 auto;
 }
 
@@ -1273,36 +1213,42 @@ article[id] {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 18px 20px;
+  padding: 16px 18px;
   border-radius: var(--radius-md);
-  background: var(--surface);
+  background-color: var(--surface);
   border: 1px solid var(--border);
-  box-shadow: var(--inner-highlight);
-  transition: transform var(--transition), border-color var(--transition), background var(--transition);
+  transition: border-color var(--transition), background-color var(--transition);
 }
 
 .contact-card:hover {
-  transform: translateY(-2px);
   border-color: var(--accent-border);
-  background: var(--surface-hover);
+  background-color: var(--surface-hover);
 }
 
 .contact-card-primary {
   border-color: var(--accent-border);
-  background: linear-gradient(135deg, rgba(159, 18, 57, 0.2) 0%, var(--surface) 70%);
+  background-color: var(--accent-surface);
+}
+
+.contact-card-primary:hover {
+  background-color: var(--accent-surface-hover);
 }
 
 .contact-icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
   display: grid;
   place-items: center;
-  background: var(--accent-soft);
-  border: 1px solid var(--accent-border);
-  color: var(--accent-bright);
-  font-size: 1.15rem;
+  background-color: var(--surface-inset);
+  border: 1px solid var(--border);
+  color: var(--accent-text);
+  font-size: 1.1rem;
   flex-shrink: 0;
+}
+
+.contact-card-primary .contact-icon {
+  border-color: var(--accent-border);
 }
 
 .contact-card > span:nth-child(2) {
@@ -1312,54 +1258,54 @@ article[id] {
 }
 
 .contact-card strong {
-  font-size: 0.94rem;
+  font-size: 0.92rem;
   font-weight: 700;
 }
 
 .contact-card small {
-  font-size: 0.8rem;
+  font-size: 0.79rem;
   color: var(--text-secondary);
 }
 
 .contact-card > b {
   margin-inline-start: auto;
-  color: var(--accent-bright);
-  font-size: 1rem;
+  color: var(--accent-text);
+  font-size: 0.96rem;
 }
 
 /* =========================================================
    نمای راهنمای اتصال به VPN (#vpn-guide)
    ========================================================= */
 .guide-top-bar {
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .guide-intro {
-  background: radial-gradient(circle at 12% 0%, rgba(159, 18, 57, 0.24) 0%, transparent 56%), var(--surface);
-  border: 1px solid var(--accent-border);
-  border-radius: var(--radius-lg);
-  padding: 30px 32px;
-  margin-bottom: 36px;
-  box-shadow: var(--inner-highlight);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-right: 3px solid var(--accent);
+  border-radius: var(--radius-md);
+  padding: 26px 28px;
+  margin-bottom: 34px;
 }
 
 .guide-intro h2 {
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-size: clamp(1.5rem, 2.8vw, 2rem);
   font-weight: 900;
   margin-bottom: 8px;
 }
 
 .guide-intro h2 bdi {
-  color: var(--accent-bright);
+  color: var(--accent-text);
 }
 
 .guide-intro p {
   color: var(--text-secondary);
-  font-size: 0.95rem;
+  font-size: 0.93rem;
 }
 
 .section-block {
-  margin-bottom: 44px;
+  margin-bottom: 40px;
 }
 
 .guide-step-head {
@@ -1367,73 +1313,75 @@ article[id] {
   align-items: flex-end;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .guide-step-head h3 {
-  font-size: 1.35rem;
+  font-size: 1.25rem;
   font-weight: 800;
 }
 
 .step-count {
   direction: ltr;
   font-family: var(--font-en-heading);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
 }
 
 .step-count i {
   font-style: normal;
-  color: var(--accent-bright);
+  color: var(--accent-text);
   margin-inline: 3px;
 }
 
 .service-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  gap: 12px;
 }
 
 .service-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 20px 22px;
+  gap: 14px;
+  padding: 18px 20px;
   border-radius: var(--radius-md);
-  background: var(--surface);
+  background-color: var(--surface);
   border: 1px solid var(--border);
   text-align: right;
   cursor: pointer;
-  box-shadow: var(--inner-highlight);
-  transition: all var(--transition);
+  transition: border-color var(--transition), background-color var(--transition);
 }
 
 .service-card:hover {
   border-color: var(--border-strong);
-  background: var(--surface-hover);
+  background-color: var(--surface-hover);
 }
 
 .service-card.is-selected {
-  border-color: var(--accent-border-strong);
-  background: linear-gradient(135deg, rgba(159, 18, 57, 0.22) 0%, var(--surface) 76%);
-  box-shadow: 0 0 26px -8px var(--accent-glow);
+  border-color: var(--accent);
+  background-color: var(--accent-surface);
 }
 
 .card-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 13px;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
   display: grid;
   place-items: center;
-  background: var(--accent-soft);
-  border: 1px solid var(--accent-border);
-  color: var(--accent-bright);
+  background-color: var(--surface-inset);
+  border: 1px solid var(--border);
+  color: var(--accent-text);
   flex-shrink: 0;
 }
 
+.service-card.is-selected .card-icon {
+  border-color: var(--accent-border);
+}
+
 .card-icon svg {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
 }
 
 .service-text {
@@ -1443,11 +1391,11 @@ article[id] {
 
 .service-text strong {
   font-family: var(--font-en-heading);
-  font-size: 1.05rem;
+  font-size: 1rem;
 }
 
 .service-text span {
-  font-size: 0.84rem;
+  font-size: 0.83rem;
   color: var(--text-secondary);
 }
 
@@ -1463,7 +1411,7 @@ article[id] {
 }
 
 .service-card.is-selected .radio-mark {
-  border-color: var(--accent-bright);
+  border-color: var(--accent-text);
 }
 
 .service-card.is-selected .radio-mark::after {
@@ -1471,22 +1419,22 @@ article[id] {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--accent-bright);
+  background-color: var(--accent-bright);
 }
 
 .platform-tabs {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 6px;
-  padding: 6px;
+  gap: 4px;
+  padding: 4px;
   border-radius: var(--radius-md);
-  background: var(--surface-inset);
+  background-color: var(--surface-inset);
   border: 1px solid var(--border);
   margin-bottom: 16px;
 }
 
 .platform-tab {
-  min-height: 46px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1495,42 +1443,40 @@ article[id] {
   border: 1px solid transparent;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition);
+  transition: background-color var(--transition), color var(--transition);
 }
 
 .platform-icon {
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
   display: inline-grid;
   place-items: center;
 }
 
 .platform-icon svg {
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
 }
 
 .platform-tab:hover {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.03);
+  background-color: var(--surface);
 }
 
 .platform-tab.is-active {
-  background: linear-gradient(135deg, var(--accent-mid), var(--accent));
-  border-color: rgba(251, 113, 133, 0.35);
+  background-color: var(--accent);
+  border-color: var(--accent);
   color: var(--on-accent);
-  box-shadow: 0 6px 18px -6px var(--accent-glow);
 }
 
 .guide-panel {
-  background: var(--surface);
+  background-color: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 28px;
-  box-shadow: var(--inner-highlight);
+  padding: 26px;
 }
 
 .guide-panel-head {
@@ -1538,47 +1484,47 @@ article[id] {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
 .panel-kicker {
   display: block;
   font-family: var(--font-en-heading);
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   letter-spacing: 0.14em;
-  color: var(--accent-bright);
+  color: var(--accent-text);
   direction: ltr;
   text-align: right;
   margin-bottom: 4px;
 }
 
 .guide-panel h4 {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 800;
 }
 
 .platform-glyph {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
   display: grid;
   place-items: center;
-  background: var(--accent-soft);
+  background-color: var(--accent-surface);
   border: 1px solid var(--accent-border);
-  color: var(--accent-bright);
+  color: var(--accent-text);
 }
 
 .platform-glyph svg {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
 }
 
 .download-box {
-  background: var(--surface-inset);
+  background-color: var(--surface-inset);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 18px;
-  margin-bottom: 20px;
+  padding: 16px;
+  margin-bottom: 18px;
 }
 
 .download-heading {
@@ -1586,25 +1532,25 @@ article[id] {
   align-items: center;
   gap: 10px;
   margin-bottom: 12px;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
 }
 
 .download-arrow {
-  width: 26px;
-  height: 26px;
-  border-radius: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
   display: grid;
   place-items: center;
-  background: var(--accent-soft);
+  background-color: var(--accent-surface);
   border: 1px solid var(--accent-border);
-  color: var(--accent-bright);
+  color: var(--accent-text);
   font-weight: 700;
 }
 
 .download-links {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
 }
 
 .download-link {
@@ -1612,19 +1558,19 @@ article[id] {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 12px 16px;
+  padding: 11px 14px;
   border-radius: var(--radius-sm);
-  background: var(--surface);
+  background-color: var(--surface);
   border: 1px solid var(--border);
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   font-weight: 600;
-  transition: all var(--transition);
+  transition: border-color var(--transition), background-color var(--transition), color var(--transition);
 }
 
 .download-link:hover {
   border-color: var(--accent-border);
-  background: var(--accent-soft);
-  color: var(--accent-bright);
+  background-color: var(--accent-surface);
+  color: var(--accent-text);
 }
 
 .steps-list {
@@ -1636,10 +1582,10 @@ article[id] {
 
 .step-item {
   display: flex;
-  gap: 14px;
+  gap: 12px;
   padding: 16px;
   border-radius: var(--radius-md);
-  background: var(--surface-inset);
+  background-color: var(--surface-inset);
   border: 1px solid var(--border);
 }
 
@@ -1648,28 +1594,28 @@ article[id] {
 }
 
 .step-number {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
   display: grid;
   place-items: center;
-  background: var(--accent-soft);
+  background-color: var(--accent-surface);
   border: 1px solid var(--accent-border);
-  color: var(--accent-bright);
+  color: var(--accent-text);
   font-family: var(--font-en-heading);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 700;
   flex-shrink: 0;
 }
 
 .step-item strong {
   display: block;
-  font-size: 0.94rem;
+  font-size: 0.92rem;
   margin-bottom: 4px;
 }
 
 .step-item p {
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   color: var(--text-secondary);
   line-height: 1.8;
 }
@@ -1679,16 +1625,16 @@ article[id] {
   align-items: flex-start;
   gap: 10px;
   margin-top: 16px;
-  padding: 14px 16px;
+  padding: 13px 16px;
   border-radius: var(--radius-sm);
-  background: var(--accent-soft);
+  background-color: var(--accent-surface);
   border: 1px solid var(--accent-border);
-  font-size: 0.84rem;
+  font-size: 0.83rem;
   color: var(--text);
 }
 
 .guide-callout > span {
-  color: var(--accent-bright);
+  color: var(--accent-text);
 }
 
 .section-footer {
@@ -1696,7 +1642,7 @@ article[id] {
   align-items: center;
   gap: 12px;
   margin-top: 14px;
-  font-size: 0.84rem;
+  font-size: 0.83rem;
   color: var(--text-muted);
 }
 
@@ -1704,50 +1650,50 @@ article[id] {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 16px 20px;
+  padding: 16px 18px;
   border-radius: var(--radius-md);
-  background: var(--surface);
-  border: 1px solid var(--accent-border);
-  margin-bottom: 44px;
-  font-size: 0.88rem;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  margin-bottom: 40px;
+  font-size: 0.87rem;
   color: var(--text-secondary);
 }
 
 .privacy-strip strong {
-  color: var(--accent-bright);
+  color: var(--accent-text);
 }
 
 .privacy-icon {
   width: 36px;
   height: 36px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   display: grid;
   place-items: center;
-  background: var(--accent-soft);
-  color: var(--accent-bright);
+  background-color: var(--accent-surface);
+  border: 1px solid var(--accent-border);
+  color: var(--accent-text);
   flex-shrink: 0;
 }
 
 /* =========================================================
-   سوالات متداول (FAQ سبک آکاردئون توییک‌فا)
+   سوالات متداول (آکاردئون مینیمال و مرتب)
    ========================================================= */
 .faq-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .faq-item {
-  background: var(--surface);
+  background-color: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   overflow: hidden;
-  transition: border-color var(--transition), background var(--transition);
+  transition: border-color var(--transition);
 }
 
 .faq-item[open] {
   border-color: var(--accent-border);
-  background: var(--surface-hover);
 }
 
 .faq-item summary {
@@ -1755,8 +1701,8 @@ article[id] {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 16px 20px;
-  font-size: 0.94rem;
+  padding: 16px 18px;
+  font-size: 0.92rem;
   font-weight: 600;
   cursor: pointer;
   list-style: none;
@@ -1767,8 +1713,8 @@ article[id] {
 }
 
 .faq-plus {
-  font-size: 1.3rem;
-  color: var(--accent-bright);
+  font-size: 1.25rem;
+  color: var(--accent-text);
   transition: transform var(--transition);
   line-height: 1;
 }
@@ -1778,47 +1724,47 @@ article[id] {
 }
 
 .faq-item p {
-  padding: 0 20px 18px;
-  font-size: 0.88rem;
+  padding: 0 18px 16px;
+  font-size: 0.87rem;
   color: var(--text-secondary);
   line-height: 1.85;
 }
 
 .support-note {
   margin-top: 16px;
-  font-size: 0.84rem;
+  font-size: 0.83rem;
   color: var(--text-muted);
 }
 
 /* =========================================================
-   فوتر چندستونه مینیمال (سبک توییک‌فا)
+   فوتر چندستونه (ساده و مرتب)
    ========================================================= */
 .footer {
   border-top: 1px solid var(--border);
-  background: #060406;
-  padding: 56px 0 28px;
+  background-color: var(--bg-alt);
+  padding: 52px 0 26px;
 }
 
 .footer-grid {
   display: grid;
   grid-template-columns: 1.5fr repeat(3, 1fr);
-  gap: 30px;
-  padding-bottom: 36px;
+  gap: 28px;
+  padding-bottom: 32px;
   border-bottom: 1px solid var(--border);
 }
 
 .footer-tagline {
-  margin-top: 14px;
-  font-size: 0.86rem;
+  margin-top: 12px;
+  font-size: 0.85rem;
   color: var(--text-secondary);
-  max-width: 320px;
+  max-width: 310px;
   line-height: 1.85;
 }
 
 .footer-col h4 {
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   color: var(--text);
 }
 
@@ -1826,27 +1772,27 @@ article[id] {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 8px;
 }
 
 .footer-col a {
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   color: var(--text-secondary);
   transition: color var(--transition);
 }
 
 .footer-col a:hover {
-  color: var(--accent-bright);
+  color: var(--accent-text);
 }
 
 .footer-bottom {
-  padding-top: 22px;
+  padding-top: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: var(--text-muted);
 }
 
@@ -1859,63 +1805,57 @@ article[id] {
 }
 
 .footer-handles a:hover {
-  color: var(--accent-bright);
+  color: var(--accent-text);
 }
 
 /* =========================================================
-   دستیار هوشمند شناور والهالا (قرمز شرابی)
+   دستیار هوشمند والهالا (مات، بدون شیشه، خوانا)
    ========================================================= */
 .ai-fab {
   position: fixed;
-  bottom: 22px;
-  left: 22px;
+  bottom: 20px;
+  left: 20px;
   z-index: 9998;
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  padding: 12px 18px;
-  border-radius: var(--radius-pill);
-  background: linear-gradient(135deg, var(--accent-mid) 0%, var(--accent) 55%, var(--accent-deep) 100%);
-  border: 1px solid rgba(251, 113, 133, 0.36);
+  gap: 8px;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: var(--radius-md);
+  background-color: var(--accent);
+  border: 1px solid var(--accent-hover);
   color: var(--on-accent);
   font-weight: 700;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   cursor: pointer;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    0 12px 32px -4px rgba(159, 18, 57, 0.65);
-  transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.45);
+  transition: background-color var(--transition), transform var(--transition);
 }
 
 .ai-fab:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.08);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    0 16px 38px -4px rgba(225, 29, 72, 0.72);
+  background-color: var(--accent-hover);
+  transform: translateY(-1px);
 }
 
 .ai-fab svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
 }
 
 .ai-drawer {
   position: fixed;
-  bottom: 84px;
-  left: 22px;
+  bottom: 76px;
+  left: 20px;
   z-index: 9999;
-  width: 380px;
+  width: 370px;
   max-width: calc(100vw - 28px);
-  height: 530px;
-  max-height: calc(100vh - 115px);
-  background: rgba(14, 10, 13, 0.98);
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  border: 1px solid var(--accent-border);
+  height: 520px;
+  max-height: calc(100vh - 110px);
+  background-color: var(--surface);
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-lg);
-  box-shadow: 0 26px 72px rgba(0, 0, 0, 0.85), 0 0 40px -16px var(--accent-glow);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.72);
   display: none;
   flex-direction: column;
   overflow: hidden;
@@ -1923,28 +1863,28 @@ article[id] {
 
 .ai-drawer.open {
   display: flex;
-  animation: aiDrawerPop 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: aiDrawerPop 0.18s ease;
 }
 
 @keyframes aiDrawerPop {
   from {
     opacity: 0;
-    transform: translateY(14px) scale(0.97);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
 .ai-header {
-  padding: 14px 16px;
+  padding: 13px 16px;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  background: linear-gradient(135deg, rgba(159, 18, 57, 0.16) 0%, rgba(19, 14, 18, 0.4) 100%);
+  background-color: var(--bg-alt);
 }
 
 .ai-header-info {
@@ -1955,21 +1895,21 @@ article[id] {
 }
 
 .ai-avatar-wrap {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--surface);
-  border: 1px solid var(--accent-border);
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   flex-shrink: 0;
-  color: var(--accent-bright);
+  color: var(--accent-text);
 }
 
 .ai-header h4 {
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   font-weight: 700;
   line-height: 1.3;
 }
@@ -1978,7 +1918,7 @@ article[id] {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.74rem;
+  font-size: 0.73rem;
   color: var(--text-secondary);
 }
 
@@ -1991,37 +1931,38 @@ article[id] {
 .ai-icon-btn {
   width: 32px;
   height: 32px;
-  border-radius: 9px;
-  background: transparent;
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
   border: 1px solid var(--border);
   color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all var(--transition);
+  transition: border-color var(--transition), color var(--transition), background-color var(--transition);
 }
 
 .ai-icon-btn:hover {
-  color: var(--accent-bright);
-  border-color: var(--accent-border);
-  background: var(--accent-soft);
+  color: var(--text);
+  border-color: var(--border-strong);
+  background-color: var(--surface-hover);
 }
 
 .ai-messages {
   flex: 1;
-  padding: 16px;
+  padding: 14px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  background-color: var(--surface-inset);
 }
 
 .ai-msg {
   max-width: 86%;
-  padding: 10px 14px;
-  border-radius: 14px;
-  font-size: 0.86rem;
+  padding: 10px 13px;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
   line-height: 1.75;
   white-space: pre-wrap;
   word-break: break-word;
@@ -2029,7 +1970,7 @@ article[id] {
 
 .ai-msg.bot {
   align-self: flex-start;
-  background: var(--surface-elevated);
+  background-color: var(--surface);
   border: 1px solid var(--border);
   color: var(--text);
   border-top-right-radius: 4px;
@@ -2037,7 +1978,7 @@ article[id] {
 
 .ai-msg.user {
   align-self: flex-end;
-  background: linear-gradient(135deg, var(--accent-mid) 0%, var(--accent) 100%);
+  background-color: var(--accent);
   color: var(--on-accent);
   font-weight: 600;
   border-top-left-radius: 4px;
@@ -2049,6 +1990,7 @@ article[id] {
   gap: 6px;
   overflow-x: auto;
   border-top: 1px solid var(--border);
+  background-color: var(--bg-alt);
   scrollbar-width: none;
 }
 
@@ -2058,25 +2000,26 @@ article[id] {
 
 .ai-prompt-chip {
   flex-shrink: 0;
-  padding: 5px 11px;
-  border-radius: var(--radius-pill);
-  background: var(--surface);
+  padding: 5px 10px;
+  border-radius: 6px;
+  background-color: var(--surface);
   border: 1px solid var(--border);
   color: var(--text-secondary);
-  font-size: 0.76rem;
+  font-size: 0.75rem;
   cursor: pointer;
-  transition: all var(--transition);
+  transition: border-color var(--transition), color var(--transition), background-color var(--transition);
 }
 
 .ai-prompt-chip:hover {
   border-color: var(--accent-border);
-  color: var(--accent-bright);
-  background: var(--accent-soft);
+  color: var(--accent-text);
+  background-color: var(--accent-surface);
 }
 
 .ai-input-row {
-  padding: 12px 14px;
+  padding: 10px 14px;
   border-top: 1px solid var(--border);
+  background-color: var(--surface);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -2084,44 +2027,42 @@ article[id] {
 
 .ai-input-row input {
   flex: 1;
-  background: var(--surface);
+  height: 38px;
+  background-color: var(--surface-inset);
   border: 1px solid var(--border);
-  border-radius: var(--radius-pill);
-  padding: 9px 14px;
-  font-size: 0.86rem;
+  border-radius: var(--radius-sm);
+  padding: 0 12px;
+  font-size: 0.85rem;
   outline: none;
-  transition: border-color var(--transition), box-shadow var(--transition);
+  transition: border-color var(--transition);
 }
 
 .ai-input-row input:focus {
-  border-color: var(--accent-border-strong);
-  box-shadow: 0 0 0 3px rgba(159, 18, 57, 0.16);
+  border-color: var(--accent);
 }
 
 .ai-send-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
   border: none;
-  background: linear-gradient(135deg, var(--accent-mid) 0%, var(--accent) 100%);
+  background-color: var(--accent);
   color: var(--on-accent);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-  transition: filter var(--transition), transform var(--transition);
+  transition: background-color var(--transition);
 }
 
 .ai-send-btn:hover {
-  filter: brightness(1.1);
-  transform: scale(1.03);
+  background-color: var(--accent-hover);
 }
 
 .ai-send-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  transform: none;
 }
 
 /* =========================================================
@@ -2160,11 +2101,11 @@ article[id] {
   }
 
   .hero {
-    padding: 68px 0 52px;
+    padding: 64px 0 50px;
   }
 
   .section {
-    padding: 58px 0;
+    padding: 56px 0;
   }
 
   .offer-grid,
@@ -2183,7 +2124,7 @@ article[id] {
   .guide-panel,
   .guide-intro,
   .offer-card {
-    padding: 22px;
+    padding: 20px;
   }
 
   .podcast-player-frame,
@@ -2218,8 +2159,10 @@ article[id] {
   }
 
   .ai-fab {
-    padding: 14px;
-    bottom: 18px;
+    width: 44px;
+    padding: 0;
+    justify-content: center;
+    bottom: 16px;
     left: 16px;
   }
 
@@ -2227,7 +2170,7 @@ article[id] {
     left: 14px;
     right: 14px;
     width: auto;
-    bottom: 76px;
-    height: 480px;
+    bottom: 70px;
+    height: 470px;
   }
 }
