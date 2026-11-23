@@ -13,7 +13,7 @@
   --border: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.14);
 
-  /* رنگ اصلی سبز-آبی والهالا (جایگزین بنفش توییک‌فا) */
+  /* رنگ اصلی سبز-آبی والهالا */
   --accent: #14b8a6;
   --accent-bright: #2dd4bf;
   --accent-cyan: #06b6d4;
@@ -26,10 +26,6 @@
   --text-secondary: #9aa6b8;
   --text-muted: #66758a;
 
-  --danger: #f43f5e;
-  --danger-soft: rgba(244, 63, 94, 0.14);
-  --success: #10b981;
-
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 22px;
@@ -39,7 +35,7 @@
   --font-en: "Inter", "Vazirmatn", sans-serif;
 
   --container: 1120px;
-  --nav-h: 68px;
+  --nav-h: 72px;
   --transition: 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -80,7 +76,6 @@ section[id] {
   scroll-margin-top: calc(var(--nav-h) + 16px);
 }
 
-/* پس‌زمینه محیطی بسیار ظریف (مشابه هیروی توییک‌فا) */
 .bg-grid {
   position: fixed;
   inset: 0;
@@ -172,15 +167,14 @@ section[id] {
 }
 
 .btn-ghost {
-  background: transparent;
-  border-color: var(--border);
-  color: var(--text-secondary);
+  background: rgba(20, 184, 166, 0.06);
+  border-color: var(--accent-border);
+  color: var(--text);
 }
 
 .btn-ghost:hover {
-  border-color: var(--accent-border);
-  color: var(--text);
   background: var(--accent-soft);
+  color: var(--accent-bright);
 }
 
 .status-dot {
@@ -193,42 +187,58 @@ section[id] {
 }
 
 /* =========================================================
-   هدر و ناوبری (Navbar)
+   هدر و ناوبری (لوگوی ترنسپرنت در گوشه سمت راست بالا)
    ========================================================= */
 .navbar {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(7, 9, 13, 0.72);
+  background: rgba(7, 9, 13, 0.78);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--border);
 }
 
 .nav-inner {
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 18px;
   height: var(--nav-h);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 16px;
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 11px;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
-.brand-logo,
+/* لوگوی بدون کادر و ترنسپرنت در گوشه بالا سمت راست */
+.brand-logo {
+  height: 48px;
+  width: auto;
+  max-width: 56px;
+  object-fit: contain;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  filter: drop-shadow(0 4px 12px rgba(20, 184, 166, 0.28));
+  transition: transform var(--transition);
+}
+
+.brand:hover .brand-logo {
+  transform: scale(1.04);
+}
+
 .brand-fallback {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
-  object-fit: cover;
-  border: 1px solid var(--accent-border);
-}
-
-.brand-fallback {
   align-items: center;
   justify-content: center;
   background: var(--accent-soft);
@@ -240,18 +250,18 @@ section[id] {
 .brand-text {
   display: flex;
   flex-direction: column;
-  line-height: 1.2;
+  line-height: 1.25;
 }
 
 .brand-name {
-  font-size: 1rem;
+  font-size: 0.98rem;
   font-weight: 800;
   letter-spacing: -0.01em;
 }
 
 .brand-sub {
   font-family: var(--font-en);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.12em;
   color: var(--accent-bright);
@@ -260,11 +270,11 @@ section[id] {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 26px;
+  gap: 24px;
 }
 
 .nav-links a {
-  font-size: 0.9rem;
+  font-size: 0.89rem;
   font-weight: 500;
   color: var(--text-secondary);
   transition: color var(--transition);
@@ -343,7 +353,7 @@ section[id] {
    بخش ۱: هیرو (Hero)
    ========================================================= */
 .hero {
-  padding: 96px 0 72px;
+  padding: 90px 0 70px;
   text-align: center;
 }
 
@@ -481,7 +491,7 @@ section[id] {
 }
 
 /* =========================================================
-   بخش ۲: ویترین تعاملی (TweakFa Guardian Style)
+   بخش ۲: ویترین تعاملی
    ========================================================= */
 .feature-tabs {
   display: flex;
@@ -603,7 +613,6 @@ section[id] {
   border: 1px solid var(--accent-border);
 }
 
-/* پنل نمایشگر زنده سمت چپ */
 .visual-panel {
   background: #0a0e14;
   border: 1px solid var(--border);
@@ -699,7 +708,7 @@ section[id] {
 }
 
 /* =========================================================
-   بخش ۳: مقایسه قبل و بعد (TweakFa Undervolt Widget)
+   بخش ۳: مقایسه قبل و بعد
    ========================================================= */
 .profile-chips {
   display: flex;
@@ -973,7 +982,7 @@ section[id] {
 }
 
 /* =========================================================
-   بخش ۵: شبکه خدمات (Services Grid)
+   بخش ۵: شبکه خدمات
    ========================================================= */
 .services-grid {
   display: grid;
@@ -1242,13 +1251,13 @@ section[id] {
 }
 
 /* =========================================================
-   دستیار هوشمند شناور والهالا (AI Drawer)
+   دستیار هوشمند شناور والهالا (Bulletproof AI Drawer)
    ========================================================= */
 .ai-fab {
   position: fixed;
   bottom: 22px;
   left: 22px;
-  z-index: 120;
+  z-index: 9998;
   display: inline-flex;
   align-items: center;
   gap: 9px;
@@ -1260,43 +1269,49 @@ section[id] {
   font-size: 0.88rem;
   border: none;
   cursor: pointer;
-  box-shadow: 0 10px 30px -4px rgba(20, 184, 166, 0.5);
+  box-shadow: 0 10px 30px -4px rgba(20, 184, 166, 0.52);
   transition: transform var(--transition), box-shadow var(--transition);
 }
 
 .ai-fab:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 36px -4px rgba(20, 184, 166, 0.68);
+  box-shadow: 0 14px 36px -4px rgba(20, 184, 166, 0.72);
 }
 
 .ai-drawer {
   position: fixed;
   bottom: 84px;
   left: 22px;
-  z-index: 130;
-  width: 370px;
+  z-index: 9999;
+  width: 375px;
   max-width: calc(100vw - 28px);
   height: 520px;
   max-height: calc(100vh - 115px);
-  background: rgba(13, 17, 23, 0.96);
+  background: rgba(13, 17, 23, 0.97);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--accent-border);
   border-radius: var(--radius-lg);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.72);
-  display: flex;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.78);
+  display: none;
   flex-direction: column;
   overflow: hidden;
-  opacity: 0;
-  transform: translateY(16px) scale(0.97);
-  pointer-events: none;
-  transition: opacity var(--transition), transform var(--transition);
 }
 
 .ai-drawer.open {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  pointer-events: auto;
+  display: flex;
+  animation: drawerPop 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes drawerPop {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .ai-header {
@@ -1324,6 +1339,7 @@ section[id] {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  color: var(--accent-bright);
 }
 
 .ai-header h4 {
