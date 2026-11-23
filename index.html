@@ -16,22 +16,27 @@
   <!-- Model Viewer برای دستیار سه‌بعدی والهالا -->
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=2" />
 </head>
 <body>
   <!-- پس‌زمینه محیطی مینیمال -->
   <div class="bg-grid" aria-hidden="true"></div>
   <div class="bg-glow" aria-hidden="true"></div>
 
-  <!-- نوار ناوبری چسبان (سبک توییک‌فا) -->
+  <!-- نوار ناوبری چسبان (لوگوی ترنسپرنت در گوشه سمت راست بالا) -->
   <header class="navbar" id="navbar">
-    <div class="container nav-inner">
+    <div class="nav-inner">
       <a href="#top" class="brand" aria-label="صفحه اصلی والهالا تک‌ورلد">
-        <img src="valhalla-logo.jpg" alt="لوگوی والهالا" class="brand-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-        <span class="brand-fallback" style="display:none;">V</span>
+        <img
+          src="valhalla-logo.jpg"
+          alt="لوگوی والهالا تک‌ورلد"
+          class="brand-logo"
+          id="brandLogoImg"
+        />
+        <span class="brand-fallback" id="brandFallback" style="display:none;">V</span>
         <div class="brand-text">
-          <span class="brand-name">والهالا</span>
-          <span class="brand-sub">VALHALLA TECH</span>
+          <span class="brand-name">والهالا تک‌ورلد</span>
+          <span class="brand-sub">VALHALLA TECH WORLD</span>
         </div>
       </a>
 
@@ -69,6 +74,10 @@
         <a href="#community" class="mobile-link">کامیونیتی و آموزش</a>
         <a href="#faq" class="mobile-link">سوالات پرتکرار</a>
         <div class="mobile-menu-actions">
+          <button type="button" class="btn btn-ghost" id="mobileAiBtn">
+            <span class="status-dot"></span>
+            باز کردن دستیار هوشمند
+          </button>
           <a href="https://t.me/ValhallaGuard_bot" target="_blank" rel="noopener noreferrer" class="btn btn-primary">ورود به ربات والهالا گارد</a>
           <a href="https://t.me/Valhalla_Guard" target="_blank" rel="noopener noreferrer" class="btn btn-outline">پشتیبانی تلگرام</a>
         </div>
@@ -77,7 +86,7 @@
   </header>
 
   <main id="top">
-    <!-- بخش ۱: هیرو (الگوی مستقیم توییک‌فا) -->
+    <!-- بخش ۱: هیرو -->
     <section class="hero">
       <div class="container hero-inner">
         <div class="eyebrow">
@@ -104,7 +113,7 @@
           </a>
         </div>
 
-        <!-- نوار دسترسی سریع (مشابه نوار ابزارهای توییک‌فا زیر هیرو) -->
+        <!-- نوار دسترسی سریع -->
         <div class="quick-bar" aria-label="دسترسی سریع">
           <a href="#guard" class="quick-pill">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -130,7 +139,7 @@
       </div>
     </section>
 
-    <!-- بخش ۲: ویترین محصول شاخص و تب‌های قابلیت (معادل بخش Phoenix Guardian در توییک‌فا) -->
+    <!-- بخش ۲: ویترین محصول شاخص و تب‌های قابلیت -->
     <section class="section" id="guard">
       <div class="container">
         <div class="section-head">
@@ -141,27 +150,21 @@
           </p>
         </div>
 
-        <!-- تب‌های تعاملی (دقیقاً به سبک نوار تب قابلیت‌های توییک‌فا) -->
         <div class="feature-tabs" role="tablist" aria-label="بخش‌های اکوسیستم والهالا">
-          <button class="feature-tab active" role="tab" aria-selected="true" data-tab="guard">والهالا گارد</button>
-          <button class="feature-tab" role="tab" aria-selected="false" data-tab="apps">اپلیکیشن و اتصال</button>
-          <button class="feature-tab" role="tab" aria-selected="false" data-tab="digital">اکانت و سیم‌کارت</button>
-          <button class="feature-tab" role="tab" aria-selected="false" data-tab="hardware">سخت‌افزار و بهینه‌سازی</button>
+          <button type="button" class="feature-tab active" role="tab" aria-selected="true" data-tab="guard">والهالا گارد</button>
+          <button type="button" class="feature-tab" role="tab" aria-selected="false" data-tab="apps">اپلیکیشن و اتصال</button>
+          <button type="button" class="feature-tab" role="tab" aria-selected="false" data-tab="digital">اکانت و سیم‌کارت</button>
+          <button type="button" class="feature-tab" role="tab" aria-selected="false" data-tab="hardware">سخت‌افزار و بهینه‌سازی</button>
         </div>
 
-        <!-- کارت دو ستونه نمایش محتوای تب انتخاب‌شده -->
         <div class="showcase-card">
-          <div class="showcase-info" id="showcaseInfo">
-            <!-- توسط script.js پر و به‌روزرسانی می‌شود -->
-          </div>
-          <div class="showcase-visual" id="showcaseVisual">
-            <!-- پنل گرافیکی و وضعیت زنده توسط script.js رندر می‌شود -->
-          </div>
+          <div class="showcase-info" id="showcaseInfo"></div>
+          <div class="showcase-visual" id="showcaseVisual"></div>
         </div>
       </div>
     </section>
 
-    <!-- بخش ۳: ویجت مقایسه عملکرد قبل و بعد (معادل بخش Undervolting Before & After در توییک‌فا) -->
+    <!-- بخش ۳: ویجت مقایسه عملکرد قبل و بعد -->
     <section class="section section-alt" id="compare">
       <div class="container">
         <div class="section-head">
@@ -172,21 +175,16 @@
           </p>
         </div>
 
-        <!-- دکمه‌های انتخاب پروفایل (مشابه انتخاب مدل کارت گرافیک در توییک‌فا) -->
         <div class="profile-chips" id="profileChips" role="tablist" aria-label="انتخاب نوع کاربری">
-          <button class="chip active" data-profile="gaming">گیمینگ آنلاین</button>
-          <button class="chip" data-profile="stream">استریم و یوتیوب 4K</button>
-          <button class="chip" data-profile="ai">هوش مصنوعی و وب</button>
-          <button class="chip" data-profile="trade">ترید و IP ثابت</button>
+          <button type="button" class="chip active" data-profile="gaming">گیمینگ آنلاین</button>
+          <button type="button" class="chip" data-profile="stream">استریم و یوتیوب 4K</button>
+          <button type="button" class="chip" data-profile="ai">هوش مصنوعی و وب</button>
+          <button type="button" class="chip" data-profile="trade">ترید و IP ثابت</button>
         </div>
 
         <div class="compare-card">
-          <!-- سه‌تایی آمار خلاصه بالا -->
-          <div class="compare-highlights" id="compareHighlights">
-            <!-- توسط JS رندر می‌شود -->
-          </div>
+          <div class="compare-highlights" id="compareHighlights"></div>
 
-          <!-- سوییچ تغییر حالت بدون گارد / با والهالا گارد -->
           <div class="compare-toggle-wrap">
             <div class="segmented-control" role="group" aria-label="حالت مقایسه">
               <button type="button" class="seg-btn" data-mode="before">بدون والهالا گارد</button>
@@ -195,15 +193,12 @@
             <span class="compare-note" id="compareNote">مسیر اختصاصی + پروفایل آپدیت خودکار</span>
           </div>
 
-          <!-- نوارهای پیشرفت معیارها -->
-          <div class="metrics-grid" id="metricsGrid">
-            <!-- توسط JS رندر می‌شود -->
-          </div>
+          <div class="metrics-grid" id="metricsGrid"></div>
         </div>
       </div>
     </section>
 
-    <!-- بخش ۴: راهنمای ۳ مرحله‌ای اتصال (معادل بخش Stepper توییک‌فا + تب سیستم‌عامل) -->
+    <!-- بخش ۴: راهنمای ۳ مرحله‌ای اتصال -->
     <section class="section" id="guide">
       <div class="container">
         <div class="section-head">
@@ -215,25 +210,20 @@
         </div>
 
         <div class="platform-tabs" id="platformTabs" role="tablist" aria-label="انتخاب سیستم‌عامل">
-          <button class="platform-tab active" data-os="android">اندروید (Android)</button>
-          <button class="platform-tab" data-os="ios">آیفون و آیپد (iOS)</button>
-          <button class="platform-tab" data-os="windows">ویندوز (Windows)</button>
-          <button class="platform-tab" data-os="macos">مک‌او‌اس (macOS)</button>
+          <button type="button" class="platform-tab active" data-os="android">اندروید (Android)</button>
+          <button type="button" class="platform-tab" data-os="ios">آیفون و آیپد (iOS)</button>
+          <button type="button" class="platform-tab" data-os="windows">ویندوز (Windows)</button>
+          <button type="button" class="platform-tab" data-os="macos">مک‌او‌اس (macOS)</button>
         </div>
 
         <div class="guide-box">
-          <div class="guide-apps-bar" id="guideAppsBar">
-            <!-- اپلیکیشن‌های پیشنهادی هر پلتفرم -->
-          </div>
-
-          <div class="steps-grid" id="stepsGrid">
-            <!-- ۳ مرحله اتصال -->
-          </div>
+          <div class="guide-apps-bar" id="guideAppsBar"></div>
+          <div class="steps-grid" id="stepsGrid"></div>
         </div>
       </div>
     </section>
 
-    <!-- بخش ۵: خدمات و ابزارهای والهالا (گرید مینیمال ۳ ستونه) -->
+    <!-- بخش ۵: خدمات و ابزارهای والهالا -->
     <section class="section section-alt" id="services">
       <div class="container">
         <div class="section-head">
@@ -320,7 +310,7 @@
       </div>
     </section>
 
-    <!-- بخش ۶: نظرات کاربران و کامیونیتی (معادل بخش نظرات تسترها در توییک‌فا) -->
+    <!-- بخش ۶: نظرات کاربران و کامیونیتی -->
     <section class="section" id="community">
       <div class="container">
         <div class="section-head">
@@ -357,7 +347,6 @@
           </blockquote>
         </div>
 
-        <!-- بنر شبکه‌های اجتماعی والهالا -->
         <div class="community-banner">
           <div class="community-text">
             <h3>به کامیونیتی والهالا تک‌ورلد بپیوند</h3>
@@ -372,7 +361,7 @@
       </div>
     </section>
 
-    <!-- بخش ۷: سوال‌های پرتکرار (آکاردئون مینیمال دقیقاً به سبک توییک‌فا) -->
+    <!-- بخش ۷: سوال‌های پرتکرار -->
     <section class="section section-alt" id="faq">
       <div class="container container-narrow">
         <div class="section-head">
@@ -436,14 +425,13 @@
     </section>
   </main>
 
-  <!-- فوتر چندستونه مینیمال (الگوی مستقیم فوتر توییک‌فا) -->
+  <!-- فوتر -->
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand-col">
           <a href="#top" class="brand">
-            <img src="valhalla-logo.jpg" alt="لوگوی والهالا" class="brand-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-            <span class="brand-fallback" style="display:none;">V</span>
+            <img src="valhalla-logo.jpg" alt="لوگوی والهالا" class="brand-logo footer-logo-img" />
             <div class="brand-text">
               <span class="brand-name">والهالا تک‌ورلد</span>
               <span class="brand-sub">VALHALLA TECH WORLD</span>
@@ -496,18 +484,17 @@
     </div>
   </footer>
 
-  <!-- دکمه شناور دستیار هوشمند والهالا (مینیمال و غیرمزاحم) -->
-  <button type="button" class="ai-fab" id="aiFab" aria-label="باز کردن دستیار هوشمند والهالا">
-    <span class="ai-fab-ring"></span>
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  <!-- دکمه شناور دستیار هوشمند والهالا -->
+  <button type="button" class="ai-fab" id="aiFab" aria-label="باز کردن دستیار هوشمند والهالا" aria-expanded="false">
+    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
     <span class="ai-fab-label">دستیار والهالا</span>
   </button>
 
-  <!-- پنل چت دستیار هوشمند والهالا (متصل به Cloudflare Worker و مدل سه‌بعدی) -->
+  <!-- پنل چت دستیار هوشمند والهالا -->
   <aside class="ai-drawer" id="aiDrawer" aria-hidden="true">
     <div class="ai-header">
       <div class="ai-header-info">
-        <div class="ai-avatar-wrap">
+        <div class="ai-avatar-wrap" id="aiAvatarWrap">
           <model-viewer
             id="valhallaBotViewer"
             src="valhalla-bot.glb"
@@ -555,6 +542,6 @@
     </form>
   </aside>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=2"></script>
 </body>
 </html>
