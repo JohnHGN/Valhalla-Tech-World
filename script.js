@@ -1,90 +1,10 @@
 /* =========================================================
-   Valhalla Tech World — Complete Interactive Engine v3
+   Valhalla Tech World — Interactive Logic & AI Assistant
    ========================================================= */
 
 const WORKER_URL = "https://valhalla-gemini-proxy.knjhgbtbp9.workers.dev";
 
-/* ---------- ۰. بارگذاری امن لوگو + حذف خودکار پس‌زمینه سفید ---------- */
-function setupTransparentLogo(imgEl) {
-  if (!imgEl || imgEl.dataset.logoReady === "true") return;
-
-  const applyTransparency = () => {
-    try {
-      const w = imgEl.naturalWidth;
-      const h = imgEl.naturalHeight;
-      if (!w || !h) return;
-
-      const canvas = document.createElement("canvas");
-      canvas.width = w;
-      canvas.height = h;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(imgEl, 0, 0);
-
-      const imageData = ctx.getImageData(0, 0, w, h);
-      const data = imageData.data;
-      const visited = new Uint8Array(w * h);
-      const queue = new Int32Array(w * h);
-      let head = 0;
-      let tail = 0;
-
-      const isOuterWhite = (idx) => {
-        const p = idx * 4;
-        return data[p] > 226 && data[p + 1] > 226 && data[p + 2] > 226;
-      };
-
-      for (let x = 0; x < w; x++) {
-        const top = x;
-        const bot = (h - 1) * w + x;
-        if (!visited[top] && isOuterWhite(top)) { visited[top] = 1; queue[tail++] = top; }
-        if (!visited[bot] && isOuterWhite(bot)) { visited[bot] = 1; queue[tail++] = bot; }
-      }
-      for (let y = 0; y < h; y++) {
-        const left = y * w;
-        const right = y * w + (w - 1);
-        if (!visited[left] && isOuterWhite(left)) { visited[left] = 1; queue[tail++] = left; }
-        if (!visited[right] && isOuterWhite(right)) { visited[right] = 1; queue[tail++] = right; }
-      }
-
-      while (head < tail) {
-        const curr = queue[head++];
-        const cx = curr % w;
-        const cy = (curr / w) | 0;
-        data[curr * 4 + 3] = 0;
-
-        if (cx > 0) { const n = curr - 1; if (!visited[n] && isOuterWhite(n)) { visited[n] = 1; queue[tail++] = n; } }
-        if (cx < w - 1) { const n = curr + 1; if (!visited[n] && isOuterWhite(n)) { visited[n] = 1; queue[tail++] = n; } }
-        if (cy > 0) { const n = curr - w; if (!visited[n] && isOuterWhite(n)) { visited[n] = 1; queue[tail++] = n; } }
-        if (cy < h - 1) { const n = curr + w; if (!visited[n] && isOuterWhite(n)) { visited[n] = 1; queue[tail++] = n; } }
-      }
-
-      ctx.putImageData(imageData, 0, 0);
-      imgEl.dataset.logoReady = "true";
-      imgEl.src = canvas.toDataURL("image/png");
-    } catch {
-      imgEl.dataset.logoReady = "true";
-    }
-  };
-
-  imgEl.addEventListener("error", () => {
-    const fallback = imgEl.dataset.fallbackSrc;
-    if (fallback && imgEl.dataset.triedFallback !== "true") {
-      imgEl.dataset.triedFallback = "true";
-      imgEl.src = fallback;
-    } else {
-      imgEl.style.display = "none";
-      const fb = document.getElementById("brandFallback");
-      if (fb) fb.style.display = "flex";
-    }
-  });
-
-  if (imgEl.complete && imgEl.naturalWidth > 0) {
-    applyTransparency();
-  } else {
-    imgEl.addEventListener("load", applyTransparency, { once: true });
-  }
-}
-
-/* ---------- ۱. داده‌های ویترین اصلی ---------- */
+/* ---------- ۱. داده‌های تب‌های ویترین اصلی ---------- */
 const SHOWCASE_DATA = {
   guard: {
     badge: "سرویس پرچم‌دار والهالا",
@@ -113,307 +33,632 @@ const SHOWCASE_DATA = {
     }
   },
   apps: {
-    badge: "آموزش و دانلود مستقیم",
-    title: "راهنمای قدم‌به‌قدم تمام اپلیکیشن‌ها روی هر سیستم‌عامل",
-    desc: "چه اندروید و آیفون داشته باشی و چه ویندوز و مک، کلاینت رسمی و آموزش اختصاصی همان برنامه رو برات آماده کردیم.",
-    ctaText: "رفتن به راهنمای اتصال و دانلود",
+    badge: "سازگار با همه دستگاه‌ها",
+    title: "اتصال ساده روی موبایل و دسکتاپ بدون شلوغی",
+    desc: "فقط یک‌بار لینک اشتراک والهالا گارد رو وارد اپلیکیشن پیشنهادی سیستم‌عاملت کن و هر زمان خواستی با یک کلیک وصل شو.",
+    ctaText: "مشاهده راهنمای ۳ مرحله‌ای",
     ctaHref: "#guide",
     features: [
-      { text: "اندروید: v2rayNG، Hiddify و WireGuard با لینک دانلود رسمی", tag: "Android", type: "free" },
-      { text: "آیفون و آیپد: Streisand، V2Box و WireGuard از App Store", tag: "iOS", type: "free" },
-      { text: "ویندوز و مک: Hiddify، v2rayN و کلاینت‌های اپل سیلیکون", tag: "Desktop", type: "pro" },
-      { text: "تست پینگ خودکار برای انتخاب سریع‌ترین سرور", tag: "هوشمند", type: "pro" }
+      { text: "سازگاری کامل با v2rayNG و Hiddify در اندروید", tag: "Android", type: "free" },
+      { text: "پشتیبانی از Streisand و V2Box روی آیفون و آیپد", tag: "iOS", type: "free" },
+      { text: "کلاینت‌های سبک ویندوز و مک‌او‌اس (اپل سیلیکون و اینتل)", tag: "Desktop", type: "pro" },
+      { text: "تست پینگ خودکار برای انتخاب سریع‌ترین لوکیشن", tag: "هوشمند", type: "pro" }
     ],
     visual: {
       header: "Multi-Platform Sync",
-      status: "4 OS • 10+ Guides",
+      status: "4 OS Supported",
       stats: [
         { label: "زمان راه‌اندازی اولیه", value: "کمتر از ۱ دقیقه", accent: true },
         { label: "تنظیم دستی موردنیاز", value: "صفر", accent: false }
       ],
       rows: [
-        { label: "اندروید", value: "v2rayNG / Hiddify / WG" },
-        { label: "آیفون و مک", value: "Streisand / V2Box / Hiddify" },
-        { label: "ویندوز", value: "Hiddify / v2rayN / WG" }
+        { label: "اندروید", value: "v2rayNG / Hiddify" },
+        { label: "آیفون و مک", value: "Streisand / V2Box" },
+        { label: "ویندوز", value: "Hiddify / v2rayN" }
       ]
     }
   },
   digital: {
-    badge: "هویت و ارتباطات بین‌المللی",
-    title: "سیم‌کارت‌های بین‌المللی، eSIM و اکانت‌های وریفای‌شده",
-    desc: "سیم‌کارت فیزیکی گرجستان (Cellfie)، اتریش (Eety) و انگلستان (Vodafone) کنار eSIM مسافرتی و شماره مجازی بیش از ۱۶۰ کشور.",
-    ctaText: "مشاهده کامل سیم‌کارت‌ها",
-    ctaHref: "#sim-cards",
+    badge: "خدمات دیجیتال و هویت بین‌المللی",
+    title: "اپل‌آیدی، شماره مجازی و سیم‌کارت بین‌المللی",
+    desc: "دسترسی امن و قانونی به سرویس‌های جهانی بدون ریسک بلاک شدن؛ از اپل‌آیدی اختصاصی تا سیم‌کارت فیزیکی بین‌المللی.",
+    ctaText: "سفارش از پشتیبانی والهالا",
+    ctaHref: "https://t.me/Valhalla_Guard",
     features: [
-      { text: "سیم‌کارت فیزیکی Cellfie گرجستان با آنتن‌دهی در ایران", tag: "فیزیکی", type: "pro" },
-      { text: "سیم‌کارت Eety اتریش با ثبت رسمی و قانونی با پاسپورت", tag: "فیزیکی", type: "pro" },
-      { text: "سیم‌کارت Vodafone انگلستان پلمپ + ۵ پوند شارژ اولیه", tag: "پرچم‌دار", type: "pro" },
-      { text: "سیم‌کارت مجازی eSIM و شماره مجازی بیش از ۱۶۰ کشور", tag: "تحویل آنی", type: "free" }
+      { text: "ساخت اپل‌آیدی وریفای‌شده با ایمیل و اطلاعات شخصی خودت", tag: "تضمینی", type: "pro" },
+      { text: "سیم‌کارت فیزیکی بین‌المللی با آنتن‌دهی و دریافت SMS در ایران", tag: "اختصاصی", type: "pro" },
+      { text: "شماره مجازی اختصاصی برای سرویس‌های هوش مصنوعی و شبکه‌ها", tag: "تحویل فوری", type: "free" },
+      { text: "تهیه و فعال‌سازی اکانت‌های پرمیوم کاربردی", tag: "پشتیبانی مستقیم", type: "free" }
     ],
     visual: {
-      header: "Valhalla SIM & Digital",
-      status: "Physical & eSIM",
+      header: "Valhalla Digital Services",
+      status: "Verified Delivery",
       stats: [
-        { label: "پوشش شماره مجازی", value: "+160 کشور", accent: true },
-        { label: "سیم‌کارت‌های فیزیکی", value: "GE / AT / UK", accent: true }
+        { label: "تحویل سرویس‌های دیجیتال", value: "آنی و مستقیم", accent: true },
+        { label: "مالکیت اکانت", value: "۱۰۰٪ اختصاصی", accent: true }
       ],
       rows: [
-        { label: "Cellfie Georgia", value: "*110*00# • 85 Days" },
-        { label: "Eety Austria", value: "*149# • Passport Reg" },
-        { label: "Vodafone UK", value: "Sealed • £5 Credit" }
+        { label: "Apple ID", value: "Personal & Verified" },
+        { label: "International SIM", value: "Physical Delivery" },
+        { label: "پشتیبانی سفارش", value: "@Valhalla_Guard" }
       ]
     }
   },
   hardware: {
-    badge: "مهندسی سخت‌افزار و آکادمی",
-    title: "تعمیرات تخصصی، مشاوره سیستم و آموزش‌های رایگان",
-    desc: "از عیب‌یابی برد لپ‌تاپ و مشاوره بی‌طرفانه خرید قطعات تا مقالات، فایل‌های PDF و پادکست‌های کاربردی در کانال والهالا.",
-    ctaText: "مشاهده مقالات و فایل‌های PDF",
-    ctaHref: "#academy",
+    badge: "مهندسی سخت‌افزار و سیستم",
+    title: "تعمیرات تخصصی، مشاوره خرید و بهینه‌سازی سیستم",
+    desc: "اگر سیستم یا لپ‌تاپت دچار ایراد سخت‌افزاری شده یا قصد خرید و ارتقای هوشمندانه داری، بدون تعصب فروشگاهی کنارتیم.",
+    ctaText: "درخواست مشاوره یا عیب‌یابی",
+    ctaHref: "https://t.me/Valhalla_Guard",
     features: [
       { text: "عیب‌یابی و تعمیر تخصصی مادربرد لپ‌تاپ و سیستم دسکتاپ", tag: "تخصصی", type: "pro" },
-      { text: "مشاوره بی‌طرفانه انتخاب قطعات و بستن سیستم", tag: "بر اساس تست", type: "pro" },
-      { text: "جزوه‌های PDF اختصاصی ChatGPT و میان‌برهای macOS", tag: "رایگان", type: "free" },
-      { text: "مقالات به‌روز ویندوز، مک، SSD و شبکه در @valhala_tw", tag: "کانال تلگرام", type: "free" }
+      { text: "مشاوره بی‌طرفانه انتخاب قطعات و بستن سیستم متناسب با بودجه", tag: "بر اساس تست", type: "pro" },
+      { text: "بهینه‌سازی ویندوز ۱۱ و macOS برای گیمینگ و کار حرفه‌ای", tag: "کاربردی", type: "free" },
+      { text: "آموزش‌های مستمر نرم‌افزار و سخت‌افزار در کانال والهالا", tag: "رایگان", type: "free" }
     ],
     visual: {
-      header: "Hardware & Academy",
-      status: "Lab + Resources",
+      header: "Hardware & System Lab",
+      status: "Diagnostics Ready",
       stats: [
-        { label: "فایل‌های PDF رایگان", value: "دانلود مستقیم", accent: true },
-        { label: "کانال آموزش تلگرام", value: "@valhala_tw", accent: true }
+        { label: "رویکرد مشاوره", value: "کاملاً بی‌طرف", accent: true },
+        { label: "پشتیبانی سیستم‌عامل", value: "Windows & macOS", accent: false }
       ],
       rows: [
         { label: "تعمیرات لپ‌تاپ و PC", value: "Board-Level" },
-        { label: "مقالات و PDF", value: "AI / OS / Hardware" },
-        { label: "پشتیبانی فنی", value: "@Valhalla_Guard" }
+        { label: "بهینه‌سازی و تیون", value: "OS & Thermal" },
+        { label: "آکادمی والهالا", value: "@valhala_tw" }
       ]
     }
   }
 };
 
-/* ---------- ۲. راهنمای کامل اتصال به تفکیک سیستم‌عامل + هر برنامه + لینک دانلود ---------- */
-const CONNECTION_GUIDES = {
+/* ---------- ۲. داده‌های ویجت مقایسه قبل و بعد ---------- */
+const COMPARE_DATA = {
+  gaming: {
+    note: "تست روی سرورهای بهینه‌سازی‌شده گیمینگ والهالا گارد",
+    highlights: [
+      { label: "کاهش پینگ", value: "۴۶ms کمتر" },
+      { label: "پکت‌لاس", value: "۰٪ افت بسته" },
+      { label: "ثبات اتصال", value: "کاملاً یکنواخت" }
+    ],
+    before: [
+      { label: "پینگ در بازی آنلاین", valueText: "118 ms (نوسان بالا)", percent: 86, status: "bad" },
+      { label: "پایداری اتصال (Uptime)", valueText: "58٪", percent: 58, status: "bad" },
+      { label: "بهره‌وری پهنای باند", valueText: "42٪", percent: 42, status: "bad" }
+    ],
+    after: [
+      { label: "پینگ در بازی آنلاین", valueText: "72 ms (ثابت)", percent: 36, status: "good" },
+      { label: "پایداری اتصال (Uptime)", valueText: "99.8٪", percent: 99, status: "good" },
+      { label: "بهره‌وری پهنای باند", valueText: "96٪", percent: 96, status: "good" }
+    ]
+  },
+  stream: {
+    note: "پخش بدون بافر یوتیوب 4K و سرویس‌های استریم",
+    highlights: [
+      { label: "سرعت دانلود", value: "۲.۸ برابر بیشتر" },
+      { label: "توقف و بافر", value: "صفر" },
+      { label: "کیفیت پخش", value: "4K 60fps" }
+    ],
+    before: [
+      { label: "تأخیر شروع ویدیو", valueText: "6.4 ثانیه", percent: 82, status: "bad" },
+      { label: "ثبات بیت‌ریت 4K", valueText: "38٪", percent: 38, status: "bad" },
+      { label: "سرعت واقعی اتصال", valueText: "34٪ از خط", percent: 34, status: "bad" }
+    ],
+    after: [
+      { label: "تأخیر شروع ویدیو", valueText: "0.9 ثانیه", percent: 18, status: "good" },
+      { label: "ثبات بیت‌ریت 4K", valueText: "98٪", percent: 98, status: "good" },
+      { label: "سرعت واقعی اتصال", valueText: "95٪ از خط", percent: 95, status: "good" }
+    ]
+  },
+  ai: {
+    note: "دسترسی سریع و بدون خطای لوکیشن به سرویس‌های هوش مصنوعی",
+    highlights: [
+      { label: "آی‌پی تمیز", value: "بدون کپچا" },
+      { label: "سرعت پاسخ‌دهی", value: "آنی" },
+      { label: "سازگاری سرویس‌ها", value: "۱۰۰٪" }
+    ],
+    before: [
+      { label: "خطای محدودیت و کپچا", valueText: "مکرر", percent: 88, status: "bad" },
+      { label: "پایداری سشن‌های طولانی", valueText: "49٪", percent: 49, status: "bad" },
+      { label: "سرعت بارگذاری صفحات", valueText: "45٪", percent: 45, status: "bad" }
+    ],
+    after: [
+      { label: "خطای محدودیت و کپچا", valueText: "نزدیک به صفر", percent: 10, status: "good" },
+      { label: "پایداری سشن‌های طولانی", valueText: "99.5٪", percent: 99, status: "good" },
+      { label: "سرعت بارگذاری صفحات", valueText: "97٪", percent: 97, status: "good" }
+    ]
+  },
+  trade: {
+    note: "پروفایل اختصاصی با ثبات مسیر و امنیت رمزنگاری‌شده",
+    highlights: [
+      { label: "امنیت تونل", value: "رمزنگاری مدرن" },
+      { label: "ثبات لوکیشن", value: "پایدار" },
+      { label: "قطعی ناگهانی", value: "حداقل ممکن" }
+    ],
+    before: [
+      { label: "ریسک تغییر ناگهانی IP", valueText: "بالا", percent: 85, status: "bad" },
+      { label: "پایداری اتصال ممتد", valueText: "54٪", percent: 54, status: "bad" },
+      { label: "سرعت باز شدن پلتفرم‌ها", valueText: "50٪", percent: 50, status: "bad" }
+    ],
+    after: [
+      { label: "ریسک تغییر ناگهانی IP", valueText: "بسیار پایین", percent: 12, status: "good" },
+      { label: "پایداری اتصال ممتد", valueText: "99.7٪", percent: 99, status: "good" },
+      { label: "سرعت باز شدن پلتفرم‌ها", valueText: "96٪", percent: 96, status: "good" }
+    ]
+  }
+};
+
+/* ---------- ۳. داده‌های راهنمای ۳ مرحله‌ای اتصال ---------- */
+const GUIDE_DATA = {
   android: {
     apps: [
+      { name: "v2rayNG (پیشنهادی)", recommended: true },
+      { name: "Hiddify", recommended: false },
+      { name: "WireGuard", recommended: false }
+    ],
+    steps: [
       {
-        id: "v2rayng",
-        name: "v2rayNG (پیشنهادی)",
-        protocol: "V2Ray / VLESS / VMess",
-        note: "سبک‌ترین و پایدارترین کلاینت اندروید برای لینک‌های اشتراک (Subscription) والهالا گارد.",
-        downloads: [
-          { label: "دانلود از Google Play", url: "https://play.google.com/store/apps/details?id=com.v2ray.ang", primary: true },
-          { label: "دانلود فایل APK (GitHub)", url: "https://github.com/2dust/v2rayNG/releases", primary: false }
-        ],
-        steps: [
-          { num: "01", title: "کپی لینک اشتراک از ربات", desc: "وارد ربات @ValhallaGuard_bot بشو، بخش اشتراک من رو بزن و لینک Subscription اختصاصی خودت رو کپی کن." },
-          { num: "02", title: "افزودن لینک در v2rayNG", desc: "برنامه v2rayNG رو باز کن، منوی سه‌خط بالا سمت چپ > Subscription group setting > علامت + رو بزن. یک نام دلخواه (مثلاً Valhalla) بنویس، لینک رو در بخش url جای‌گذاری کن و تیک بالا رو بزن." },
-          { num: "03", title: "آپدیت سرورها و اتصال", desc: "به صفحه اصلی برگرد، روی منوی سه‌نقطه بالا سمت راست > Update subscription بزن تا سرورها لود بشن. یک سرور رو انتخاب کن و دکمه V پایین صفحه رو بزن." }
-        ]
+        num: "01",
+        title: "دریافت لینک اشتراک",
+        desc: "وارد ربات @ValhallaGuard_bot بشو و لینک اشتراک اختصاصی (Subscription) خودت رو کپی کن."
       },
       {
-        id: "hiddify-android",
-        name: "Hiddify",
-        protocol: "V2Ray / Sing-box (همه‌کاره)",
-        note: "رابط کاربری بسیار ساده با انتخاب خودکار سریع‌ترین سرور بدون نیاز به تست دستی.",
-        downloads: [
-          { label: "دانلود از Google Play", url: "https://play.google.com/store/apps/details?id=app.hiddify.com", primary: true },
-          { label: "دانلود مستقیم (GitHub)", url: "https://github.com/hiddify/hiddify-app/releases", primary: false }
-        ],
-        steps: [
-          { num: "01", title: "کپی کردن لینک اشتراک", desc: "لینک اشتراک اختصاصی والهالا گارد رو از ربات @ValhallaGuard_bot کپی کن." },
-          { num: "02", title: "ایمپورت با یک کلیک", desc: "برنامه Hiddify رو باز کن، دکمه + (New Profile) رو بزن و گزینه «افزودن از کلیپ‌بورد / Add from Clipboard» رو انتخاب کن." },
-          { num: "03", title: "اتصال خودکار", desc: "کافیه دکمه دایره‌ای بزرگ وسط صفحه رو لمس کنی و مجوز VPN اندروید رو تایید کنی تا به بهترین سرور وصل بشی." }
-        ]
+        num: "02",
+        title: "نصب و ایمپورت در v2rayNG",
+        desc: "اپلیکیشن v2rayNG رو باز کن، از منوی بالا بخش Subscription Setting رو بزن، با علامت + لینک رو وارد و ذخیره کن."
       },
       {
-        id: "wg-android",
-        name: "WireGuard",
-        protocol: "WireGuard (پینگ پایین گیم)",
-        note: "مناسب کاربرانی که فایل کانفیگ .conf یا QR Code اختصاصی وایرگارد دریافت کرده‌اند.",
-        downloads: [
-          { label: "دانلود از Google Play", url: "https://play.google.com/store/apps/details?id=com.wireguard.android", primary: true }
-        ],
-        steps: [
-          { num: "01", title: "دریافت فایل یا QR Code", desc: "فایل کانفیگ WireGuard (با پسوند .conf) یا تصویر QR Code خودت رو از پشتیبانی یا ربات ذخیره کن." },
-          { num: "02", title: "وارد کردن تونل", desc: "در برنامه WireGuard دکمه + آبی پایین صفحه رو بزن و «Import from file» یا «Scan from QR code» رو انتخاب کن." },
-          { num: "03", title: "فعال‌سازی اتصال", desc: "کلید کنار نام پروفایل جدید رو روشن کن و مجوز اتصال VPN رو تایید کن." }
-        ]
+        num: "03",
+        title: "آپدیت و اتصال یک‌کلیکه",
+        desc: "در صفحه اصلی از منوی سه‌نقطه گزینه Update Subscription رو بزن، یکی از سرورها رو انتخاب کن و دکمه اتصال رو لمس کن."
       }
     ]
   },
   ios: {
     apps: [
+      { name: "Streisand (پیشنهادی)", recommended: true },
+      { name: "V2Box", recommended: false },
+      { name: "WireGuard", recommended: false }
+    ],
+    steps: [
       {
-        id: "streisand",
-        name: "Streisand (پیشنهادی)",
-        protocol: "V2Ray / VLESS / Reality",
-        note: "بهترین و پایدارترین اپلیکیشن رایگان آیفون و آیپد برای اشتراک‌های والهالا گارد.",
-        downloads: [
-          { label: "دانلود از App Store", url: "https://apps.apple.com/app/streisand/id6450534064", primary: true }
-        ],
-        steps: [
-          { num: "01", title: "کپی لینک اشتراک", desc: "لینک Subscription اختصاصی خودت رو از ربات @ValhallaGuard_bot کپی کن (در صورت نیاز به اپل‌آیدی با پشتیبانی در ارتباط باش)." },
-          { num: "02", title: "افزودن لینک در Streisand", desc: "برنامه Streisand رو باز کن، روی علامت + بالا سمت راست بزن و گزینه Import from Clipboard رو انتخاب کن." },
-          { num: "03", title: "آپدیت و روشن کردن اتصال", desc: "روی اسم اشتراک نگه دار و Update رو بزن (برای آپدیت‌های بعدی)، یک سرور رو تیک بزن و دکمه آبی بالای صفحه رو لمس کن." }
-        ]
+        num: "01",
+        title: "کپی کردن لینک اشتراک",
+        desc: "لینک اشتراک اختصاصی خودت رو از ربات @ValhallaGuard_bot کپی کن (در صورت نیاز به اپل‌آیدی با پشتیبانی در ارتباط باش)."
       },
       {
-        id: "v2box-ios",
-        name: "V2Box",
-        protocol: "V2Ray / VLESS / ShadowSocks",
-        note: "بسیار ساده، سریع و محبوب روی iOS با نمایش لحظه‌ای پینگ تمام سرورها.",
-        downloads: [
-          { label: "دانلود از App Store", url: "https://apps.apple.com/app/v2box-v2ray-client/id6446814690", primary: true }
-        ],
-        steps: [
-          { num: "01", title: "کپی کردن لینک اشتراک", desc: "لینک اشتراک والهالا گارد رو از ربات تلگرام @ValhallaGuard_bot کپی کن." },
-          { num: "02", title: "وارد کردن در تب Configs", desc: "در V2Box وارد تب Configs پایین صفحه شو، علامت + بالا سمت راست رو بزن و «Import v2ray uri from clipboard» یا «Add Subscription» رو انتخاب کن." },
-          { num: "03", title: "اتصال در تب Home", desc: "روی یک سرور ضربه بزن، به تب Home برگرد و اسلایدر «Slide to Connect» رو به سمت راست بکش." }
-        ]
+        num: "02",
+        title: "افزودن لینک در Streisand",
+        desc: "اپلیکیشن Streisand رو از App Store نصب کن، علامت + بالا رو بزن و گزینه Import from Clipboard رو انتخاب کن."
       },
       {
-        id: "wg-ios",
-        name: "WireGuard",
-        protocol: "WireGuard",
-        note: "مصرف باتری بسیار کم و پایداری عالی برای اتصال دائمی و گیمینگ روی آیفون.",
-        downloads: [
-          { label: "دانلود از App Store", url: "https://apps.apple.com/app/wireguard/id1441195209", primary: true }
-        ],
-        steps: [
-          { num: "01", title: "آماده‌سازی فایل کانفیگ", desc: "فایل کانفیگ وایرگارد (.conf) یا QR Code اختصاصی خودت رو دریافت کن." },
-          { num: "02", title: "ایمپورت در اپ WireGuard", desc: "علامت + بالا سمت راست رو بزن و «Create from file or archive» یا «Create from QR code» رو انتخاب کن." },
-          { num: "03", title: "تایید Face ID و اتصال", desc: "در اولین اتصال با Face ID یا رمز گوشی، افزودن پروفایل VPN رو تایید کن و سوییچ رو روشن کن." }
-        ]
+        num: "03",
+        title: "تست پینگ و اتصال",
+        desc: "روی نام اشتراک ضربه بزن تا سرورها آپدیت بشن، سپس دکمه اتصال بالای صفحه رو روشن کن و مجوز VPN رو تایید کن."
       }
     ]
   },
   windows: {
     apps: [
+      { name: "Hiddify (پیشنهادی)", recommended: true },
+      { name: "v2rayN", recommended: false },
+      { name: "WireGuard", recommended: false }
+    ],
+    steps: [
       {
-        id: "hiddify-win",
-        name: "Hiddify (پیشنهادی)",
-        protocol: "V2Ray / Sing-box / TUN Mode",
-        note: "ساده‌ترین برنامه ویندوز با پشتیبانی از کل سیستم (مرورگرها، بازی‌ها و اپ‌های دسکتاپ).",
-        downloads: [
-          { label: "دانلود نسخه Windows (GitHub)", url: "https://github.com/hiddify/hiddify-app/releases", primary: true }
-        ],
-        steps: [
-          { num: "01", title: "نصب و کپی لینک اشتراک", desc: "فایل نصب Windows (.exe) رو از لینک بالا دانلود و نصب کن، سپس لینک اشتراک رو از @ValhallaGuard_bot کپی کن." },
-          { num: "02", title: "افزودن پروفایل", desc: "Hiddify رو باز کن، روی New Profile (+ پروفایل جدید) کلیک کن و Add from Clipboard رو بزن." },
-          { num: "03", title: "اتصال و حالت VPN", desc: "روی دکمه بزرگ Connect کلیک کن. برای بازی‌ها یا برنامه‌هایی که از پروکسی عبور نمی‌کنن، از تنظیمات حالت VPN (TUN) رو فعال کن (اجرا با Run as Administrator)." }
-        ]
+        num: "01",
+        title: "کپی لینک اشتراک",
+        desc: "لینک اختصاصی اشتراک والهالا گارد رو از ربات تلگرام @ValhallaGuard_bot کپی کن."
       },
       {
-        id: "v2rayn",
-        name: "v2rayN",
-        protocol: "V2Ray / Xray (حرفه‌ای)",
-        note: "کلاینت حرفه‌ای و دقیق برای کاربرانی که کنترل کامل روی سرورها، پورت‌ها و مسیریابی می‌خوان.",
-        downloads: [
-          { label: "دانلود v2rayN (GitHub)", url: "https://github.com/2dust/v2rayN/releases", primary: true }
-        ],
-        steps: [
-          { num: "01", title: "استخراج و اجرای برنامه", desc: "فایل فشرده v2rayN-windows-64-SelfContained.zip رو دانلود، اکسترکت و v2rayN.exe رو اجرا کن." },
-          { num: "02", title: "افزودن Subscription", desc: "از منوی بالا Subscription group > Subscription group setting > Add رو بزن، اسم دلخواه و لینک اشتراک رو وارد کن و Confirm بزن." },
-          { num: "03", title: "آپدیت و فعال‌سازی System Proxy", desc: "از منوی Subscription group گزینه Update subscription without proxy رو بزن. یک سرور انتخاب کن و در نوار پایین برنامه، حالت System Proxy رو روی Set system proxy بذار." }
-        ]
+        num: "02",
+        title: "اضافه کردن پروفایل در Hiddify",
+        desc: "برنامه Hiddify رو اجرا کن، روی دکمه New Profile کلیک کن و گزینه Add from Clipboard رو بزن."
       },
       {
-        id: "wg-win",
-        name: "WireGuard",
-        protocol: "WireGuard",
-        note: "بهترین عملکرد و کمترین سربار CPU برای گیمینگ روی ویندوز.",
-        downloads: [
-          { label: "دانلود از سایت رسمی WireGuard", url: "https://www.wireguard.com/install/", primary: true }
-        ],
-        steps: [
-          { num: "01", title: "نصب کلاینت رسمی", desc: "نسخه رسمی ویندوز رو از لینک بالا دانلود و نصب کن." },
-          { num: "02", title: "ایمپورت فایل کانفیگ", desc: "برنامه رو باز کن، روی Import tunnel(s) from file کلیک کن و فایل .conf خودت رو انتخاب کن." },
-          { num: "03", title: "اتصال فوری", desc: "روی دکمه Activate کلیک کن تا وضعیت به Active تغییر کنه." }
-        ]
+        num: "03",
+        title: "اتصال و انتخاب حالت سیستم",
+        desc: "دکمه بزرگ Connect وسط صفحه رو بزن تا کل سیستم (مرورگر و اپ‌ها) به اینترنت پایدار متصل بشن."
       }
     ]
   },
   macos: {
     apps: [
+      { name: "Hiddify / V2Box (پیشنهادی)", recommended: true },
+      { name: "Streisand (اپل سیلیکون)", recommended: false },
+      { name: "WireGuard", recommended: false }
+    ],
+    steps: [
       {
-        id: "hiddify-mac",
-        name: "Hiddify (پیشنهادی)",
-        protocol: "V2Ray / Sing-box (M1-M4 & Intel)",
-        note: "کاملاً سازگار با مک‌بوک‌های اپل سیلیکون و اینتل با رابط کاربری تمیز و اتصال پایدار.",
-        downloads: [
-          { label: "دانلود نسخه macOS (.dmg)", url: "https://github.com/hiddify/hiddify-app/releases", primary: true }
-        ],
-        steps: [
-          { num: "01", title: "نصب فایل DMG", desc: "فایل macOS (.dmg) رو از لینک بالا دانلود کن، بازش کن و آیکون Hiddify رو داخل پوشه Applications بکش." },
-          { num: "02", title: "افزودن لینک اشتراک", desc: "لینک Subscription خودت رو از ربات @ValhallaGuard_bot کپی کن و داخل Hiddify گزینه Add from Clipboard رو بزن." },
-          { num: "03", title: "تایید مجوز مک و اتصال", desc: "دکمه Connect رو بزن و در پنجره سیستم‌عامل، اجازه اضافه شدن پروفایل شبکه/پروکسی رو با رمز مک یا Touch ID تایید کن." }
-        ]
+        num: "01",
+        title: "دریافت لینک اشتراک",
+        desc: "لینک اشتراک اختصاصی خودت رو از ربات @ValhallaGuard_bot کپی کن."
       },
       {
-        id: "v2box-mac",
-        name: "V2Box / Streisand",
-        protocol: "V2Ray (ویژه اپل سیلیکون)",
-        note: "قابل نصب مستقیم از App Store مک بدون نیاز به تنظیمات دستی اضافه.",
-        downloads: [
-          { label: "دانلود V2Box (App Store)", url: "https://apps.apple.com/app/v2box-v2ray-client/id6446814690", primary: true },
-          { label: "دانلود Streisand (App Store)", url: "https://apps.apple.com/app/streisand/id6450534064", primary: false }
-        ],
-        steps: [
-          { num: "01", title: "نصب از App Store مک", desc: "یکی از برنامه‌های V2Box یا Streisand رو مستقیم از اپ‌استور مک نصب کن." },
-          { num: "02", title: "ایمپورت لینک اشتراک", desc: "لینک اشتراک والهالا گارد رو کپی کن و در برنامه گزینه Import from Clipboard رو بزن." },
-          { num: "03", title: "فعال‌سازی VPN", desc: "سرور دلخواهت رو انتخاب کن و دکمه اتصال رو بزن تا کل ترافیک مک متصل بشه." }
-        ]
+        num: "02",
+        title: "ایمپورت در کلاینت مک",
+        desc: "برنامه Hiddify یا V2Box رو روی مک اجرا کن و لینک کپی‌شده رو از بخش Import / Add Profile وارد کن."
       },
       {
-        id: "wg-mac",
-        name: "WireGuard",
-        protocol: "WireGuard",
-        note: "سبک و بومی برای macOS با آیکون مستقیم در Menu Bar بالای مک.",
-        downloads: [
-          { label: "دانلود از Mac App Store", url: "https://apps.apple.com/app/wireguard/id1451685025", primary: true }
-        ],
-        steps: [
-          { num: "01", title: "نصب از Mac App Store", desc: "اپلیکیشن رسمی WireGuard رو از اپ‌استور مک دانلود و اجرا کن." },
-          { num: "02", title: "وارد کردن فایل .conf", desc: "روی Import Tunnel(s) from File کلیک کن و فایل کانفیگ خودت رو انتخاب کن." },
-          { num: "03", title: "اتصال از نوار بالا", desc: "دکمه Activate رو بزن؛ از این به بعد از آیکون WireGuard در نوار بالای مک می‌تونی سریع قطع و وصلش کنی." }
-        ]
+        num: "03",
+        title: "تایید دسترسی و اتصال",
+        desc: "دکمه اتصال رو بزن و در اولین اجرا مجوز شبکه مک‌او‌اس (System Proxy / VPN) رو تایید کن."
       }
     ]
   }
 };
 
-/* ---------- ۳. مقالات آموزشی کانال تلگرام (@valhala_tw) ---------- */
-const ARTICLES_DATA = [
-  {
-    cat: "ai",
-    catLabel: "هوش مصنوعی",
-    title: "آموزش کاربردی و حرفه‌ای ChatGPT",
-    desc: "آشنایی با قابلیت‌های کلیدی ChatGPT و نحوه استفاده هوشمندانه از آن در کارهای روزمره و تخصصی.",
-    url: "https://t.me/valhala_tw/63"
-  },
-  {
-    cat: "ai",
-    catLabel: "هوش مصنوعی",
-    title: "قسمت اول آموزش پرامپت‌نویسی",
-    desc: "چطور سوال‌ها و دستورهای دقیق بنویسیم تا بهترین و ساختاریافته‌ترین خروجی را از هوش مصنوعی بگیریم.",
-    url: "https://t.me/valhala_tw/64"
-  },
-  {
-    cat: "os",
-    catLabel: "ویندوز و مک",
-    title: "مدیریت و بهینه‌سازی حرفه‌ای ویندوز",
-    desc: "تنظیمات کلیدی برای افزایش سرعت، کاهش مصرف منابع پس‌زمینه و روان‌تر شدن عملکرد ویندوز.",
-    url: "https://t.me/valhala_tw/15"
-  },
-  {
-    cat: "os",
-    catLabel: "ویندوز و مک",
-    title: "پیش‌نمایش سریع فایل‌ها در ویندوز",
-    desc: "چطور شبیه قابلیت Quick Look مک‌بوک، فایل‌ها و تصاویر را در ویندوز فقط با یک کلید بدون باز کردن ببینیم.",
-    url: "https://t.me/valhala_tw/16"
-  },
-  {
-    cat: "hardware",
-    catLabel: "سخت‌افزار",
-    title: "ابزارها و تنظیمات
+/* ---------- رندر بخش ویترین تب‌ها ---------- */
+function renderShowcase(key) {
+  const data = SHOWCASE_DATA[key];
+  if (!data) return;
+
+  const infoEl = document.getElementById("showcaseInfo");
+  const visualEl = document.getElementById("showcaseVisual");
+  if (!infoEl || !visualEl) return;
+
+  const isExternal = data.ctaHref.startsWith("http");
+  const targetAttr = isExternal ? 'target="_blank" rel="noopener noreferrer"' : "";
+
+  infoEl.innerHTML = `
+    <span class="showcase-badge">${data.badge}</span>
+    <h3>${data.title}</h3>
+    <p>${data.desc}</p>
+    <ul class="feature-list">
+      ${data.features
+        .map(
+          (f) => `
+        <li>
+          <span class="feature-list-text">
+            <span class="check-mark">${f.type === "pro" ? "✦" : "✓"}</span>
+            <span>${f.text}</span>
+          </span>
+          <span class="tier-tag ${f.type}">${f.tag}</span>
+        </li>`
+        )
+        .join("")}
+    </ul>
+    <a href="${data.ctaHref}" ${targetAttr} class="btn btn-primary">${data.ctaText}</a>
+  `;
+
+  visualEl.innerHTML = `
+    <div class="visual-panel">
+      <div class="visual-top">
+        <span class="visual-top-title">
+          <span class="status-dot"></span>
+          <span>${data.visual.header}</span>
+        </span>
+        <span>${data.visual.status}</span>
+      </div>
+      <div class="visual-stats">
+        ${data.visual.stats
+          .map(
+            (s) => `
+          <div class="v-stat">
+            <span class="v-stat-label">${s.label}</span>
+            <span class="v-stat-value ${s.accent ? "accent" : ""}">${s.value}</span>
+          </div>`
+          )
+          .join("")}
+      </div>
+      <div class="visual-rows">
+        ${data.visual.rows
+          .map(
+            (r) => `
+          <div class="v-row">
+            <span>${r.label}</span>
+            <span>${r.value}</span>
+          </div>`
+          )
+          .join("")}
+      </div>
+    </div>
+  `;
+}
+
+/* ---------- رندر بخش مقایسه قبل و بعد ---------- */
+let currentProfile = "gaming";
+let currentMode = "after";
+
+function renderCompare() {
+  const profile = COMPARE_DATA[currentProfile];
+  if (!profile) return;
+
+  const highlightsEl = document.getElementById("compareHighlights");
+  const noteEl = document.getElementById("compareNote");
+  const metricsEl = document.getElementById("metricsGrid");
+  if (!highlightsEl || !noteEl || !metricsEl) return;
+
+  highlightsEl.innerHTML = profile.highlights
+    .map(
+      (h) => `
+    <div class="highlight-box">
+      <span>${h.label}</span>
+      <strong>${h.value}</strong>
+    </div>`
+    )
+    .join("");
+
+  noteEl.textContent = profile.note;
+
+  const list = profile[currentMode];
+  metricsEl.innerHTML = list
+    .map(
+      (m) => `
+    <div class="metric-row">
+      <div class="metric-header">
+        <span>${m.label}</span>
+        <strong>${m.valueText}</strong>
+      </div>
+      <div class="metric-track">
+        <div class="metric-fill ${m.status}" style="width: ${m.percent}%"></div>
+      </div>
+    </div>`
+    )
+    .join("");
+}
+
+/* ---------- رندر راهنمای ۳ مرحله‌ای اتصال ---------- */
+function renderGuide(os) {
+  const data = GUIDE_DATA[os];
+  if (!data) return;
+
+  const appsBar = document.getElementById("guideAppsBar");
+  const stepsGrid = document.getElementById("stepsGrid");
+  if (!appsBar || !stepsGrid) return;
+
+  appsBar.innerHTML = `
+    <span class="guide-apps-title">اپلیکیشن‌های پیشنهادی برای این سیستم‌عامل:</span>
+    <div class="guide-app-badges">
+      ${data.apps
+        .map(
+          (app) =>
+            `<span class="app-badge ${app.recommended ? "recommended" : ""}">${app.name}</span>`
+        )
+        .join("")}
+    </div>
+  `;
+
+  stepsGrid.innerHTML = data.steps
+    .map(
+      (s) => `
+    <div class="step-card">
+      <span class="step-num">${s.num}</span>
+      <h4>${s.title}</h4>
+      <p>${s.desc}</p>
+    </div>`
+    )
+    .join("");
+}
+
+/* ---------- کنترل باز و بسته کردن پنل دستیار هوشمند ---------- */
+function setAiDrawerState(forceOpen) {
+  const aiDrawer = document.getElementById("aiDrawer");
+  const aiFab = document.getElementById("aiFab");
+  if (!aiDrawer) return;
+
+  const isCurrentlyOpen = aiDrawer.classList.contains("open");
+  const nextState = typeof forceOpen === "boolean" ? forceOpen : !isCurrentlyOpen;
+
+  if (nextState) {
+    aiDrawer.classList.add("open");
+  } else {
+    aiDrawer.classList.remove("open");
+  }
+
+  aiDrawer.setAttribute("aria-hidden", String(!nextState));
+  if (aiFab) {
+    aiFab.setAttribute("aria-expanded", String(nextState));
+  }
+
+  if (nextState) {
+    setTimeout(() => {
+      document.getElementById("aiInput")?.focus();
+    }, 80);
+  }
+}
+
+/* ---------- ارتباط با Cloudflare Worker دستیار والهالا ---------- */
+const BOT_SKINS = ["valhalla-bot.glb", "valhalla_bot_2.glb"];
+let currentSkinIndex = 0;
+let chatHistory = [];
+
+function appendMessage(text, role) {
+  const container = document.getElementById("aiMessages");
+  if (!container) return null;
+  const div = document.createElement("div");
+  div.className = `ai-msg ${role}`;
+  div.textContent = text;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+  return div;
+}
+
+async function sendToValhallaAI(userText) {
+  const sendBtn = document.getElementById("aiSendBtn");
+  const input = document.getElementById("aiInput");
+
+  appendMessage(userText, "user");
+  const loadingMsg = appendMessage("در حال بررسی و پاسخ‌گویی...", "bot");
+
+  if (input) input.value = "";
+  if (sendBtn) sendBtn.disabled = true;
+
+  const systemInstruction =
+    "تو دستیار هوشمند رسمی سایت والهالا تک‌ورلد (Valhalla Tech World) هستی. کوتاه، دقیق، محترمانه و به زبان فارسی پاسخ بده. کانال تلگرام: @valhala_tw، پشتیبانی: @Valhalla_Guard، ربات اشتراک والهالا گارد: @ValhallaGuard_bot، اینستاگرام: @Valhala_tw.";
+
+  chatHistory.push({ role: "user", parts: [{ text: userText }] });
+
+  try {
+    const response = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: systemInstruction }] },
+        contents: chatHistory.slice(-8)
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const rawText = await response.text();
+    let reply = "";
+    try {
+      const data = JSON.parse(rawText);
+      reply =
+        data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+        data?.reply ||
+        data?.response ||
+        data?.answer ||
+        data?.text ||
+        data?.message ||
+        "";
+    } catch {
+      reply = rawText;
+    }
+
+    if (!reply) {
+      reply = "پاسخی دریافت نشد. لطفاً دوباره امتحان کن یا به پشتیبانی @Valhalla_Guard پیام بده.";
+    }
+
+    if (loadingMsg) loadingMsg.textContent = reply;
+    chatHistory.push({ role: "model", parts: [{ text: reply }] });
+  } catch (err) {
+    if (loadingMsg) {
+      loadingMsg.textContent =
+        "در حال حاضر ارتباط با سرور هوش مصنوعی برقرار نشد. می‌تونی مستقیماً از طریق تلگرام @Valhalla_Guard یا ربات @ValhallaGuard_bot راهنمایی بگیری.";
+    }
+  } finally {
+    if (sendBtn) sendBtn.disabled = false;
+    input?.focus();
+  }
+}
+
+/* ---------- Event Delegation سراسری ---------- */
+document.addEventListener("click", (e) => {
+  const openTrigger = e.target.closest("#navAiBtn, #aiFab, #mobileAiBtn");
+  if (openTrigger) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById("mobileMenu")?.classList.remove("open");
+    setAiDrawerState();
+    return;
+  }
+
+  const closeTrigger = e.target.closest("#aiCloseBtn");
+  if (closeTrigger) {
+    e.preventDefault();
+    setAiDrawerState(false);
+    return;
+  }
+
+  const skinTrigger = e.target.closest("#switchSkinBtn");
+  if (skinTrigger) {
+    currentSkinIndex = (currentSkinIndex + 1) % BOT_SKINS.length;
+    const botViewer = document.getElementById("valhallaBotViewer");
+    if (botViewer) {
+      botViewer.setAttribute("src", BOT_SKINS[currentSkinIndex]);
+    }
+    return;
+  }
+
+  const promptChip = e.target.closest(".ai-prompt-chip");
+  if (promptChip) {
+    const prompt = promptChip.dataset.prompt;
+    if (prompt) sendToValhallaAI(prompt);
+  }
+});
+
+/* ---------- راه‌اندازی اولیه ---------- */
+function initValhallaApp() {
+  renderShowcase("guard");
+  renderCompare();
+  renderGuide("android");
+
+  const mobileToggle = document.getElementById("mobileToggle");
+  const mobileMenu = document.getElementById("mobileMenu");
+  mobileToggle?.addEventListener("click", () => {
+    const isOpen = mobileMenu.classList.toggle("open");
+    mobileToggle.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  document.querySelectorAll(".mobile-link").forEach((link) => {
+    link.addEventListener("click", () => {
+      mobileMenu?.classList.remove("open");
+      mobileToggle?.setAttribute("aria-expanded", "false");
+    });
+  });
+
+  document.querySelectorAll(".feature-tab").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".feature-tab").forEach((b) => {
+        b.classList.remove("active");
+        b.setAttribute("aria-selected", "false");
+      });
+      btn.classList.add("active");
+      btn.setAttribute("aria-selected", "true");
+      renderShowcase(btn.dataset.tab);
+    });
+  });
+
+  document.querySelectorAll("#profileChips .chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll("#profileChips .chip").forEach((c) => c.classList.remove("active"));
+      chip.classList.add("active");
+      currentProfile = chip.dataset.profile;
+      renderCompare();
+    });
+  });
+
+  document.querySelectorAll(".seg-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".seg-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentMode = btn.dataset.mode;
+      renderCompare();
+    });
+  });
+
+  document.querySelectorAll(".platform-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".platform-tab").forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
+      renderGuide(tab.dataset.os);
+    });
+  });
+
+  document.querySelectorAll(".faq-q").forEach((qBtn) => {
+    qBtn.addEventListener("click", () => {
+      const item = qBtn.closest(".faq-item");
+      const answer = item.querySelector(".faq-a");
+      const isOpen = item.classList.contains("open");
+
+      document.querySelectorAll(".faq-item").forEach((other) => {
+        other.classList.remove("open");
+        other.querySelector(".faq-q").setAttribute("aria-expanded", "false");
+        other.querySelector(".faq-a").style.maxHeight = null;
+      });
+
+      if (!isOpen) {
+        item.classList.add("open");
+        qBtn.setAttribute("aria-expanded", "true");
+        answer.style.maxHeight = answer.scrollHeight + "px";
+      }
+    });
+  });
+
+  const aiForm = document.getElementById("aiForm");
+  aiForm?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const val = document.getElementById("aiInput")?.value.trim();
+    if (val) sendToValhallaAI(val);
+  });
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initValhallaApp);
+} else {
+  initValhallaApp();
+}
