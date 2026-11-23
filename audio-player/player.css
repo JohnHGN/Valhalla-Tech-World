@@ -1,997 +1,873 @@
-* { box-sizing: border-box; }
-:root { color-scheme: dark; font-family: Tahoma, Arial, sans-serif; }
+@charset "UTF-8";
+
+/* =========================================================
+   Valhalla Audio — Minimal Matte Dark UI (Wine Red Accent)
+   Synchronized with Valhalla Tech World main design
+   ========================================================= */
+
+:root {
+  color-scheme: dark;
+
+  --vp-bg: #09090b;
+  --vp-bg-alt: #0d0d10;
+  --vp-surface: #121216;
+  --vp-surface-hover: #18181e;
+  --vp-inset: #0c0c0f;
+
+  --vp-border: #222228;
+  --vp-border-strong: #303039;
+
+  --vp-accent: #9f1239;
+  --vp-accent-hover: #be123c;
+  --vp-accent-bright: #f43f5e;
+  --vp-accent-text: #fda4af;
+  --vp-accent-surface: #1f0d13;
+  --vp-accent-border: #5c182c;
+
+  --vp-text: #f4f4f5;
+  --vp-text-secondary: #a1a1aa;
+  --vp-text-muted: #71717a;
+  --vp-on-accent: #fff5f7;
+
+  --vp-font-fa: "Vazirmatn", system-ui, -apple-system, sans-serif;
+  --vp-font-en: "Inter", "Vazirmatn", sans-serif;
+  --vp-transition: 0.18s ease;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 html,
 body {
-  background: transparent !important;
-}
-
-html {
-  min-height: 100%;
+  background-color: var(--vp-bg);
+  color: var(--vp-text);
+  font-family: var(--vp-font-fa);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 body {
-  margin: 0;
-  min-height: 0;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  overflow: visible;
+  padding: 16px;
 }
 
-.player-shell {
-  background: transparent !important;
-}
-.player-shell {
-  position: relative; width: min(100%, 1500px); aspect-ratio: 2048 / 768;
-  overflow: hidden; isolation: isolate; color: #f4fbff;
-  container-type: inline-size;
-}
-.player-skin { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; z-index: -1; user-select: none; }
-
-/* Podcast artwork — sits inside the circular emblem on the player skin */
-.podcast-logo {
-  position: absolute;
-  z-index: 0;
-  left: 5.6%;
-  top: 25.6%;
-  width: 17%;
-  height: 45.33%;
-  object-fit: contain;
-  object-position: center;
-  border-radius: 50%;
-  pointer-events: none;
-  user-select: none;
-  filter: drop-shadow(0 0 7px rgba(0, 225, 255, .65))
-          drop-shadow(0 0 15px rgba(0, 190, 255, .3));
-}
-.podcast-logo[hidden] { display: none; }
-
-button, select, input { font: inherit; }
-button { color: inherit; cursor: pointer; }
-.brand {
-  position: absolute; left: 32.4%; top: 17.1%; direction: ltr;
-  letter-spacing: .42em; font: 500 clamp(9px, 1.05cqw, 16px)/1 Arial, sans-serif;
-  white-space: nowrap; text-shadow: 0 0 12px #b9f7ff;
-}
-.playing-status {
-  position: absolute; right: 6.8%; top: 16%; width: 11.5%; height: 10.5%;
-  border: 1px solid #13efff; border-radius: 999px;
-  background: linear-gradient(150deg, #071c25dd, #06131bdc);
-  box-shadow: inset 0 0 12px #03dffb55, 0 0 13px #00dfff66;
-  display: flex; align-items: center; justify-content: center; gap: .6em;
-  color: #00efff; font-size: clamp(8px, 1.45cqw, 20px); white-space: nowrap;
-}
-.status-dot { width: .55em; height: .55em; border-radius: 50%; background: #00f5ff; box-shadow: 0 0 7px 3px #00eaff; }
-.timeline { position: absolute; left: 28.7%; right: 7.2%; top: 61.2%; height: 9%; direction: ltr; }
-.seek { display: block; width: 100%; height: 13%; margin: 0; accent-color: #00eaff; cursor: pointer; }
-.time-row { display: flex; justify-content: space-between; margin-top: .35%; font: 600 clamp(8px, 1.35cqw, 19px) Arial, sans-serif; text-shadow: 0 1px 5px #000; }
-.controls { position: absolute; left: 8.2%; right: 2.8%; top: 73.1%; height: 13.4%; direction: ltr; }
-.control {
-  position: absolute; top: 0; height: 88%; border: 1px solid #7ab9ca99;
-  border-radius: 999px; background: linear-gradient(145deg, #061c27ee, #07131beF 65%, #071f2aee);
-  box-shadow: inset 0 0 9px #62d9ef35, 0 2px 9px #000b, 0 0 7px #1ddff044;
-  display: flex; align-items: center; justify-content: center; gap: .5em;
-  padding: 0 1%; color: #f6fbff; white-space: nowrap;
-}
-.control:focus-visible, .playing-status:focus-visible, .utility-control button:focus-visible {
-  outline: 2px solid #fff; outline-offset: 3px;
-}
-.control-icon { font-size: clamp(15px, 2.4cqw, 34px); color: #00efff; line-height: 1; }
-.speed-control { left: 0; width: 12.4%; border-color: #0dddf5; }
-.speed-control select { appearance: none; border: 0; outline: 0; background: transparent; color: white; font: 600 clamp(10px, 1.45cqw, 21px) Arial; width: 43%; cursor: pointer; }
-.speed-control option { color: #fff; background: #071923; }
-.chevron { color: #00edff; font-size: clamp(14px, 2cqw, 27px); line-height: 1; }
-.sleep-control { left: 13.5%; width: 17%; gap: 1.1em; }
-.sleep-control .control-icon { color: white; }
-.sleep-label { display: flex; flex-direction: column; gap: .25em; font-size: clamp(8px, 1.05cqw, 15px); line-height: 1.2; direction: rtl; }
-.sleep-label small { font-size: .9em; }
-.skip-control { width: 5.2%; border: 0; background: transparent; box-shadow: none; flex-direction: column; gap: 0; }
-.skip-control strong { font: 600 clamp(12px, 1.7cqw, 24px) Arial; }
-.skip-arrow { color: #ffbf63; font-size: clamp(22px, 3.4cqw, 48px); line-height: .8; text-shadow: 0 0 9px #ff9e26; }
-.rewind { left: 32.5%; }
-.previous { left: 40%; width: 5.8%; }
-.round-control { border-radius: 50%; font-size: clamp(17px, 2.5cqw, 36px); }
-.transport-icon { direction: ltr; font-weight: 700; }
-.play-control {
-  left: 48.1%; width: 9.5%; height: 112%; top: -12%;
-  border: 2px solid #ffd27a; border-radius: 50%;
-  background: radial-gradient(circle, #092d3b 15%, #03121a 68%);
-  box-shadow: inset 0 0 13px #00dfff88, 0 0 0 3px #03dffb55, 0 0 18px #00dfff88, 0 0 12px #ffb84d;
-}
-.play-symbol { font-size: clamp(23px, 3.1cqw, 44px); color: #b9faff; text-shadow: 0 0 12px #00efff; }
-.next { left: 59.5%; width: 5.8%; }
-.forward { left: 66.2%; }
-.volume-control { left: 73.2%; width: 15.4%; gap: 8%; }
-.volume-icon { font-size: clamp(17px, 2.4cqw, 34px); }
-.volume-control input { width: 58%; accent-color: #00efff; cursor: pointer; }
-.utility-control { left: 89.3%; width: 10.7%; padding: 0; gap: 0; }
-.utility-control button { flex: 1; height: 100%; border: 0; background: transparent; font-size: clamp(22px, 3cqw, 43px); color: #f5fbff; }
-.utility-control i { width: 1px; height: 55%; background: #c9faff88; }
-.share-icon { display: inline-block; position: relative; font-size: 0; width: 1em; height: 1em; }
-.share-icon::before, .share-icon::after { content: ""; position: absolute; width: .24em; height: .24em; border: 2px solid currentColor; border-radius: 50%; }
-.share-icon::before { left: .05em; top: .38em; box-shadow: .62em -.35em 0 -.02em #07131b, .62em .35em 0 -.02em #07131b; }
-.share-icon::after { width: .63em; height: .5em; left: .18em; top: .22em; border-width: 0; border-top: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: skewY(-28deg); }
-.player-message {
-  position: absolute; left: 50%; bottom: 2%; transform: translateX(-50%);
-  padding: .45em 1em; border-radius: 999px; background: #03151fee; color: #bffaff;
-  font-size: clamp(9px, 1cqw, 14px); opacity: 0; pointer-events: none; transition: opacity .2s;
-}
-.player-message.show { opacity: 1; }
-@media (max-width: 620px) {
-  body { padding: 0; }
-  .player-shell { width: 100%; }
-  .brand { letter-spacing: .28em; }
-  .sleep-control { gap: .25em; }
-  .sleep-label { font-size: clamp(6px, 1.05cqw, 9px); }
-  .control { padding: 0 .3%; }
-  .volume-control { gap: 3%; }
+button,
+select,
+input {
+  font-family: inherit;
+  color: inherit;
 }
 
-/* اکولایزر زنده در فضای مرکزی تصویر پایه */
-.equalizer {
-  position:absolute; left:31.5%; top:34%; width:60.7%; height:20%;
-  overflow:visible; pointer-events:none;
-  filter:drop-shadow(0 0 5px rgba(0,220,255,.25));
+[hidden] {
+  display: none !important;
 }
-.track-title {
-  position: absolute;
-  left: 32%;
-  right: 8%;
-  top: 26%;
-  color: #c9faff;
-  text-align: center;
-  direction: rtl;
-  font-size: clamp(15px, 2cqw, 29px);
+
+.vp-container {
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* =========================================================
+   کارت اصلی پلیر (مات و مینیمال)
+   ========================================================= */
+.vp-card {
+  position: relative;
+  background-color: var(--vp-surface);
+  border: 1px solid var(--vp-border);
+  border-radius: 14px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ردیف بالا: کاور، عنوان و اکولایزر */
+.vp-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.vp-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  flex: 1;
+}
+
+.vp-cover {
+  width: 68px;
+  height: 68px;
+  border-radius: 12px;
+  background-color: var(--vp-inset);
+  border: 1px solid var(--vp-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.vp-cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.vp-cover-placeholder {
+  width: 26px;
+  height: 26px;
+  color: var(--vp-accent-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vp-cover-placeholder svg {
+  width: 100%;
+  height: 100%;
+}
+
+.vp-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.vp-kicker-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.vp-brand {
+  font-family: var(--vp-font-en);
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: .04em;
-  text-shadow: 0 0 12px #00dfff, 0 1px 5px #000;
+  letter-spacing: 0.14em;
+  color: var(--vp-text-muted);
+  direction: ltr;
+}
+
+.vp-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background-color: var(--vp-inset);
+  border: 1px solid var(--vp-border);
+  color: var(--vp-text-secondary);
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--vp-transition), color var(--vp-transition), background-color var(--vp-transition);
+}
+
+.vp-status:hover {
+  border-color: var(--vp-border-strong);
+  color: var(--vp-text);
+}
+
+.vp-status.is-playing {
+  background-color: var(--vp-accent-surface);
+  border-color: var(--vp-accent-border);
+  color: var(--vp-accent-text);
+}
+
+.vp-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--vp-text-muted);
+  transition: background-color var(--vp-transition);
+}
+
+.vp-status.is-playing .vp-status-dot {
+  background-color: var(--vp-accent-bright);
+  animation: vpPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes vpPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.vp-track-title {
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--vp-text);
+  line-height: 1.45;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.playing-status.is-playing {
-  border-color:#ffd27a; color:#ffe0a2;
-  box-shadow:inset 0 0 12px #03dffb55,0 0 15px #ffb84d66;
-}
-@media (max-width:620px) {
-  .equalizer { top:34%; height:18%; }
-  .track-title { top:27%; }
-}
-/* VALHALLA — Premium ROG Controls */
 
-.control {
-  border: 1px solid rgba(0, 226, 255, .65);
-  background:
-    linear-gradient(145deg,
-      rgba(13, 43, 55, .96),
-      rgba(2, 12, 20, .97) 58%,
-      rgba(24, 35, 42, .96));
-  box-shadow:
-    inset 0 1px 2px rgba(255,255,255,.16),
-    inset 0 -3px 8px rgba(0,0,0,.65),
-    0 0 8px rgba(0,220,255,.25),
-    0 3px 8px rgba(0,0,0,.65);
-  transition:
-    transform .2s ease,
-    box-shadow .2s ease,
-    border-color .2s ease,
-    filter .2s ease;
-}
-
-.control:hover {
-  border-color: #ffd27a;
-  box-shadow:
-    inset 0 0 12px rgba(0,225,255,.2),
-    0 0 12px rgba(0,225,255,.55),
-    0 0 18px rgba(255,184,77,.22);
-  filter: brightness(1.2);
-}
-
-.control:active {
-  transform: scale(.95);
-  filter: brightness(1.35);
-}
-
-.play-control {
-  border: 2px solid #ffd27a;
-  background:
-    radial-gradient(circle at 50% 45%,
-      #126174,
-      #05202d 58%,
-      #020b12 100%);
-  box-shadow:
-    inset 0 0 18px rgba(0,238,255,.55),
-    0 0 8px #00eaff,
-    0 0 18px rgba(255,190,90,.7);
-}
-
-.play-control:hover {
-  box-shadow:
-    inset 0 0 24px rgba(0,238,255,.7),
-    0 0 16px #00eaff,
-    0 0 28px rgba(255,190,90,.85);
-  transform: scale(1.06);
-}
-
-.play-symbol {
-  text-shadow:
-    0 0 8px #00f5ff,
-    0 0 18px #00dfff;
-}
-
-.skip-control:hover {
-  background: rgba(0, 210, 255, .09);
-  transform: translateY(-3px);
-}
-
-.control-icon,
-.chevron,
-.volume-icon {
-  filter: drop-shadow(0 0 5px rgba(0,225,255,.65));
-}
-/* ROG Gaming Font */
-@font-face {
-  font-family: "ROG";
-  src: url("assets/fonts/EA-Font-v15-by-Ghettoshark.ttf.woff") format("woff");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Podcast title */
-.track-title {
-  font-family: "ROG", Tahoma, sans-serif;
-  font-weight: normal;
-  letter-spacing: .06em;
-  text-shadow:
-    0 0 8px #00eaff,
-    0 0 16px #00cfff,
-    0 2px 5px #000;
-}
-
-
-/* =========================================================
-   VALHALLA / ROG HUD — SVG ICON SYSTEM
-   ========================================================= */
-.hud-icon {
-  display: block;
-  width: 1em;
-  height: 1em;
-  flex: 0 0 auto;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.75;
-  stroke-linecap: square;
-  stroke-linejoin: bevel;
-  color: #8cf7ff;
-  filter: drop-shadow(0 0 4px rgba(0, 229, 255, .75));
-  overflow: visible;
-}
-
-.control-icon,
-.volume-icon,
-.transport-icon,
-.skip-arrow,
-.chevron,
-.utility-icon {
-  display: block;
-  line-height: 1;
-}
-
-.speed-icon { font-size: clamp(17px, 2.35cqw, 33px); }
-.sleep-icon { font-size: clamp(17px, 2.25cqw, 32px); color: #d9fbff; }
-.chevron { font-size: clamp(12px, 1.55cqw, 22px); color: #00efff; }
-.skip-arrow {
-  width: 1em;
-  height: 1em;
-  font-size: clamp(22px, 3.1cqw, 44px);
-  color: #ffc66f;
-  filter: drop-shadow(0 0 5px rgba(255, 174, 64, .8));
-}
-.transport-icon {
-  width: 1em;
-  height: 1em;
-  font-size: clamp(19px, 2.55cqw, 36px);
-  color: #9afaff;
-}
-.volume-icon { font-size: clamp(19px, 2.35cqw, 34px); }
-
-.play-symbol {
-  position: relative;
-  display: block;
-  width: .9em;
-  height: .9em;
-  font-size: clamp(25px, 3.2cqw, 46px);
-  color: #d5fcff;
-  filter: drop-shadow(0 0 7px #00eaff);
-}
-.play-symbol::before,
-.play-symbol::after {
-  content: "";
-  position: absolute;
-  top: 15%;
-  height: 70%;
-  background: currentColor;
-}
-.play-symbol::before {
-  left: 29%;
-  width: 57%;
-  clip-path: polygon(0 0, 100% 50%, 0 100%);
-}
-.play-symbol.is-playing::before,
-.play-symbol.is-playing::after {
-  top: 17%;
-  width: 22%;
-  height: 66%;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-}
-.play-symbol.is-playing::before { left: 22%; }
-.play-symbol.is-playing::after { left: 58%; }
-
-.utility-control button {
+/* اکولایزر مینیمال بدون نئون */
+.vp-eq-wrap {
+  width: 210px;
+  height: 46px;
+  flex-shrink: 0;
+  background-color: var(--vp-inset);
+  border: 1px solid var(--vp-border);
+  border-radius: 10px;
+  padding: 6px 8px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: #d7fbff;
-  transition: color .18s ease, background .18s ease, filter .18s ease;
-}
-.utility-icon {
-  width: 1em;
-  height: 1em;
-  font-size: .9em;
-}
-.utility-control button:hover,
-.utility-control button:focus-visible {
-  color: #00efff;
-  background: rgba(0, 225, 255, .09);
-  filter: drop-shadow(0 0 7px #00dfff);
-}
-.utility-control button[aria-label="تکرار روشن"] {
-  color: #ffd27a;
-  filter: drop-shadow(0 0 7px #ffb84d);
 }
 
-.control:hover .hud-icon,
-.control:focus-visible .hud-icon {
-  color: #fff0c9;
-  filter: drop-shadow(0 0 5px #00eaff) drop-shadow(0 0 8px rgba(255, 184, 77, .55));
-}
-.play-control .play-symbol {
-  color: #d9fcff;
-}
-.play-control:hover .play-symbol {
-  color: #fff3d5;
-}
-@media (max-width: 620px) {
-  .hud-icon { stroke-width: 1.9; }
-}
-
-
-/* Final podcast artwork alignment based on the current site screenshot */
-.player-logo,
-.podcast-logo {
-  left: 9% !important;
-  top: 19% !important;
-  width: 17% !important;
-  height: 45.33% !important;
-}
-
-
-/* VALHALLA PLAYER — aligned transport controls (corrected) */
-
-/* Keep the original button center, but make its width match its height.
-   The control row is 89% of the player width; 6.35% gives a circle
-   matching the existing 112% control-row height. */
-.controls .play-control {
-  left: 49.675%;
-  width: 6.35%;
-  height: 112%;
-  top: -12%;
-  min-width: 0;
-  aspect-ratio: 1 / 1;
-  box-sizing: border-box;
-  padding: 0;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: none;
-}
-.controls .play-control:hover {
-  transform: scale(1.04);
-}
-.controls .play-control:active {
-  transform: scale(.96);
-}
-
-/* Rewind/forward labels are layered precisely at the icon center. */
-.controls .skip-control {
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  gap: 0;
-}
-.skip-icon-wrap {
-  position: relative;
-  display: block;
+.vp-equalizer {
   width: 100%;
   height: 100%;
-  flex: 0 0 100%;
+  display: block;
 }
-.skip-icon-wrap .skip-arrow {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 1.08em;
-  height: 1.08em;
-  margin: 0;
-  transform: translate(-50%, -50%);
-  font-size: clamp(22px, 3.1cqw, 44px);
+
+/* =========================================================
+   نوار پیشرفت و زمان
+   ========================================================= */
+.vp-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  direction: ltr;
 }
-.skip-icon-wrap strong {
+
+.vp-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--vp-accent) 0%,
+    var(--vp-accent) var(--progress, 0%),
+    #25252d var(--progress, 0%),
+    #25252d 100%
+  );
+  outline: none;
+  cursor: pointer;
+}
+
+.vp-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background-color: var(--vp-text);
+  border: 2px solid var(--vp-accent);
+  cursor: pointer;
+  transition: transform var(--vp-transition), background-color var(--vp-transition);
+}
+
+.vp-range:hover::-webkit-slider-thumb {
+  transform: scale(1.15);
+  background-color: var(--vp-accent-text);
+}
+
+.vp-range::-moz-range-track {
+  height: 5px;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.vp-range::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background-color: var(--vp-text);
+  border: 2px solid var(--vp-accent);
+  cursor: pointer;
+}
+
+.vp-time-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--vp-font-en);
+  font-size: 0.76rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--vp-text-muted);
+}
+
+/* =========================================================
+   ردیف کنترل‌ها
+   ========================================================= */
+.vp-controls {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--vp-border);
+  direction: ltr;
+}
+
+.vp-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vp-group-left {
+  justify-content: flex-start;
+}
+
+.vp-group-center {
+  justify-content: center;
+  gap: 10px;
+}
+
+.vp-group-right {
+  justify-content: flex-end;
+}
+
+.vp-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 11px;
+  border-radius: 8px;
+  background-color: var(--vp-inset);
+  border: 1px solid var(--vp-border);
+  color: var(--vp-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color var(--vp-transition), color var(--vp-transition), background-color var(--vp-transition);
+}
+
+.vp-pill svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  color: var(--vp-text-muted);
+}
+
+.vp-pill:hover {
+  border-color: var(--vp-border-strong);
+  background-color: var(--vp-surface-hover);
+  color: var(--vp-text);
+}
+
+.vp-pill.is-active {
+  background-color: var(--vp-accent-surface);
+  border-color: var(--vp-accent-border);
+  color: var(--vp-accent-text);
+}
+
+.vp-pill.is-active svg {
+  color: var(--vp-accent-text);
+}
+
+.vp-speed select {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-family: var(--vp-font-en);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--vp-text);
+  cursor: pointer;
+}
+
+.vp-speed option {
+  background-color: var(--vp-surface);
+  color: var(--vp-text);
+}
+
+.vp-sleep-text {
+  direction: rtl;
+  font-size: 0.78rem;
+}
+
+.vp-sleep-text strong {
+  color: var(--vp-text);
+  font-weight: 600;
+}
+
+.vp-pill.is-active .vp-sleep-text strong {
+  color: var(--vp-accent-text);
+}
+
+/* دکمه‌های آیکونی پخش */
+.vp-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  background-color: var(--vp-inset);
+  border: 1px solid var(--vp-border);
+  color: var(--vp-text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: background-color var(--vp-transition), border-color var(--vp-transition), color var(--vp-transition);
+}
+
+.vp-btn svg {
+  width: 17px;
+  height: 17px;
+}
+
+.vp-btn:hover {
+  background-color: var(--vp-surface-hover);
+  border-color: var(--vp-border-strong);
+  color: var(--vp-text);
+}
+
+.vp-btn.is-active {
+  background-color: var(--vp-accent-surface);
+  border-color: var(--vp-accent-border);
+  color: var(--vp-accent-text);
+}
+
+.vp-btn-sm {
+  width: 36px;
+  height: 36px;
+}
+
+.vp-btn-sm svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* دکمه‌های عقب/جلو ۱۵ و ۳۰ ثانیه */
+.vp-skip {
+  width: 40px;
+  height: 38px;
+}
+
+.vp-skip svg {
+  width: 21px;
+  height: 21px;
+}
+
+.vp-skip span {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: 1;
-  margin: 0;
-  transform: translate(-50%, -50%);
-  font: 700 clamp(9px, 1.05cqw, 15px)/1 "Yas", Tahoma, Arial, sans-serif;
-  color: #fff8e9;
-  text-shadow: 0 1px 4px #000, 0 0 5px #ffb84d;
+  font-family: var(--vp-font-en);
+  font-size: 0.56rem;
+  font-weight: 700;
+  margin-top: 2px;
   pointer-events: none;
 }
 
-/* Load the Persian Yas font if its file is present in this path. */
-@font-face {
-  font-family: "Yas";
-  src: url("assets/fonts/Yas.ttf") format("truetype"),
-       url("assets/fonts/Yas.woff2") format("woff2"),
-       url("assets/fonts/Yas.woff") format("woff");
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-}
-.player-shell,
-.player-shell button,
-.player-shell select,
-.player-shell .playing-status,
-.player-shell .sleep-label,
-.player-shell .time-row,
-.player-shell .player-message {
-  font-family: "Yas", Tahoma, Arial, sans-serif;
+/* دکمه اصلی پخش (قرمز شرابی مات) */
+.vp-play-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--vp-accent);
+  border: 1px solid var(--vp-accent-hover);
+  color: var(--vp-on-accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color var(--vp-transition), transform var(--vp-transition);
 }
 
-
-/* VALHALLA — expandable podcast library */
-.podcast-library{direction:rtl;position:relative;z-index:5;width:min(100%,1500px);margin:clamp(12px,1.5vw,22px) auto 28px;color:#eafaff;font-family:"Yas",Tahoma,Arial,sans-serif}
-.podcast-library-toggle{width:100%;min-height:clamp(48px,5.2vw,68px);display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px clamp(16px,2.2vw,30px);border:1px solid rgba(0,225,255,.65);border-radius:14px;color:#dffcff;background:linear-gradient(110deg,rgba(5,27,39,.97),rgba(5,15,27,.98) 58%,rgba(21,27,40,.97));box-shadow:inset 0 0 14px rgba(0,210,255,.12),0 0 14px rgba(0,205,255,.13);cursor:pointer;font:700 clamp(14px,1.45vw,19px)/1.5 "Yas",Tahoma,Arial,sans-serif;text-align:right}
-.podcast-library-toggle:hover,.podcast-library-toggle[aria-expanded=true]{border-color:#ffd27a;box-shadow:inset 0 0 16px rgba(0,210,255,.16),0 0 16px rgba(0,205,255,.22)}
-.podcast-library-heading:before{content:"♫";color:#00eaff;margin-left:12px;text-shadow:0 0 9px #00dfff}
-.podcast-library-chevron{color:#00efff;font:700 25px/1 Arial,sans-serif;transition:transform .2s}
-.podcast-library-toggle[aria-expanded=true] .podcast-library-chevron{transform:rotate(180deg)}
-.podcast-list-panel{margin-top:9px;padding:clamp(8px,1.2vw,16px);border:1px solid rgba(0,220,255,.38);border-radius:14px;background:linear-gradient(145deg,rgba(3,17,27,.98),rgba(8,20,34,.98));box-shadow:inset 0 0 18px rgba(0,190,255,.08),0 8px 24px rgba(0,0,0,.35)}
-.podcast-list{display:grid;gap:8px;max-height:min(55vh,520px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:#00cde8 #071722}
-.podcast-list-item{min-height:52px;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:8px 12px;border:1px solid rgba(105,204,225,.18);border-radius:10px;background:rgba(8,32,45,.72)}
-.podcast-list-item.is-current{border-color:rgba(0,230,255,.65);background:rgba(0,120,150,.17)}
-.podcast-list-title{min-width:0;color:#eafaff;font-size:clamp(12px,1.15vw,16px);line-height:1.7;overflow-wrap:anywhere}
-.podcast-list-item.is-current .podcast-list-title{color:#9afaff}
-.podcast-list-play{flex:0 0 auto;min-width:108px;min-height:36px;padding:6px 12px;border:1px solid rgba(0,225,255,.65);border-radius:999px;background:linear-gradient(145deg,#0b3544,#061722);color:#9afaff;font:700 12px/1.5 "Yas",Tahoma,Arial,sans-serif;cursor:pointer}
-.podcast-list-item.is-current .podcast-list-play{border-color:#ffd27a;color:#ffe0a2}
-.podcast-list-empty{margin:0;padding:18px;color:#9ebac5;text-align:center;font-size:13px}
-.podcast-list-panel[hidden]{display:none!important}
-@media(max-width:620px){.podcast-library{margin-top:8px}.podcast-list-item{gap:8px;padding:7px}.podcast-list-play{min-width:88px;padding-inline:8px}}
-
-/* Empty initial state: do not show a podcast cover before selection. */
-#podcastLogo[hidden] { display: none !important; }
-
-
-
-/* =========================================================
-   VALHALLA AUDIO — Liquid Glass controls and podcast library
-   Covers the separate iframe document, not just the parent page.
-   ========================================================= */
-.player-shell {
-  background: transparent !important;
-}
-.controls .control,
-.playing-status {
-  background:
-    linear-gradient(135deg,
-      rgba(245,252,255,.22),
-      rgba(117,196,229,.075) 42%,
-      rgba(255,255,255,.105)) !important;
-  -webkit-backdrop-filter: blur(13px) saturate(210%) brightness(1.12) !important;
-  backdrop-filter: blur(13px) saturate(210%) brightness(1.12) !important;
-  border: 1px solid rgba(227,248,255,.48) !important;
-  box-shadow:
-    inset 0 1.5px 0 rgba(255,255,255,.72),
-    inset 1px 0 0 rgba(255,255,255,.25),
-    inset -1px 0 0 rgba(255,255,255,.16),
-    inset 0 -1px 0 rgba(2,18,30,.22),
-    0 5px 17px rgba(0,0,0,.16),
-    0 0 13px rgba(0,220,255,.075) !important;
-}
-.controls .skip-control {
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-}
-.controls .play-control {
-  background:
-    radial-gradient(circle at 35% 25%, rgba(255,255,255,.32), transparent 45%),
-    linear-gradient(145deg, rgba(150,229,250,.25), rgba(7,42,58,.28)) !important;
-  border: 1.5px solid rgba(255,236,185,.86) !important;
-  box-shadow:
-    inset 0 1.5px 0 rgba(255,255,255,.78),
-    inset 0 0 18px rgba(0,228,255,.22),
-    0 0 0 2px rgba(111,227,255,.20),
-    0 0 18px rgba(0,220,255,.26),
-    0 0 12px rgba(255,190,91,.22) !important;
-}
-.controls .control:hover,
-.playing-status:hover {
-  background:
-    linear-gradient(135deg, rgba(255,255,255,.29), rgba(139,215,244,.12), rgba(255,255,255,.14)) !important;
-  border-color: rgba(247,253,255,.78) !important;
-}
-.speed-control select,
-.sleep-control,
-.volume-control {
-  color: #f5fcff !important;
-}
-.speed-control select {
-  background: transparent !important;
-}
-.podcast-library-toggle {
-  background:
-    linear-gradient(135deg,
-      rgba(245,252,255,.18),
-      rgba(111,194,228,.055) 46%,
-      rgba(255,255,255,.09)) !important;
-  -webkit-backdrop-filter: blur(15px) saturate(215%) brightness(1.10) !important;
-  backdrop-filter: blur(15px) saturate(215%) brightness(1.10) !important;
-  border: 1px solid rgba(233,249,255,.46) !important;
-  border-radius: 21px !important;
-  box-shadow:
-    inset 0 1.5px 0 rgba(255,255,255,.68),
-    inset 1px 0 0 rgba(255,255,255,.22),
-    inset -1px 0 0 rgba(255,255,255,.15),
-    inset 0 -1px 0 rgba(3,20,33,.18),
-    0 9px 24px rgba(0,0,0,.12) !important;
-}
-.podcast-list-panel {
-  background:
-    linear-gradient(135deg, rgba(245,252,255,.15), rgba(111,194,228,.045), rgba(255,255,255,.07)) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(210%) brightness(1.10) !important;
-  backdrop-filter: blur(16px) saturate(210%) brightness(1.10) !important;
-  border: 1px solid rgba(233,249,255,.40) !important;
-  border-radius: 22px !important;
-  box-shadow:
-    inset 0 1.5px 0 rgba(255,255,255,.58),
-    inset 1px 0 0 rgba(255,255,255,.18),
-    0 12px 30px rgba(0,0,0,.14) !important;
-}
-.podcast-list-item {
-  background: rgba(223,245,255,.075) !important;
-  border: 1px solid rgba(231,249,255,.28) !important;
-  border-radius: 15px !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.38) !important;
-}
-.podcast-list-item.is-current {
-  background: rgba(125,222,246,.14) !important;
-  border-color: rgba(241,252,255,.55) !important;
-}
-.podcast-list-play {
-  background: linear-gradient(135deg, rgba(255,255,255,.20), rgba(121,208,237,.08)) !important;
-  border: 1px solid rgba(236,250,255,.46) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.55) !important;
+.vp-play-btn:hover {
+  background-color: var(--vp-accent-hover);
+  transform: scale(1.04);
 }
 
+.vp-play-btn:active {
+  transform: scale(0.97);
+}
 
-/* Clear optical glass for the podcast title bar and library */
-.podcast-library-toggle,
-.podcast-list-panel,
-.podcast-list-item,
-.podcast-list-play,
-.controls .control,
-.playing-status {
-  background-color: rgba(190,226,247,.045) !important;
-  background-image: linear-gradient(135deg,
-    rgba(255,255,255,.20),
-    rgba(207,237,255,.045) 36%,
-    rgba(110,184,224,.015) 68%,
-    rgba(255,255,255,.10)) !important;
-  -webkit-backdrop-filter: blur(4px) saturate(245%) brightness(1.18) !important;
-  backdrop-filter: blur(4px) saturate(245%) brightness(1.18) !important;
-  border: 1px solid rgba(239,250,255,.60) !important;
-  box-shadow:
-    inset 0 2px 0 rgba(255,255,255,.82),
-    inset 1px 0 0 rgba(255,255,255,.28),
-    inset -1px 0 0 rgba(255,255,255,.20),
-    inset 0 -2px 0 rgba(255,255,255,.13),
-    0 9px 26px rgba(0,0,0,.14) !important;
+.vp-play-icon {
+  position: relative;
+  display: block;
+  width: 18px;
+  height: 18px;
 }
-.podcast-library-toggle {
-  border-radius: 24px !important;
-  min-height: clamp(48px,5.2vw,68px);
+
+.vp-play-icon::before,
+.vp-play-icon::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  height: 14px;
+  background-color: currentColor;
 }
-.podcast-list-panel { border-radius: 25px !important; }
-.podcast-list-item { border-radius: 18px !important; }
-.podcast-list-play { border-radius: 999px !important; }
-.controls .play-control {
-  background:
-    radial-gradient(ellipse at 30% 18%,rgba(255,255,255,.52),transparent 48%),
-    linear-gradient(145deg,rgba(209,243,255,.30),rgba(100,174,215,.08)) !important;
-  border: 1.5px solid rgba(255,255,255,.88) !important;
-  box-shadow: inset 0 2px 0 rgba(255,255,255,.92),
-    inset 0 0 20px rgba(218,245,255,.18),
-    0 0 0 1px rgba(255,255,255,.30),
-    0 0 22px rgba(120,211,255,.22) !important;
+
+.vp-play-icon::before {
+  left: 4px;
+  width: 12px;
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+}
+
+.vp-play-icon::after {
+  opacity: 0;
+}
+
+.vp-play-icon.is-playing::before,
+.vp-play-icon.is-playing::after {
+  opacity: 1;
+  top: 2px;
+  width: 4px;
+  height: 14px;
+  border-radius: 1px;
+  clip-path: none;
+}
+
+.vp-play-icon.is-playing::before {
+  left: 3px;
+}
+
+.vp-play-icon.is-playing::after {
+  right: 3px;
+}
+
+/* کنترل صدا */
+.vp-volume {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 10px;
+  border-radius: 9px;
+  background-color: var(--vp-inset);
+  border: 1px solid var(--vp-border);
+  height: 36px;
+}
+
+.vp-volume .vp-btn-sm {
+  border: none;
+  background: transparent;
+  width: 34px;
+  height: 34px;
+}
+
+.vp-vol-range {
+  width: 74px;
+  height: 4px;
+}
+
+/* پیام وضعیت شناور */
+.vp-toast {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translate(-50%, 6px);
+  padding: 6px 14px;
+  border-radius: 8px;
+  background-color: var(--vp-bg-alt);
+  border: 1px solid var(--vp-accent-border);
+  color: var(--vp-accent-text);
+  font-size: 0.78rem;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.vp-toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
 }
 
 /* =========================================================
-   VALHALLA AUDIO — Mobile control layout repair
-   Keep the desktop layout untouched; compact controls on phones.
+   بخش کشویی عناوین پادکست‌ها (همسان با آکاردئون سایت)
    ========================================================= */
-@media (max-width: 620px) {
-  .player-shell {
+.vp-library {
+  border-top: 1px solid var(--vp-border);
+  border-bottom: 1px solid var(--vp-border);
+}
+
+.vp-library-toggle {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 15px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  color: var(--vp-text);
+  font-size: 0.94rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color var(--vp-transition);
+}
+
+.vp-library-toggle:hover,
+.vp-library-toggle[aria-expanded="true"] {
+  color: var(--vp-accent-text);
+}
+
+.vp-library-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vp-library-right svg {
+  color: var(--vp-accent-text);
+}
+
+.vp-library-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vp-library-count {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--vp-text-secondary);
+  padding: 2px 10px;
+  border-radius: 999px;
+  background-color: var(--vp-surface);
+  border: 1px solid var(--vp-border);
+}
+
+.vp-library-toggle[aria-expanded="true"] .vp-library-count {
+  background-color: var(--vp-accent-surface);
+  border-color: var(--vp-accent-border);
+  color: var(--vp-accent-text);
+}
+
+.vp-library-chevron {
+  color: var(--vp-text-secondary);
+  transition: transform 0.22s ease, color var(--vp-transition);
+}
+
+.vp-library-toggle[aria-expanded="true"] .vp-library-chevron {
+  transform: rotate(180deg);
+  color: var(--vp-accent-text);
+}
+
+.vp-list-panel {
+  padding: 4px 0 14px;
+}
+
+.vp-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 260px;
+  overflow-y: auto;
+  border-right: 2px solid var(--vp-accent-border);
+  padding-right: 14px;
+  margin-right: 6px;
+}
+
+.vp-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--vp-border);
+  cursor: pointer;
+  transition: background-color var(--vp-transition);
+}
+
+.vp-list-item:last-child {
+  border-bottom: none;
+}
+
+.vp-list-item:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.vp-list-item.is-current {
+  background-color: var(--vp-accent-surface);
+  border-radius: 8px;
+  padding-inline: 12px;
+}
+
+.vp-list-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.vp-list-num {
+  font-family: var(--vp-font-en);
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--vp-text-muted);
+  width: 22px;
+  flex-shrink: 0;
+}
+
+.vp-list-item.is-current .vp-list-num {
+  color: var(--vp-accent-text);
+}
+
+.vp-list-thumb {
+  width: 36px;
+  height: 36px;
+  border-radius: 7px;
+  object-fit: cover;
+  border: 1px solid var(--vp-border);
+  background-color: var(--vp-inset);
+  flex-shrink: 0;
+}
+
+.vp-list-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--vp-text);
+  overflow-wrap: anywhere;
+}
+
+.vp-list-item.is-current .vp-list-title {
+  color: var(--vp-accent-text);
+}
+
+.vp-list-play {
+  flex-shrink: 0;
+  height: 32px;
+  min-width: 86px;
+  padding: 0 12px;
+  border-radius: 7px;
+  background-color: var(--vp-surface);
+  border: 1px solid var(--vp-border-strong);
+  color: var(--vp-text);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--vp-transition), border-color var(--vp-transition), color var(--vp-transition);
+}
+
+.vp-list-play:hover {
+  border-color: var(--vp-accent-border);
+  color: var(--vp-accent-text);
+}
+
+.vp-list-item.is-current .vp-list-play {
+  background-color: var(--vp-accent);
+  border-color: var(--vp-accent);
+  color: var(--vp-on-accent);
+}
+
+.vp-list-empty {
+  padding: 16px 8px;
+  font-size: 0.84rem;
+  color: var(--vp-text-muted);
+  text-align: center;
+}
+
+/* اسکرول‌بار هماهنگ */
+.vp-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.vp-list::-webkit-scrollbar-track {
+  background: var(--vp-bg);
+}
+
+.vp-list::-webkit-scrollbar-thumb {
+  background: #27272e;
+  border-radius: 4px;
+}
+
+.vp-list::-webkit-scrollbar-thumb:hover {
+  background: var(--vp-accent);
+}
+
+/* =========================================================
+   واکنش‌گرایی (تبلت و موبایل)
+   ========================================================= */
+@media (max-width: 820px) {
+  .vp-top {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .vp-eq-wrap {
+    width: 100%;
+    height: 38px;
+  }
+
+  .vp-controls {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .vp-group-center {
+    order: 1;
+  }
+
+  .vp-group-left,
+  .vp-group-right {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .vp-group-left {
+    order: 2;
+  }
+
+  .vp-group-right {
+    order: 3;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 10px;
+  }
+
+  .vp-card {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .vp-cover {
+    width: 54px;
+    height: 54px;
+  }
+
+  .vp-track-title {
+    font-size: 0.96rem;
+  }
+
+  .vp-volume {
+    flex: 1;
+    max-width: 170px;
+  }
+
+  .vp-vol-range {
     width: 100%;
   }
 
-  .controls {
-    left: 4%;
-    right: 4%;
-    top: 72.2%;
-    height: 15.2%;
+  .vp-list-item {
+    gap: 10px;
+    padding: 10px 4px;
   }
 
-  /* All controls stay in one aligned row, with no inherited padding. */
-  .controls .control {
-    top: 8%;
-    height: 78%;
-    min-width: 0;
-    padding: 0;
-    gap: 0;
-    border-radius: 999px;
-    transform: none;
+  .vp-list-play {
+    min-width: 72px;
+    font-size: 0.74rem;
   }
-
-  .controls .speed-control {
-    left: 0;
-    width: 11.5%;
-    gap: 2%;
-  }
-  .speed-control .speed-icon { font-size: clamp(11px, 2.1cqw, 17px); }
-  .speed-control select {
-    width: 48%;
-    min-width: 0;
-    padding: 0;
-    font-size: clamp(7px, 1.35cqw, 11px);
-    text-align: center;
-  }
-  .speed-control .chevron { display: none; }
-
-  .controls .sleep-control {
-    left: 12.2%;
-    width: 10%;
-    gap: 0;
-  }
-  .sleep-control .sleep-icon { font-size: clamp(12px, 2.2cqw, 18px); }
-  .sleep-control .sleep-label,
-  .sleep-control .chevron { display: none; }
-
-  .controls .rewind {
-    left: 23.2%;
-    width: 7%;
-  }
-  .controls .previous {
-    left: 31.2%;
-    width: 7%;
-  }
-  .controls .play-control {
-    left: 41.2%;
-    top: -2%;
-    width: 9%;
-    height: 98%;
-    min-width: 0;
-    padding: 0;
-    border-radius: 50%;
-  }
-  .controls .next {
-    left: 53.2%;
-    width: 7%;
-  }
-  .controls .forward {
-    left: 61.2%;
-    width: 7%;
-  }
-
-  .controls .volume-control {
-    left: 70%;
-    width: 16%;
-    gap: 3%;
-  }
-  .volume-control .volume-icon { font-size: clamp(12px, 2.25cqw, 18px); }
-  .volume-control input {
-    width: 58%;
-    min-width: 0;
-    height: 16px;
-    margin: 0;
-  }
-
-  .controls .utility-control {
-    left: 87.5%;
-    width: 12.5%;
-    height: 78%;
-    top: 8%;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    padding: 0;
-    gap: 0;
-  }
-  .utility-control button {
-    min-width: 0;
-    width: 48%;
-    height: 100%;
-    padding: 0;
-    font-size: clamp(13px, 2.5cqw, 20px);
-  }
-  .utility-control i { height: 48%; }
-
-  .controls .hud-icon,
-  .controls .skip-arrow,
-  .controls .transport-icon {
-    font-size: clamp(13px, 2.45cqw, 20px);
-  }
-  .skip-icon-wrap .skip-arrow {
-    width: 1.08em;
-    height: 1.08em;
-    font-size: clamp(13px, 2.45cqw, 20px);
-  }
-  .skip-icon-wrap strong {
-    font-size: clamp(7px, 1.25cqw, 10px);
-  }
-  .play-symbol { font-size: clamp(18px, 3.1cqw, 25px); }
-}
-
-/* Very narrow phones: prioritize spacing and tap targets over labels. */
-@media (max-width: 380px) {
-  .controls {
-    left: 3.2%;
-    right: 3.2%;
-  }
-  .controls .speed-control { width: 10.5%; }
-  .controls .sleep-control { left: 11.2%; width: 8.5%; }
-  .controls .rewind { left: 20.8%; width: 7.2%; }
-  .controls .previous { left: 29%; width: 7.2%; }
-  .controls .play-control { left: 40.5%; width: 9.5%; }
-  .controls .next { left: 53%; width: 7.2%; }
-  .controls .forward { left: 61.2%; width: 7.2%; }
-  .controls .volume-control { left: 69.5%; width: 15.5%; }
-  .controls .utility-control { left: 86.2%; width: 13.8%; }
-  .volume-control input { width: 54%; }
-}
-
-
-/* =========================================================
-   VALHALLA AUDIO — Mobile control positioning (final pass)
-   Re-centers every control in a single, evenly spaced row.
-   Desktop rules remain unchanged.
-   ========================================================= */
-@media screen and (max-width: 620px) {
-  .player-shell .timeline {
-    left: 28.7%;
-    right: 7.2%;
-    top: 61.2%;
-    height: 9%;
-  }
-
-  .player-shell .controls {
-    left: 4%;
-    right: 4%;
-    top: 72.8%;
-    height: 14.8%;
-    direction: ltr;
-  }
-
-  .player-shell .controls > .control {
-    position: absolute;
-    top: 12%;
-    height: 76%;
-    min-width: 0;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: none;
-  }
-
-  /* Left-side utility controls */
-  .player-shell .controls .speed-control {
-    left: 0%;
-    width: 11.5%;
-    gap: 2%;
-  }
-  .player-shell .speed-control .speed-icon { font-size: clamp(12px, 2.4cqw, 17px); }
-  .player-shell .speed-control select {
-    width: 52%;
-    min-width: 0;
-    margin: 0;
-    padding: 0;
-    font-size: clamp(8px, 1.55cqw, 11px);
-    line-height: 1;
-    text-align: center;
-  }
-  .player-shell .speed-control .chevron { display: none; }
-
-  .player-shell .controls .sleep-control {
-    left: 12.5%;
-    width: 8.5%;
-    gap: 0;
-  }
-  .player-shell .sleep-control .sleep-icon { font-size: clamp(13px, 2.5cqw, 18px); }
-  .player-shell .sleep-control .sleep-label,
-  .player-shell .sleep-control .chevron { display: none; }
-
-  /* Transport cluster — centered around the main play button */
-  .player-shell .controls .rewind {
-    left: 22.5%;
-    width: 7.2%;
-  }
-  .player-shell .controls .previous {
-    left: 31%;
-    width: 7.2%;
-  }
-  .player-shell .controls .play-control {
-    left: 41.4%;
-    width: 9.2%;
-    height: 96%;
-    top: 2%;
-    padding: 0;
-    aspect-ratio: auto;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .player-shell .controls .next {
-    left: 53.2%;
-    width: 7.2%;
-  }
-  .player-shell .controls .forward {
-    left: 61.7%;
-    width: 7.2%;
-  }
-
-  /* Volume and secondary actions on the right */
-  .player-shell .controls .volume-control {
-    left: 70.2%;
-    width: 15.2%;
-    gap: 4%;
-  }
-  .player-shell .volume-control .volume-icon { font-size: clamp(13px, 2.5cqw, 18px); }
-  .player-shell .volume-control input[type="range"] {
-    display: block;
-    width: 61%;
-    min-width: 0;
-    height: 14px;
-    margin: 0;
-    padding: 0;
-    accent-color: #00efff;
-  }
-
-  .player-shell .controls .utility-control {
-    left: 87%;
-    width: 13%;
-    top: 12%;
-    height: 76%;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    padding: 0;
-    gap: 0;
-  }
-  .player-shell .utility-control button {
-    flex: 0 0 48%;
-    width: 48%;
-    min-width: 0;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: clamp(14px, 2.7cqw, 20px);
-  }
-  .player-shell .utility-control i { height: 48%; margin: 0; }
-
-  /* Consistent icon sizing and optical centering */
-  .player-shell .controls .hud-icon,
-  .player-shell .controls .transport-icon,
-  .player-shell .controls .skip-arrow {
-    flex: 0 0 auto;
-    font-size: clamp(13px, 2.55cqw, 19px);
-  }
-  .player-shell .skip-icon-wrap {
-    position: relative;
-    display: block;
-    width: 100%;
-    height: 100%;
-    flex: 0 0 100%;
-  }
-  .player-shell .skip-icon-wrap .skip-arrow {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 1.08em;
-    height: 1.08em;
-    margin: 0;
-    transform: translate(-50%, -50%);
-  }
-  .player-shell .skip-icon-wrap strong {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    margin: 0;
-    transform: translate(-50%, -50%);
-    font-size: clamp(7px, 1.35cqw, 10px);
-    line-height: 1;
-  }
-  .player-shell .play-symbol { font-size: clamp(19px, 3.5cqw, 26px); }
-
-  /* Prevent native range thumbs from appearing oversized on phones */
-  .player-shell input[type="range"] {
-    -webkit-appearance: none;
-    appearance: none;
-    background: transparent;
-    cursor: pointer;
-  }
-  .player-shell input[type="range"]::-webkit-slider-runnable-track {
-    height: 4px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #00eaff, #8defff 55%, rgba(190,235,255,.55));
-    box-shadow: 0 0 5px rgba(0,225,255,.45);
-  }
-  .player-shell input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 12px;
-    height: 12px;
-    margin-top: -4px;
-    border: 1px solid rgba(255,255,255,.9);
-    border-radius: 50%;
-    background: #dffaff;
-    box-shadow: 0 0 6px rgba(0,225,255,.6);
-  }
-  .player-shell input[type="range"]::-moz-range-track {
-    height: 4px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #00eaff, #8defff 55%, rgba(190,235,255,.55));
-  }
-  .player-shell input[type="range"]::-moz-range-thumb {
-    width: 12px;
-    height: 12px;
-    border: 1px solid rgba(255,255,255,.9);
-    border-radius: 50%;
-    background: #dffaff;
-    box-shadow: 0 0 6px rgba(0,225,255,.6);
-  }
-}
-
-@media screen and (max-width: 380px) {
-  .player-shell .controls { left: 3%; right: 3%; }
-  .player-shell .controls .speed-control { width: 11%; }
-  .player-shell .controls .sleep-control { left: 12%; width: 8%; }
-  .player-shell .controls .rewind { left: 21%; width: 7.4%; }
-  .player-shell .controls .previous { left: 29.5%; width: 7.4%; }
-  .player-shell .controls .play-control { left: 40.8%; width: 9.5%; }
-  .player-shell .controls .next { left: 52.5%; width: 7.4%; }
-  .player-shell .controls .forward { left: 61%; width: 7.4%; }
-  .player-shell .controls .volume-control { left: 69.5%; width: 15.5%; }
-  .player-shell .controls .utility-control { left: 86.5%; width: 13.5%; }
 }
