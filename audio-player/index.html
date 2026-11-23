@@ -3,110 +3,192 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#03131b">
+  <meta name="theme-color" content="#09090b">
   <title>Valhalla Audio Player</title>
-  <link rel="stylesheet" href="player.css?v=20261112-mobile-controls-02">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="player.css?v=3">
 </head>
 <body>
-  <main class="player-shell" id="valhallaPlayer" aria-label="پخش‌کننده صوتی وال‌هالا"
-        >
-    <img class="player-skin" src="assets/valhalla-player-base.png" alt="" draggable="false">
-    <img class="podcast-logo" id="podcastLogo" alt="لوگوی پادکست" draggable="false" hidden>
+  <div class="vp-container">
+    <main class="vp-card" id="valhallaPlayer" aria-label="پخش‌کننده صوتی والهالا">
+      <!-- ردیف بالا: کاور، عنوان، وضعیت و اکولایزر -->
+      <div class="vp-top">
+        <div class="vp-meta">
+          <div class="vp-cover" id="coverWrap">
+            <img class="vp-cover-img" id="podcastLogo" alt="کاور پادکست" draggable="false" hidden>
+            <span class="vp-cover-placeholder" id="coverPlaceholder" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18V5l12-2v13"/>
+                <circle cx="6" cy="18" r="3"/>
+                <circle cx="18" cy="16" r="3"/>
+              </svg>
+            </span>
+          </div>
 
-    <div class="brand">VALHALLA AUDIO</div>
-    <button class="playing-status" id="statusButton" type="button" aria-label="تغییر وضعیت پخش">
-      <span class="status-dot"></span><span id="statusText">متوقف</span>
-    </button>
+          <div class="vp-titles">
+            <div class="vp-kicker-row">
+              <span class="vp-brand">VALHALLA AUDIO</span>
+              <button class="vp-status" id="statusButton" type="button" aria-label="تغییر وضعیت پخش">
+                <span class="vp-status-dot" aria-hidden="true"></span>
+                <span id="statusText">متوقف</span>
+              </button>
+            </div>
+            <h1 class="vp-track-title" id="trackTitle" aria-live="polite">هیچ پادکستی انتخاب نشده</h1>
+          </div>
+        </div>
 
-    <div class="track-title" id="trackTitle" aria-live="polite">هیچ پادکستی انتخاب نشده</div>
-    <canvas class="equalizer" id="equalizer" aria-label="اکولایزر زنده"></canvas>
-
-    <div class="timeline">
-      <input id="seekBar" class="seek" type="range" min="0" max="1000" value="0"
-             aria-label="موقعیت پخش">
-      <div class="time-row">
-        <span id="currentTime">00:00</span>
-        <span id="duration">00:00</span>
+        <div class="vp-eq-wrap" aria-hidden="true">
+          <canvas class="vp-equalizer" id="equalizer"></canvas>
+        </div>
       </div>
-    </div>
 
-    <div class="controls" aria-label="کنترل‌های پخش">
-      <label class="control speed-control" title="سرعت پخش">
-        <svg class="hud-icon speed-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M12 3.5a8.5 8.5 0 1 0 8.5 8.5"/><path d="M12 7v5l3.5 2"/><path d="M16.5 3.8h4v4"/></svg>
-        <select id="speedSelect" aria-label="سرعت پخش">
-          <option value="0.5">0.5x</option>
-          <option value="0.75">0.75x</option>
-          <option value="1" selected>1.0x</option>
-          <option value="1.25">1.25x</option>
-          <option value="1.5">1.5x</option>
-          <option value="1.75">1.75x</option>
-          <option value="2">2.0x</option>
-        </select>
-        <svg class="hud-icon chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="m6 9 6 6 6-6"/></svg>
-      </label>
+      <!-- نوار زمان پخش -->
+      <div class="vp-timeline">
+        <input id="seekBar" class="vp-range vp-seek" type="range" min="0" max="1000" value="0" aria-label="موقعیت پخش">
+        <div class="vp-time-row">
+          <span id="currentTime">00:00</span>
+          <span id="duration">00:00</span>
+        </div>
+      </div>
 
-      <button class="control sleep-control" id="sleepButton" type="button" title="توقف خودکار">
-        <svg class="hud-icon control-icon sleep-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.2 2"/><path d="M4.8 5.8 3.5 4.5"/></svg>
-        <span class="sleep-label"><span>توقف خودکار</span><small id="sleepValue">خاموش</small></span>
-        <svg class="hud-icon chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="m6 9 6 6 6-6"/></svg>
-      </button>
+      <!-- نوار کنترل‌های مینیمال -->
+      <div class="vp-controls" aria-label="کنترل‌های پخش">
+        <!-- چپ: سرعت و تایمر خواب -->
+        <div class="vp-group vp-group-left">
+          <label class="vp-pill vp-speed" title="سرعت پخش">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m12 14 4-4"/>
+              <path d="M3.34 19a10 10 0 1 1 17.32 0"/>
+            </svg>
+            <select id="speedSelect" aria-label="سرعت پخش">
+              <option value="0.5">0.5x</option>
+              <option value="0.75">0.75x</option>
+              <option value="1" selected>1.0x</option>
+              <option value="1.25">1.25x</option>
+              <option value="1.5">1.5x</option>
+              <option value="1.75">1.75x</option>
+              <option value="2">2.0x</option>
+            </select>
+          </label>
 
-      <button class="control skip-control rewind" id="rewindButton" type="button" aria-label="۱۵ ثانیه عقب">
-        <span class="skip-icon-wrap">
-          <svg class="hud-icon skip-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M8 7H3.5V2.5"/><path d="M4 7a8.5 8.5 0 1 1-1 8"/></svg>
-          <strong>15</strong>
+          <button class="vp-pill vp-sleep" id="sleepButton" type="button" title="توقف خودکار">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 7v5l3 2"/>
+            </svg>
+            <span class="vp-sleep-text">توقف: <strong id="sleepValue">خاموش</strong></span>
+          </button>
+        </div>
+
+        <!-- وسط: کنترل‌های اصلی پخش -->
+        <div class="vp-group vp-group-center">
+          <button class="vp-btn vp-skip" id="rewindButton" type="button" aria-label="۱۵ ثانیه عقب" title="۱۵ ثانیه عقب">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/>
+              <path d="M3 3v5h5"/>
+            </svg>
+            <span>15</span>
+          </button>
+
+          <button class="vp-btn" id="previousButton" type="button" aria-label="قطعه قبلی" title="قطعه قبلی">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="19 20 9 12 19 4 19 20"/>
+              <line x1="5" y1="19" x2="5" y2="5"/>
+            </svg>
+          </button>
+
+          <button class="vp-play-btn" id="playButton" type="button" aria-label="پخش">
+            <span class="vp-play-icon" id="playSymbol" aria-hidden="true"></span>
+          </button>
+
+          <button class="vp-btn" id="nextButton" type="button" aria-label="قطعه بعدی" title="قطعه بعدی">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="5 4 15 12 5 20 5 4"/>
+              <line x1="19" y1="5" x2="19" y2="19"/>
+            </svg>
+          </button>
+
+          <button class="vp-btn vp-skip" id="forwardButton" type="button" aria-label="۳۰ ثانیه جلو" title="۳۰ ثانیه جلو">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 12a9 9 0 1 1-3-6.7L21 8"/>
+              <path d="M21 3v5h-5"/>
+            </svg>
+            <span>30</span>
+          </button>
+        </div>
+
+        <!-- راست: صدا، تکرار و اشتراک‌گذاری -->
+        <div class="vp-group vp-group-right">
+          <div class="vp-volume" title="بلندی صدا">
+            <button type="button" class="vp-btn vp-btn-sm" id="muteButton" aria-label="قطع یا وصل صدا">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+              </svg>
+            </button>
+            <input id="volumeBar" class="vp-range vp-vol-range" type="range" min="0" max="1" step="0.01" value="0.85" aria-label="بلندی صدا">
+          </div>
+
+          <button class="vp-btn vp-btn-sm" id="repeatButton" type="button" aria-label="تکرار خاموش" title="تکرار">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m17 2 4 4-4 4"/>
+              <path d="M3 11v-1a4 4 0 0 1 4-4h14"/>
+              <path d="m7 22-4-4 4-4"/>
+              <path d="M21 13v1a4 4 0 0 1-4 4H3"/>
+            </svg>
+          </button>
+
+          <button class="vp-btn vp-btn-sm" id="shareButton" type="button" aria-label="اشتراک‌گذاری" title="اشتراک‌گذاری">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="18" cy="5" r="3"/>
+              <circle cx="6" cy="12" r="3"/>
+              <circle cx="18" cy="19" r="3"/>
+              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <audio id="audioElement" preload="metadata"></audio>
+      <div class="vp-toast" id="playerMessage" role="status" aria-live="polite"></div>
+    </main>
+
+    <!-- فهرست کشویی عناوین پادکست‌ها (سبک مینیمال سایت) -->
+    <section class="vp-library" id="podcastLibrary" aria-label="عناوین پادکست‌ها">
+      <button class="vp-library-toggle" id="podcastLibraryToggle" type="button" aria-expanded="false" aria-controls="podcastListPanel">
+        <span class="vp-library-right">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="8" y1="6" x2="21" y2="6"/>
+            <line x1="8" y1="12" x2="21" y2="12"/>
+            <line x1="8" y1="18" x2="21" y2="18"/>
+            <line x1="3" y1="6" x2="3.01" y2="6"/>
+            <line x1="3" y1="12" x2="3.01" y2="12"/>
+            <line x1="3" y1="18" x2="3.01" y2="18"/>
+          </svg>
+          <span>عناوین پادکست‌ها</span>
+        </span>
+        <span class="vp-library-left">
+          <span class="vp-library-count" id="podcastCount">۰ اپیزود</span>
+          <svg class="vp-library-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
         </span>
       </button>
-      <button class="control round-control previous" id="previousButton" type="button" aria-label="قطعه قبلی">
-        <svg class="hud-icon transport-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M6 5v14"/><path d="m18 6-9 6 9 6z"/></svg>
-      </button>
-      <button class="control play-control" id="playButton" type="button" aria-label="پخش">
-        <span class="play-symbol" id="playSymbol" aria-hidden="true"></span>
-      </button>
-      <button class="control round-control next" id="nextButton" type="button" aria-label="قطعه بعدی">
-        <svg class="hud-icon transport-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M18 5v14"/><path d="m6 6 9 6-9 6z"/></svg>
-      </button>
-      <button class="control skip-control forward" id="forwardButton" type="button" aria-label="۳۰ ثانیه جلو">
-        <span class="skip-icon-wrap">
-          <svg class="hud-icon skip-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M16 7h4.5V2.5"/><path d="M20 7a8.5 8.5 0 1 0 1 8"/></svg>
-          <strong>30</strong>
-        </span>
-      </button>
 
-      <label class="control volume-control" title="بلندی صدا">
-        <svg class="hud-icon volume-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M4 10v4h3.5l4.5 3.5v-11L7.5 10z"/><path d="M16 9a4.5 4.5 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/></svg>
-        <input id="volumeBar" type="range" min="0" max="1" step="0.01" value="0.85"
-               aria-label="بلندی صدا">
-      </label>
-
-      <div class="control utility-control">
-        <button id="repeatButton" type="button" aria-label="تکرار خاموش" title="تکرار">
-          <svg class="hud-icon utility-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M20 7v5h-5"/><path d="M19 12a7.5 7.5 0 1 0 1 4"/></svg>
-        </button>
-        <i></i>
-        <button id="shareButton" type="button" aria-label="اشتراک‌گذاری" title="اشتراک‌گذاری">
-          <svg class="hud-icon utility-icon share-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="5" r="2.2"/><circle cx="6" cy="12" r="2.2"/><circle cx="18" cy="19" r="2.2"/><path d="m8 11 7.8-4.7M8 13l7.8 4.7"/></svg>
-        </button>
+      <div class="vp-list-panel" id="podcastListPanel" hidden>
+        <div class="vp-list" id="podcastList" aria-live="polite">
+          <p class="vp-list-empty">در حال بارگذاری عناوین پادکست‌ها...</p>
+        </div>
       </div>
-    </div>
+    </section>
+  </div>
 
-    <audio id="audioElement" preload="metadata"></audio>
-    <div class="player-message" id="playerMessage" role="status" aria-live="polite"></div>
-  </main>
-
-  <section class="podcast-library" id="podcastLibrary" aria-label="عناوین پادکست‌ها">
-    <button class="podcast-library-toggle" id="podcastLibraryToggle"
-            type="button" aria-expanded="false" aria-controls="podcastListPanel">
-      <span class="podcast-library-heading">عناوین پادکست‌ها</span>
-      <span class="podcast-library-chevron" aria-hidden="true">⌄</span>
-    </button>
-    <div class="podcast-list-panel" id="podcastListPanel" hidden>
-      <div class="podcast-list" id="podcastList" aria-live="polite">
-        <p class="podcast-list-empty">در حال بارگذاری عناوین پادکست‌ها...</p>
-      </div>
-    </div>
-  </section>
-  <script src="player.js"></script>
-  <script src="playlist.js"></script>
+  <script src="player.js?v=3"></script>
+  <script src="playlist.js?v=3"></script>
 </body>
 </html>
