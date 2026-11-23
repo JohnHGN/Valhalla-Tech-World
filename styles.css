@@ -1,14 +1,13 @@
 @charset "UTF-8";
 
 /* =========================================================
-   Valhalla Tech World — Clean Minimal Dark UI (TweakFa Style)
-   No Glassmorphism | Matte Surfaces | Wine Red Accent
+   Valhalla Tech World — Minimal Editorial UI (TweakFa Style)
+   Matte Surfaces | Frameless Accordion Categories | Wine Red
    ========================================================= */
 
 :root {
   color-scheme: dark;
 
-  /* سطوح مات و تفکیک‌شده بدون شیشه‌ای‌سازی */
   --bg: #09090b;
   --bg-alt: #0d0d10;
   --surface: #121216;
@@ -16,11 +15,10 @@
   --surface-elevated: #16161b;
   --surface-inset: #0c0c0f;
 
-  /* خطوط مرزی دقیق و مینیمال */
   --border: #222228;
   --border-strong: #303039;
 
-  /* پالت قرمز شرابی کنترل‌شده */
+  /* پالت قرمز شرابی */
   --accent: #9f1239;
   --accent-hover: #be123c;
   --accent-bright: #f43f5e;
@@ -29,13 +27,11 @@
   --accent-surface-hover: #2b111a;
   --accent-border: #5c182c;
 
-  /* تایپوگرافی و خوانایی بالا */
   --text: #f4f4f5;
   --text-secondary: #a1a1aa;
   --text-muted: #71717a;
   --on-accent: #fff5f7;
 
-  /* انحنای مهندسی‌شده و یکپارچه */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -47,7 +43,7 @@
 
   --container: 1120px;
   --nav-h: 66px;
-  --transition: 0.18s ease;
+  --transition: 0.2s ease;
 }
 
 *,
@@ -138,7 +134,6 @@ article[id] {
   display: none !important;
 }
 
-/* حذف شلوغی پس‌زمینه — فقط بوم تمیز و یکدست */
 .bg-grid,
 .bg-glow {
   display: none;
@@ -156,7 +151,7 @@ article[id] {
 }
 
 /* =========================================================
-   دکمه‌ها (مرتب، یک‌دست و بدون جلوه‌های شیشه‌ای یا نئونی)
+   دکمه‌ها
    ========================================================= */
 .btn {
   display: inline-flex;
@@ -261,7 +256,7 @@ article[id] {
 }
 
 /* =========================================================
-   هدر و منو (تک‌خطی، مات و منظم مثل توییک‌فا)
+   هدر و منو
    ========================================================= */
 .navbar {
   position: sticky;
@@ -422,7 +417,7 @@ article[id] {
 }
 
 /* =========================================================
-   جست‌وجوی سریع (مات و منظم)
+   جست‌وجوی سریع
    ========================================================= */
 .quick-search {
   position: absolute;
@@ -554,7 +549,7 @@ article[id] {
 }
 
 /* =========================================================
-   بخش ۱: هیرو (ساده، متمرکز و شیک مثل توییک‌فا)
+   بخش ۱: هیرو
    ========================================================= */
 .hero {
   padding: 88px 0 72px;
@@ -619,7 +614,6 @@ article[id] {
   margin-bottom: 36px;
 }
 
-/* نوار میان‌برهای سریع زیر دکمه‌های اصلی */
 .quick-bar {
   display: flex;
   align-items: center;
@@ -692,7 +686,7 @@ article[id] {
 .section-head {
   text-align: center;
   max-width: 640px;
-  margin: 0 auto 40px;
+  margin: 0 auto 42px;
 }
 
 .section-label {
@@ -728,7 +722,7 @@ article[id] {
 }
 
 /* =========================================================
-   بخش ۲: کارت‌های خدمات و سیم‌کارت فیزیکی (کاملاً مات و منظم)
+   بخش ۲: خدمات و سیم‌کارت فیزیکی
    ========================================================= */
 .offer-grid {
   display: grid;
@@ -739,7 +733,7 @@ article[id] {
 .offer-card {
   background-color: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   padding: 26px;
   display: flex;
   flex-direction: column;
@@ -753,7 +747,6 @@ article[id] {
 
 .offer-featured {
   grid-column: 1 / -1;
-  background-color: var(--surface);
   border-color: var(--accent-border);
 }
 
@@ -869,7 +862,7 @@ article[id] {
   color: var(--text-muted);
 }
 
-/* سیم‌کارت فیزیکی (تب‌بندی منظم سگمنت‌دار) */
+/* سیم‌کارت فیزیکی */
 .physical-sim-card {
   grid-column: 1 / -1;
 }
@@ -895,7 +888,7 @@ article[id] {
   font-size: 0.84rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color var(--transition), color var(--transition), border-color var(--transition);
+  transition: background-color var(--transition), color var(--transition);
 }
 
 .sim-tab:hover {
@@ -998,118 +991,287 @@ article[id] {
 }
 
 /* =========================================================
-   بخش ۳: مقالات (فیلتر سگمنت‌دار + کارت‌های مات منظم)
+   بخش ۳: آکادمی و دسته‌بندی‌ها — الگوی توییک آکادمی (توییک‌فا)
+   بدون کادربندی جعبه‌ای | کلیک روی هر دسته = باز شدن جزئیات زیر آن
    ========================================================= */
+.academy-filters.is-replaced {
+  display: none !important;
+}
+
+.academy-grid.is-replaced {
+  display: none !important;
+}
+
+/* ساختار فهرست کشویی بدون کادر */
+.academy-accordion {
+  max-width: 920px;
+  margin: 0 auto;
+  border-top: 1px solid var(--border);
+}
+
+.academy-group {
+  border-bottom: 1px solid var(--border);
+  transition: border-color var(--transition);
+}
+
+.academy-group.is-open {
+  border-bottom-color: var(--accent-border);
+}
+
+.academy-group-trigger {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 22px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  text-align: right;
+  cursor: pointer;
+  transition: background-color var(--transition);
+}
+
+.academy-group-trigger:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.academy-group-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.academy-group-index {
+  font-family: var(--font-en-heading);
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  min-width: 26px;
+  transition: color var(--transition);
+}
+
+.academy-group-trigger:hover .academy-group-index,
+.academy-group.is-open .academy-group-index {
+  color: var(--accent-text);
+}
+
+.academy-group-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.academy-group-title {
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.4;
+  transition: color var(--transition);
+}
+
+.academy-group-trigger:hover .academy-group-title,
+.academy-group.is-open .academy-group-title {
+  color: var(--accent-text);
+}
+
+.academy-group-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.academy-group-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.academy-group-count {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  transition: border-color var(--transition), color var(--transition), background-color var(--transition);
+}
+
+.academy-group.is-open .academy-group-count {
+  background-color: var(--accent-surface);
+  border-color: var(--accent-border);
+  color: var(--accent-text);
+}
+
+.academy-group-chevron {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: transform 0.24s ease, color var(--transition);
+}
+
+.academy-group.is-open .academy-group-chevron {
+  transform: rotate(180deg);
+  color: var(--accent-text);
+}
+
+/* پنل بازشونده دقیقاً زیر دسته‌بندی */
+.academy-group-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.academy-group.is-open .academy-group-panel {
+  grid-template-rows: 1fr;
+}
+
+.academy-group-panel-inner {
+  overflow: hidden;
+}
+
+.academy-group-items {
+  margin: 0 22px 24px 8px;
+  padding: 4px 20px 4px 0;
+  border-right: 2px solid var(--accent-border);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ردیف‌های جزئیات داخل هر دسته‌بندی (کاملاً بدون کادر جعبه‌ای) */
+.academy-group-items .academy-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 6px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  transition: background-color var(--transition), padding-inline-start var(--transition);
+}
+
+.academy-group-items .academy-card:last-child {
+  border-bottom: none;
+  padding-bottom: 6px;
+}
+
+.academy-group-items .academy-card:hover {
+  background-color: transparent;
+}
+
+.academy-group-items a.academy-card:hover {
+  padding-inline-start: 10px;
+}
+
+.academy-group-items .academy-card-ai {
+  background: transparent;
+  border-color: var(--border);
+}
+
+.academy-group-items .academy-number {
+  position: static;
+  display: inline-block;
+  font-family: var(--font-en-heading);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.academy-group-items .academy-type {
+  font-family: var(--font-en-heading);
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  color: var(--accent-text);
+  margin-bottom: 4px;
+  direction: ltr;
+  text-align: right;
+  padding-left: 0;
+}
+
+.academy-group-items .academy-card h3 {
+  font-size: 0.98rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+  line-height: 1.5;
+  color: var(--text);
+  transition: color var(--transition);
+}
+
+.academy-group-items a.academy-card:hover h3 {
+  color: var(--accent-text);
+}
+
+.academy-group-items .academy-card p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.85;
+  max-width: 760px;
+}
+
+.academy-group-items .academy-arrow {
+  margin-top: 8px;
+  color: var(--accent-text);
+  font-size: 0.84rem;
+  font-weight: 700;
+  align-self: flex-start;
+  transition: transform var(--transition);
+}
+
+.academy-group-items a.academy-card:hover .academy-arrow {
+  transform: translateX(-4px);
+}
+
+/* حالت فالبک قبل از اجرای JS */
 .academy-filters {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 28px;
+  gap: 8px;
+  margin-bottom: 24px;
 }
 
 .academy-filter {
   height: 36px;
   padding: 0 16px;
   border-radius: var(--radius-sm);
-  background-color: var(--surface);
-  border: 1px solid var(--border);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
   color: var(--text-secondary);
-  font-size: 0.84rem;
+  font-size: 0.86rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color var(--transition), border-color var(--transition), color var(--transition);
-}
-
-.academy-filter:hover {
-  border-color: var(--border-strong);
-  color: var(--text);
 }
 
 .academy-filter.is-active {
-  background-color: var(--accent);
-  border-color: var(--accent);
-  color: var(--on-accent);
+  color: var(--accent-text);
+  border-bottom-color: var(--accent);
 }
 
 .academy-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-}
-
-.academy-card {
-  position: relative;
+  max-width: 920px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  border-radius: var(--radius-md);
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  transition: border-color var(--transition), background-color var(--transition);
-}
-
-.academy-card:hover {
-  border-color: var(--accent-border);
-  background-color: var(--surface-hover);
-}
-
-.academy-number {
-  position: absolute;
-  top: 18px;
-  left: 18px;
-  font-family: var(--font-en-heading);
-  font-size: 0.72rem;
-  color: var(--text-muted);
-}
-
-.academy-type {
-  font-family: var(--font-en-heading);
-  font-size: 0.66rem;
-  letter-spacing: 0.1em;
-  color: var(--accent-text);
-  margin-bottom: 10px;
-  direction: ltr;
-  text-align: right;
-  padding-left: 34px;
-}
-
-.academy-card h3 {
-  font-size: 0.98rem;
-  font-weight: 700;
-  margin-bottom: 8px;
-  line-height: 1.5;
-}
-
-.academy-card p {
-  font-size: 0.84rem;
-  color: var(--text-secondary);
-  line-height: 1.85;
-  flex: 1;
-}
-
-.academy-arrow {
-  margin-top: 14px;
-  color: var(--accent-text);
-  font-size: 0.88rem;
-  font-weight: 700;
-  align-self: flex-end;
-}
-
-.academy-card-ai {
-  border-color: var(--accent-border);
-  background-color: var(--surface);
 }
 
 .prompt-article {
-  grid-column: span 3;
+  grid-column: auto;
 }
 
 .prompt-source-link {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-top: 14px;
+  margin-top: 12px;
   color: var(--accent-text);
   font-size: 0.85rem;
   font-weight: 700;
@@ -1121,22 +1283,22 @@ article[id] {
 }
 
 .pdf-reader {
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px solid var(--border);
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
 }
 
 .pdf-reader summary {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  height: 36px;
-  padding: 0 15px;
+  height: 34px;
+  padding: 0 14px;
   border-radius: var(--radius-sm);
   background-color: var(--accent-surface);
   border: 1px solid var(--accent-border);
   color: var(--accent-text);
-  font-size: 0.83rem;
+  font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
   list-style: none;
@@ -1152,9 +1314,9 @@ article[id] {
 }
 
 .pdf-reader-frame {
-  height: min(74vh, 720px);
-  min-height: 400px;
-  margin-top: 14px;
+  height: min(72vh, 680px);
+  min-height: 380px;
+  margin-top: 12px;
   border-radius: var(--radius-sm);
   overflow: hidden;
   border: 1px solid var(--border-strong);
@@ -1171,7 +1333,7 @@ article[id] {
 .pdf-download-link {
   display: inline-flex;
   margin-top: 10px;
-  font-size: 0.83rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: var(--accent-text);
 }
@@ -1184,7 +1346,7 @@ article[id] {
   max-width: 1080px;
   min-height: 560px;
   margin: 0 auto;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid var(--border);
   background-color: var(--surface);
@@ -1475,7 +1637,7 @@ article[id] {
 .guide-panel {
   background-color: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   padding: 26px;
 }
 
@@ -1676,24 +1838,22 @@ article[id] {
 }
 
 /* =========================================================
-   سوالات متداول (آکاردئون مینیمال و مرتب)
+   سوالات متداول (آکاردئون بدون کادر اضافه)
    ========================================================= */
 .faq-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  border-top: 1px solid var(--border);
 }
 
 .faq-item {
-  background-color: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
   overflow: hidden;
-  transition: border-color var(--transition);
 }
 
 .faq-item[open] {
-  border-color: var(--accent-border);
+  border-bottom-color: var(--accent-border);
 }
 
 .faq-item summary {
@@ -1701,11 +1861,17 @@ article[id] {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 16px 18px;
-  font-size: 0.92rem;
+  padding: 18px 6px;
+  font-size: 0.94rem;
   font-weight: 600;
   cursor: pointer;
   list-style: none;
+  transition: color var(--transition);
+}
+
+.faq-item summary:hover,
+.faq-item[open] summary {
+  color: var(--accent-text);
 }
 
 .faq-item summary::-webkit-details-marker {
@@ -1724,20 +1890,20 @@ article[id] {
 }
 
 .faq-item p {
-  padding: 0 18px 16px;
-  font-size: 0.87rem;
+  padding: 0 6px 18px;
+  font-size: 0.88rem;
   color: var(--text-secondary);
   line-height: 1.85;
 }
 
 .support-note {
-  margin-top: 16px;
+  margin-top: 18px;
   font-size: 0.83rem;
   color: var(--text-muted);
 }
 
 /* =========================================================
-   فوتر چندستونه (ساده و مرتب)
+   فوتر
    ========================================================= */
 .footer {
   border-top: 1px solid var(--border);
@@ -1809,7 +1975,7 @@ article[id] {
 }
 
 /* =========================================================
-   دستیار هوشمند والهالا (مات، بدون شیشه، خوانا)
+   دستیار هوشمند والهالا (مات و خوانا)
    ========================================================= */
 .ai-fab {
   position: fixed;
@@ -2078,14 +2244,6 @@ article[id] {
     display: flex;
   }
 
-  .academy-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .prompt-article {
-    grid-column: span 2;
-  }
-
   .footer-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -2127,6 +2285,15 @@ article[id] {
     padding: 20px;
   }
 
+  .academy-group-trigger {
+    padding: 18px 4px;
+  }
+
+  .academy-group-items {
+    margin: 0 10px 20px 0;
+    padding: 4px 14px 4px 0;
+  }
+
   .podcast-player-frame,
   .podcast-player-frame iframe {
     min-height: 460px;
@@ -2139,13 +2306,8 @@ article[id] {
     display: none;
   }
 
-  .academy-grid,
   .footer-grid {
     grid-template-columns: 1fr;
-  }
-
-  .prompt-article {
-    grid-column: span 1;
   }
 
   .quick-search {
