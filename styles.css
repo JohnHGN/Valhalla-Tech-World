@@ -72,6 +72,21 @@ input {
   color: inherit;
 }
 
+code {
+  font-family: var(--font-en);
+  background: rgba(20, 184, 166, 0.12);
+  color: var(--accent-bright);
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.84rem;
+}
+
+.inline-link {
+  color: var(--accent-bright);
+  font-weight: 600;
+  border-bottom: 1px dashed var(--accent-border);
+}
+
 section[id] {
   scroll-margin-top: calc(var(--nav-h) + 16px);
 }
@@ -114,7 +129,7 @@ section[id] {
 }
 
 /* =========================================================
-   دکمه‌ها (Buttons)
+   دکمه‌ها
    ========================================================= */
 .btn {
   display: inline-flex;
@@ -122,7 +137,7 @@ section[id] {
   justify-content: center;
   gap: 8px;
   font-weight: 600;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   padding: 11px 20px;
   border-radius: var(--radius-pill);
   border: 1px solid transparent;
@@ -132,13 +147,17 @@ section[id] {
 }
 
 .btn-sm {
-  font-size: 0.85rem;
-  padding: 8px 16px;
+  font-size: 0.83rem;
+  padding: 8px 15px;
 }
 
 .btn-lg {
   font-size: 0.96rem;
   padding: 13px 26px;
+}
+
+.btn-full {
+  width: 100%;
 }
 
 .btn-primary {
@@ -187,13 +206,13 @@ section[id] {
 }
 
 /* =========================================================
-   هدر و ناوبری (لوگوی ترنسپرنت در گوشه سمت راست بالا)
+   هدر و ناوبری
    ========================================================= */
 .navbar {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(7, 9, 13, 0.78);
+  background: rgba(7, 9, 13, 0.8);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--border);
@@ -218,21 +237,20 @@ section[id] {
   flex-shrink: 0;
 }
 
-/* لوگوی بدون کادر و ترنسپرنت در گوشه بالا سمت راست */
 .brand-logo {
-  height: 48px;
+  height: 50px;
   width: auto;
-  max-width: 56px;
+  max-width: 60px;
   object-fit: contain;
   background: transparent;
   border: none;
   border-radius: 0;
-  filter: drop-shadow(0 4px 12px rgba(20, 184, 166, 0.28));
+  filter: drop-shadow(0 4px 12px rgba(20, 184, 166, 0.3));
   transition: transform var(--transition);
 }
 
 .brand:hover .brand-logo {
-  transform: scale(1.04);
+  transform: scale(1.05);
 }
 
 .brand-fallback {
@@ -256,7 +274,6 @@ section[id] {
 .brand-name {
   font-size: 0.98rem;
   font-weight: 800;
-  letter-spacing: -0.01em;
 }
 
 .brand-sub {
@@ -270,18 +287,18 @@ section[id] {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
 }
 
 .nav-links a {
-  font-size: 0.89rem;
+  font-size: 0.88rem;
   font-weight: 500;
   color: var(--text-secondary);
   transition: color var(--transition);
 }
 
 .nav-links a:hover {
-  color: var(--text);
+  color: var(--accent-bright);
 }
 
 .nav-actions {
@@ -310,7 +327,6 @@ section[id] {
   width: 100%;
   background: var(--text);
   border-radius: 2px;
-  transition: transform var(--transition), opacity var(--transition);
 }
 
 .mobile-menu {
@@ -350,10 +366,10 @@ section[id] {
 }
 
 /* =========================================================
-   بخش ۱: هیرو (Hero)
+   هیرو و سکشن‌ها
    ========================================================= */
 .hero {
-  padding: 90px 0 70px;
+  padding: 88px 0 68px;
   text-align: center;
 }
 
@@ -385,7 +401,7 @@ section[id] {
 }
 
 .hero-title {
-  font-size: clamp(2.1rem, 5vw, 3.45rem);
+  font-size: clamp(2.1rem, 5vw, 3.4rem);
   font-weight: 900;
   line-height: 1.3;
   letter-spacing: -0.02em;
@@ -400,9 +416,9 @@ section[id] {
 }
 
 .hero-desc {
-  font-size: 1.05rem;
+  font-size: 1.03rem;
   color: var(--text-secondary);
-  max-width: 630px;
+  max-width: 650px;
   margin: 0 auto 32px;
   line-height: 1.85;
 }
@@ -413,7 +429,7 @@ section[id] {
   justify-content: center;
   flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 44px;
+  margin-bottom: 42px;
 }
 
 .quick-bar {
@@ -449,11 +465,8 @@ section[id] {
   transform: translateY(-1px);
 }
 
-/* =========================================================
-   ساختار عمومی سکشن‌ها
-   ========================================================= */
 .section {
-  padding: 84px 0;
+  padding: 80px 0;
 }
 
 .section-alt {
@@ -464,8 +477,8 @@ section[id] {
 
 .section-head {
   text-align: center;
-  max-width: 660px;
-  margin: 0 auto 42px;
+  max-width: 680px;
+  margin: 0 auto 38px;
 }
 
 .section-label {
@@ -479,7 +492,7 @@ section[id] {
 }
 
 .section-title {
-  font-size: clamp(1.55rem, 3.2vw, 2.25rem);
+  font-size: clamp(1.55rem, 3.2vw, 2.2rem);
   font-weight: 800;
   line-height: 1.35;
   margin-bottom: 12px;
@@ -487,44 +500,64 @@ section[id] {
 
 .section-sub {
   color: var(--text-secondary);
-  font-size: 0.98rem;
+  font-size: 0.96rem;
 }
 
 /* =========================================================
-   بخش ۲: ویترین تعاملی
+   تب‌های مشترک
    ========================================================= */
-.feature-tabs {
+.feature-tabs,
+.platform-tabs,
+.sim-tabs,
+.academy-tabs,
+.profile-chips,
+.article-filters {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 28px;
+  margin-bottom: 26px;
 }
 
-.feature-tab {
-  padding: 10px 20px;
+.feature-tab,
+.platform-tab,
+.sim-tab,
+.academy-tab,
+.chip {
+  padding: 9px 18px;
   border-radius: var(--radius-pill);
   background: var(--surface);
   border: 1px solid var(--border);
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition);
 }
 
-.feature-tab:hover {
+.feature-tab:hover,
+.platform-tab:hover,
+.sim-tab:hover,
+.academy-tab:hover,
+.chip:hover {
   color: var(--text);
   border-color: var(--border-strong);
 }
 
-.feature-tab.active {
+.feature-tab.active,
+.platform-tab.active,
+.sim-tab.active,
+.academy-tab.active,
+.chip.active {
   background: var(--accent-soft);
   border-color: var(--accent-border);
   color: var(--accent-bright);
   box-shadow: 0 0 20px -6px var(--accent-glow);
 }
 
+/* =========================================================
+   ویترین تعاملی (بخش ۲)
+   ========================================================= */
 .showcase-card {
   display: grid;
   grid-template-columns: 1fr 1.05fr;
@@ -534,32 +567,35 @@ section[id] {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 34px;
-  box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.7);
 }
 
-.showcase-badge {
+.showcase-badge,
+.sim-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 600;
   color: var(--accent-bright);
   background: var(--accent-soft);
-  padding: 4px 12px;
+  border: 1px solid rgba(20, 184, 166, 0.25);
+  padding: 3px 11px;
   border-radius: var(--radius-pill);
+}
+
+.showcase-badge {
   margin-bottom: 14px;
 }
 
 .showcase-info h3 {
-  font-size: 1.55rem;
+  font-size: 1.5rem;
   font-weight: 800;
   margin-bottom: 10px;
-  line-height: 1.4;
 }
 
 .showcase-info > p {
   color: var(--text-secondary);
-  font-size: 0.95rem;
+  font-size: 0.94rem;
   margin-bottom: 22px;
 }
 
@@ -567,8 +603,8 @@ section[id] {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 26px;
+  gap: 10px;
+  margin-bottom: 24px;
 }
 
 .feature-list li {
@@ -580,7 +616,7 @@ section[id] {
   border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
 }
 
 .feature-list-text {
@@ -595,7 +631,7 @@ section[id] {
 }
 
 .tier-tag {
-  font-size: 0.74rem;
+  font-size: 0.73rem;
   font-weight: 600;
   padding: 2px 9px;
   border-radius: var(--radius-pill);
@@ -620,17 +656,6 @@ section[id] {
   padding: 22px;
   position: relative;
   overflow: hidden;
-}
-
-.visual-panel::before {
-  content: "";
-  position: absolute;
-  top: -60px;
-  left: -60px;
-  width: 220px;
-  height: 220px;
-  background: radial-gradient(circle, rgba(20, 184, 166, 0.16), transparent 70%);
-  pointer-events: none;
 }
 
 .visual-top {
@@ -674,10 +699,8 @@ section[id] {
 }
 
 .v-stat-value {
-  font-size: 1.15rem;
+  font-size: 1.12rem;
   font-weight: 800;
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
 }
 
 .v-stat-value.accent {
@@ -708,40 +731,496 @@ section[id] {
 }
 
 /* =========================================================
-   بخش ۳: مقایسه قبل و بعد
+   بخش ۳: راهنمای اتصال به تفکیک هر برنامه + دانلود
    ========================================================= */
-.profile-chips {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 24px;
-}
-
-.chip {
-  padding: 8px 16px;
-  border-radius: var(--radius-pill);
+.guide-box {
   background: var(--surface);
   border: 1px solid var(--border);
-  color: var(--text-secondary);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+}
+
+.guide-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-bottom: 20px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.app-selector-wrap {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.guide-label {
   font-size: 0.86rem;
-  font-weight: 500;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.app-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.app-tab {
+  font-family: var(--font-en);
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+  background: #0a0e14;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all var(--transition);
 }
 
-.chip:hover {
+.app-tab:hover {
   border-color: var(--border-strong);
   color: var(--text);
 }
 
-.chip.active {
+.app-tab.active {
   background: var(--accent-soft);
   border-color: var(--accent-border);
   color: var(--accent-bright);
-  font-weight: 700;
 }
 
+.app-downloads {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.app-meta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  background: rgba(20, 184, 166, 0.06);
+  border: 1px solid rgba(20, 184, 166, 0.22);
+  margin-bottom: 22px;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.app-meta-bar strong {
+  color: var(--text);
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.step-card {
+  background: #0b0f16;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px;
+}
+
+.step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  color: var(--accent-bright);
+  font-family: var(--font-en);
+  font-weight: 700;
+  font-size: 0.86rem;
+  margin-bottom: 14px;
+}
+
+.step-card h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.step-card p {
+  font-size: 0.87rem;
+  color: var(--text-secondary);
+  line-height: 1.78;
+}
+
+/* =========================================================
+   بخش ۴: سیم‌کارت‌های بین‌المللی فیزیکی و مجازی
+   ========================================================= */
+.sim-panel,
+.academy-panel {
+  display: none;
+}
+
+.sim-panel.active,
+.academy-panel.active {
+  display: block;
+}
+
+.sim-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.sim-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition), border-color var(--transition);
+}
+
+.sim-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-border);
+}
+
+.sim-visual-wrap {
+  padding: 18px 18px 8px;
+  background: linear-gradient(180deg, rgba(20, 184, 166, 0.07) 0%, transparent 100%);
+}
+
+.sim-chip-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.45));
+}
+
+.sim-body {
+  padding: 18px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.sim-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.sim-title-row h3 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.sim-desc {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.75;
+}
+
+.sim-specs {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.sim-specs li {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  padding-right: 16px;
+  position: relative;
+}
+
+.sim-specs li::before {
+  content: "•";
+  color: var(--accent-bright);
+  font-weight: 900;
+  position: absolute;
+  right: 0;
+}
+
+.sim-specs strong {
+  color: var(--text);
+}
+
+.virtual-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.virtual-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+}
+
+.virtual-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.virtual-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  color: var(--accent-bright);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.virtual-head h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin-top: 4px;
+}
+
+.virtual-note {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(20, 184, 166, 0.06);
+  border: 1px solid rgba(20, 184, 166, 0.2);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-bottom: 18px;
+}
+
+/* =========================================================
+   بخش ۵: آکادمی (مقالات، PDFها، پادکست‌ها)
+   ========================================================= */
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.article-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  transition: transform var(--transition), border-color var(--transition);
+}
+
+.article-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-border);
+}
+
+.article-card h3 {
+  font-size: 0.98rem;
+  font-weight: 700;
+  margin-top: 8px;
+  margin-bottom: 6px;
+}
+
+.article-card p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.academy-footer-cta {
+  text-align: center;
+  margin-top: 26px;
+}
+
+.pdfs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.pdf-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pdf-badge-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pdf-type {
+  font-family: var(--font-en);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.pdf-card h3 {
+  font-size: 1.08rem;
+  font-weight: 800;
+}
+
+.pdf-card p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  flex: 1;
+}
+
+.pdf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+/* پلیر پادکست */
+.podcast-player-shell {
+  max-width: 860px;
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+}
+
+.podcast-now-playing {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.podcast-now-playing h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.podcast-now-playing p {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+}
+
+.podcast-status-pill {
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  color: var(--accent-bright);
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.custom-audio-el {
+  width: 100%;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  accent-color: var(--accent);
+}
+
+.podcast-alert {
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(244, 63, 94, 0.1);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  color: #fda4af;
+  font-size: 0.84rem;
+  margin-bottom: 16px;
+}
+
+.podcast-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.podcast-item {
+  width: 100%;
+  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: #0b0f16;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.podcast-item:hover,
+.podcast-item.active {
+  border-color: var(--accent-border);
+  background: rgba(20, 184, 166, 0.08);
+}
+
+.podcast-item-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.podcast-play-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  color: var(--accent-bright);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.podcast-item strong {
+  display: block;
+  font-size: 0.92rem;
+}
+
+.podcast-item span {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* =========================================================
+   مقایسه قبل و بعد
+   ========================================================= */
 .compare-card {
   max-width: 880px;
   margin: 0 auto;
@@ -807,7 +1286,6 @@ section[id] {
   font-size: 0.86rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all var(--transition);
 }
 
 .seg-btn.active {
@@ -839,10 +1317,6 @@ section[id] {
   font-size: 0.9rem;
 }
 
-.metric-header strong {
-  font-variant-numeric: tabular-nums;
-}
-
 .metric-track {
   height: 10px;
   background: #0a0e14;
@@ -854,7 +1328,7 @@ section[id] {
 .metric-fill {
   height: 100%;
   border-radius: var(--radius-pill);
-  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease;
+  transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .metric-fill.good {
@@ -866,123 +1340,7 @@ section[id] {
 }
 
 /* =========================================================
-   بخش ۴: راهنمای ۳ مرحله‌ای اتصال
-   ========================================================= */
-.platform-tabs {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 24px;
-}
-
-.platform-tab {
-  padding: 9px 18px;
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  color: var(--text-secondary);
-  font-size: 0.88rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-
-.platform-tab.active {
-  background: var(--accent-soft);
-  border-color: var(--accent-border);
-  color: var(--accent-bright);
-}
-
-.guide-box {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 28px;
-}
-
-.guide-apps-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding-bottom: 20px;
-  margin-bottom: 24px;
-  border-bottom: 1px solid var(--border);
-}
-
-.guide-apps-title {
-  font-size: 0.88rem;
-  color: var(--text-secondary);
-}
-
-.guide-app-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.app-badge {
-  font-family: var(--font-en);
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 5px 12px;
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border);
-  color: var(--text);
-}
-
-.app-badge.recommended {
-  background: var(--accent-soft);
-  border-color: var(--accent-border);
-  color: var(--accent-bright);
-}
-
-.steps-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-}
-
-.step-card {
-  background: #0b0f16;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 22px;
-}
-
-.step-num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  background: var(--accent-soft);
-  border: 1px solid var(--accent-border);
-  color: var(--accent-bright);
-  font-family: var(--font-en);
-  font-weight: 700;
-  font-size: 0.86rem;
-  margin-bottom: 14px;
-}
-
-.step-card h4 {
-  font-size: 1.02rem;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.step-card p {
-  font-size: 0.88rem;
-  color: var(--text-secondary);
-  line-height: 1.75;
-}
-
-/* =========================================================
-   بخش ۵: شبکه خدمات
+   شبکه خدمات و کامیونیتی
    ========================================================= */
 .services-grid {
   display: grid;
@@ -997,13 +1355,12 @@ section[id] {
   padding: 26px;
   display: flex;
   flex-direction: column;
-  transition: transform var(--transition), border-color var(--transition), background var(--transition);
+  transition: transform var(--transition), border-color var(--transition);
 }
 
 .service-card:hover {
   transform: translateY(-3px);
   border-color: var(--accent-border);
-  background: var(--surface-hover);
 }
 
 .service-icon {
@@ -1020,15 +1377,15 @@ section[id] {
 }
 
 .service-card h3 {
-  font-size: 1.08rem;
+  font-size: 1.06rem;
   font-weight: 700;
   margin-bottom: 10px;
 }
 
 .service-card p {
-  font-size: 0.9rem;
+  font-size: 0.89rem;
   color: var(--text-secondary);
-  margin-bottom: 20px;
+  margin-bottom: 18px;
   flex: 1;
 }
 
@@ -1036,57 +1393,8 @@ section[id] {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 600;
-  color: var(--accent-bright);
-  transition: gap var(--transition);
-}
-
-.service-card:hover .card-link {
-  gap: 10px;
-}
-
-/* =========================================================
-   بخش ۶: نظرات و کامیونیتی
-   ========================================================= */
-.reviews-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-  margin-bottom: 32px;
-}
-
-.review-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 18px;
-}
-
-.review-card p {
-  font-size: 0.92rem;
-  color: var(--text);
-  line-height: 1.8;
-}
-
-.review-card footer {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  border-top: 1px solid var(--border);
-  padding-top: 12px;
-}
-
-.review-card strong {
-  font-size: 0.9rem;
-}
-
-.review-card span {
-  font-size: 0.78rem;
   color: var(--accent-bright);
 }
 
@@ -1103,13 +1411,13 @@ section[id] {
 }
 
 .community-text h3 {
-  font-size: 1.25rem;
+  font-size: 1.22rem;
   font-weight: 800;
   margin-bottom: 6px;
 }
 
 .community-text p {
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   color: var(--text-secondary);
 }
 
@@ -1120,7 +1428,7 @@ section[id] {
 }
 
 /* =========================================================
-   بخش ۷: سوالات پرتکرار (FAQ)
+   FAQ و فوتر
    ========================================================= */
 .faq-list {
   display: flex;
@@ -1133,7 +1441,6 @@ section[id] {
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   overflow: hidden;
-  transition: border-color var(--transition);
 }
 
 .faq-item.open {
@@ -1150,17 +1457,15 @@ section[id] {
   justify-content: space-between;
   gap: 16px;
   text-align: right;
-  font-size: 0.96rem;
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
 }
 
 .faq-plus {
   font-size: 1.35rem;
-  font-weight: 400;
   color: var(--accent-bright);
   transition: transform var(--transition);
-  line-height: 1;
 }
 
 .faq-item.open .faq-plus {
@@ -1175,14 +1480,11 @@ section[id] {
 
 .faq-a p {
   padding: 0 22px 20px;
-  font-size: 0.9rem;
+  font-size: 0.89rem;
   color: var(--text-secondary);
   line-height: 1.85;
 }
 
-/* =========================================================
-   فوتر (Footer)
-   ========================================================= */
 .footer {
   border-top: 1px solid var(--border);
   background: #06080b;
@@ -1208,7 +1510,6 @@ section[id] {
   font-size: 0.92rem;
   font-weight: 700;
   margin-bottom: 14px;
-  color: var(--text);
 }
 
 .footer-col ul {
@@ -1221,7 +1522,6 @@ section[id] {
 .footer-col a {
   font-size: 0.86rem;
   color: var(--text-secondary);
-  transition: color var(--transition);
 }
 
 .footer-col a:hover {
@@ -1246,12 +1546,8 @@ section[id] {
   font-family: var(--font-en);
 }
 
-.footer-handles a:hover {
-  color: var(--accent-bright);
-}
-
 /* =========================================================
-   دستیار هوشمند شناور والهالا (Bulletproof AI Drawer)
+   دستیار هوشمند شناور
    ========================================================= */
 .ai-fab {
   position: fixed;
@@ -1270,12 +1566,6 @@ section[id] {
   border: none;
   cursor: pointer;
   box-shadow: 0 10px 30px -4px rgba(20, 184, 166, 0.52);
-  transition: transform var(--transition), box-shadow var(--transition);
-}
-
-.ai-fab:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 36px -4px rgba(20, 184, 166, 0.72);
 }
 
 .ai-drawer {
@@ -1300,18 +1590,6 @@ section[id] {
 
 .ai-drawer.open {
   display: flex;
-  animation: drawerPop 0.22s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-@keyframes drawerPop {
-  from {
-    opacity: 0;
-    transform: translateY(14px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
 }
 
 .ai-header {
@@ -1339,7 +1617,6 @@ section[id] {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  color: var(--accent-bright);
 }
 
 .ai-header h4 {
@@ -1372,12 +1649,6 @@ section[id] {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all var(--transition);
-}
-
-.ai-icon-btn:hover {
-  color: var(--accent-bright);
-  border-color: var(--accent-border);
 }
 
 .ai-messages {
@@ -1402,7 +1673,6 @@ section[id] {
   align-self: flex-start;
   background: var(--surface-elevated);
   border: 1px solid var(--border);
-  color: var(--text);
   border-top-right-radius: 4px;
 }
 
@@ -1431,12 +1701,6 @@ section[id] {
   color: var(--text-secondary);
   font-size: 0.76rem;
   cursor: pointer;
-  transition: all var(--transition);
-}
-
-.ai-prompt-chip:hover {
-  border-color: var(--accent-border);
-  color: var(--accent-bright);
 }
 
 .ai-input-row {
@@ -1454,11 +1718,6 @@ section[id] {
   padding: 9px 14px;
   font-size: 0.86rem;
   outline: none;
-  transition: border-color var(--transition);
-}
-
-.ai-input-row input:focus {
-  border-color: var(--accent-border);
 }
 
 .ai-send-btn {
@@ -1472,22 +1731,12 @@ section[id] {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: filter var(--transition);
-}
-
-.ai-send-btn:hover {
-  filter: brightness(1.1);
-}
-
-.ai-send-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 /* =========================================================
-   واکنش‌گرایی (Responsive)
+   واکنش‌گرایی
    ========================================================= */
-@media (max-width: 960px) {
+@media (max-width: 1024px) {
   .nav-links,
   #navAiBtn {
     display: none;
@@ -1502,8 +1751,9 @@ section[id] {
     padding: 24px;
   }
 
+  .sim-grid,
+  .articles-grid,
   .services-grid,
-  .reviews-grid,
   .steps-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1513,29 +1763,24 @@ section[id] {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 680px) {
   .hero {
-    padding: 64px 0 48px;
+    padding: 60px 0 46px;
   }
 
   .section {
-    padding: 58px 0;
+    padding: 56px 0;
   }
 
-  .compare-highlights,
+  .sim-grid,
+  .virtual-grid,
+  .articles-grid,
+  .pdfs-grid,
   .services-grid,
-  .reviews-grid,
   .steps-grid,
+  .compare-highlights,
   .footer-grid {
     grid-template-columns: 1fr;
-  }
-
-  .visual-stats {
-    grid-template-columns: 1fr;
-  }
-
-  .community-banner {
-    padding: 22px;
   }
 
   .ai-fab-label {
