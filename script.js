@@ -1,6 +1,6 @@
 /* =========================================================
    Valhalla Tech World — Complete App Script
-   Includes Tweak-Academy Style Expandable Categories
+   Minimal Podcast Theme Sync + Corner Valhalla Bot + Accordion
    ========================================================= */
 
 const WORKER_URL = "https://valhalla-gemini-proxy.knjhgbtbp9.workers.dev";
@@ -139,6 +139,340 @@ const VPN_GUIDES = {
   }
 };
 
+/* ---------- استایل تزریقی مینیمال برای منو و پلیر پادکست داخل audio-player/ ---------- */
+const PODCAST_IFRAME_CSS = `
+  :root {
+    color-scheme: dark !important;
+    --bg: #09090b !important;
+    --bg-alt: #0d0d10 !important;
+    --surface: #121216 !important;
+    --surface-hover: #18181e !important;
+    --surface-inset: #0c0c0f !important;
+    --border: #222228 !important;
+    --border-strong: #303039 !important;
+    --accent: #9f1239 !important;
+    --accent-hover: #be123c !important;
+    --accent-bright: #f43f5e !important;
+    --accent-text: #fda4af !important;
+    --primary: #9f1239 !important;
+    --teal: #9f1239 !important;
+    --cyan: #be123c !important;
+    --text: #f4f4f5 !important;
+    --text-secondary: #a1a1aa !important;
+    --muted: #71717a !important;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  html, body {
+    background: #09090b !important;
+    color: #f4f4f5 !important;
+    font-family: "Vazirmatn", system-ui, -apple-system, sans-serif !important;
+    margin: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  body::before, body::after {
+    display: none !important;
+  }
+
+  /* حذف شلوغی و کادرهای شیشه‌ای درون پلیر */
+  header, main, section, aside, nav, .app, .player, .player-shell, .player-card,
+  .podcast-app, .podcast-container, .playlist, .track-list, .episode-list,
+  .sidebar, .menu, .controls-bar, .now-playing, .card, .panel {
+    background-image: none !important;
+    box-shadow: none !important;
+  }
+
+  .player, .player-shell, .player-card, .podcast-app, .now-playing, .controls-bar, .panel {
+    background-color: #121216 !important;
+    border: 1px solid #222228 !important;
+    border-radius: 12px !important;
+  }
+
+  /* منوی پادکست‌ها و ردیف اپیزودها (مینیمال با خط جداکننده ظریف) */
+  .playlist, .track-list, .episode-list, .episodes, ul.playlist, ul.tracks, nav ul {
+    background-color: #0d0d10 !important;
+    border: 1px solid #222228 !important;
+    border-radius: 12px !important;
+    padding: 4px !important;
+  }
+
+  .track, .track-item, .episode, .episode-item, .playlist-item,
+  li.track, li.episode, button.track, button.episode {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid #222228 !important;
+    border-radius: 0 !important;
+    color: #a1a1aa !important;
+    transition: background-color 0.18s ease, color 0.18s ease !important;
+  }
+
+  .track:last-child, .track-item:last-child, .episode:last-child,
+  .episode-item:last-child, .playlist-item:last-child {
+    border-bottom: none !important;
+  }
+
+  .track:hover, .track-item:hover, .episode:hover, .episode-item:hover, .playlist-item:hover {
+    background-color: #16161b !important;
+    color: #f4f4f5 !important;
+  }
+
+  .track.active, .track.is-active, .track-item.active, .track-item.is-active,
+  .episode.active, .episode.is-active, .episode-item.active, .episode-item.is-active,
+  .playlist-item.active, .playlist-item.is-active, [aria-current="true"] {
+    background-color: #1f0d13 !important;
+    border-right: 2px solid #9f1239 !important;
+    color: #fff5f7 !important;
+  }
+
+  /* دکمه‌های پلیر و منو */
+  button, .btn {
+    font-family: "Vazirmatn", system-ui, sans-serif !important;
+    border-radius: 8px !important;
+    transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease !important;
+  }
+
+  .play-btn, .btn-play, #playBtn, #playPauseBtn, button[data-action="play"],
+  button.primary, .tab.active, .filter.active, .category.active {
+    background-color: #9f1239 !important;
+    border-color: #9f1239 !important;
+    color: #fff5f7 !important;
+  }
+
+  .play-btn:hover, .btn-play:hover, #playBtn:hover, #playPauseBtn:hover,
+  button[data-action="play"]:hover, button.primary:hover {
+    background-color: #be123c !important;
+    border-color: #be123c !important;
+  }
+
+  /* اسلایدر زمان پخش و صدا */
+  input[type="range"] {
+    accent-color: #9f1239 !important;
+    cursor: pointer !important;
+  }
+
+  input[type="range"]::-webkit-slider-runnable-track {
+    background: #222228 !important;
+    height: 4px !important;
+    border-radius: 999px !important;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    background: #f43f5e !important;
+    border: 2px solid #09090b !important;
+  }
+
+  .progress-fill, .progress-bar-fill, .seek-fill, .waveform-progress {
+    background: #9f1239 !important;
+  }
+
+  .progress, .progress-bar, .seek-bar {
+    background: #222228 !important;
+  }
+
+  .time, .duration, .current-time, time {
+    font-variant-numeric: tabular-nums !important;
+    color: #a1a1aa !important;
+  }
+
+  a {
+    color: #fda4af !important;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #09090b;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #27272e;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #9f1239;
+  }
+`;
+
+/* ---------- همگام‌سازی خودکار ظاهر بخش پادکست، منو و پلیر ---------- */
+function syncPodcastPlayerTheme() {
+  const frameWrap = document.querySelector(".podcast-player-frame");
+  if (!frameWrap) return;
+
+  // افزودن نوار عنوان مینیمال بالای پلیر پادکست برای یکپارچگی با طراحی سایت
+  if (!frameWrap.parentElement?.classList.contains("podcast-shell")) {
+    const shell = document.createElement("div");
+    shell.className = "podcast-shell";
+
+    const bar = document.createElement("div");
+    bar.className = "podcast-bar";
+    bar.innerHTML = `
+      <span class="podcast-bar-right">
+        <span class="podcast-eq" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>پلیر و آرشیو پادکست‌های والهالا</span>
+      </span>
+      <span class="podcast-bar-meta">پخش مستقیم صوتی</span>
+    `;
+
+    frameWrap.parentNode.insertBefore(shell, frameWrap);
+    shell.appendChild(bar);
+    shell.appendChild(frameWrap);
+  }
+
+  const iframe = frameWrap.querySelector("iframe");
+  if (!iframe) return;
+
+  const injectStyles = () => {
+    try {
+      const doc = iframe.contentDocument || iframe.contentWindow?.document;
+      if (!doc || !doc.head) return;
+
+      if (!doc.getElementById("valhalla-vazir-font")) {
+        const fontLink = doc.createElement("link");
+        fontLink.id = "valhalla-vazir-font";
+        fontLink.rel = "stylesheet";
+        fontLink.href = "https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap";
+        doc.head.appendChild(fontLink);
+      }
+
+      let styleTag = doc.getElementById("valhalla-podcast-minimal-theme");
+      if (!styleTag) {
+        styleTag = doc.createElement("style");
+        styleTag.id = "valhalla-podcast-minimal-theme";
+        doc.head.appendChild(styleTag);
+      }
+      styleTag.textContent = PODCAST_IFRAME_CSS;
+
+      // تنظیم ارتفاع متناسب با محتوای داخلی پلیر در صورت امکان
+      const adjustHeight = () => {
+        const contentH = doc.documentElement?.scrollHeight || doc.body?.scrollHeight || 0;
+        if (contentH >= 360 && contentH <= 860) {
+          iframe.style.height = `${contentH + 8}px`;
+        }
+      };
+      setTimeout(adjustHeight, 250);
+      setTimeout(adjustHeight, 900);
+    } catch {
+      // اگر منبع iframe روی دامنه خارجی باشد، بدون خطا رها می‌شود
+    }
+  };
+
+  iframe.addEventListener("load", injectStyles);
+  if (iframe.contentDocument?.readyState === "complete") {
+    injectStyles();
+  }
+}
+
+/* ---------- تضمین نمایش و چیدمان کلید «والهالا بات» در گوشه پایین سمت چپ ---------- */
+function ensureValhallaBotUI() {
+  let fab = document.getElementById("aiFab") || document.querySelector(".ai-fab");
+  let drawer = document.getElementById("aiDrawer") || document.querySelector(".ai-drawer");
+
+  const botIconSvg = `
+    <span class="ai-fab-badge" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="8" width="18" height="11" rx="3"/>
+        <path d="M12 8V4"/>
+        <circle cx="12" cy="3" r="1"/>
+        <circle cx="9" cy="13.5" r="1" fill="currentColor" stroke="none"/>
+        <circle cx="15" cy="13.5" r="1" fill="currentColor" stroke="none"/>
+      </svg>
+    </span>
+    <span class="ai-fab-label">
+      <span>والهالا بات</span>
+      <span class="ai-fab-dot" aria-hidden="true"></span>
+    </span>
+  `;
+
+  if (!fab) {
+    fab = document.createElement("button");
+    fab.type = "button";
+    fab.id = "aiFab";
+    fab.className = "ai-fab";
+    fab.setAttribute("aria-label", "باز کردن والهالا بات");
+    fab.setAttribute("aria-expanded", "false");
+    fab.innerHTML = botIconSvg;
+    document.body.appendChild(fab);
+  } else {
+    fab.classList.add("ai-fab");
+    fab.id = fab.id || "aiFab";
+    fab.setAttribute("aria-label", "باز کردن والهالا بات");
+    fab.innerHTML = botIconSvg;
+  }
+
+   if (!drawer) {
+    drawer = document.createElement("aside");
+    drawer.id = "aiDrawer";
+    drawer.className = "ai-drawer";
+    drawer.setAttribute("aria-hidden", "true");
+    drawer.hidden = true;
+    drawer.innerHTML = `
+      <div class="ai-header">
+        <div class="ai-header-info">
+          <div class="ai-avatar-wrap" id="aiAvatarWrap">
+            <model-viewer
+              id="valhallaBotViewer"
+              src="${BOT_SKINS[0]}"
+              alt="Valhalla Bot"
+              auto-rotate
+              autoplay
+              disable-zoom
+              interaction-prompt="none"
+              shadow-intensity="0"
+              style="width: 42px; height: 42px; background: transparent;">
+            </model-viewer>
+          </div>
+          <div>
+            <h4>والهالا بات</h4>
+            <span class="ai-status"><span class="status-dot"></span>آنلاین و آماده پاسخ‌گویی</span>
+          </div>
+        </div>
+        <div class="ai-header-actions">
+          <button type="button" class="ai-icon-btn" id="switchSkinBtn" title="تغییر اسکین ربات" aria-label="تغییر اسکین ربات">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+          </button>
+          <button type="button" class="ai-icon-btn" id="aiCloseBtn" aria-label="بستن چت">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="ai-messages" id="aiMessages">
+        <div class="ai-msg bot">
+          سلام! من <strong>والهالا بات</strong> هستم. درباره راهنمای اتصال والهالا گارد، خدمات دیجیتال، سیم‌کارت بین‌المللی یا مسائل فنی سیستم چطور می‌تونم کمکت کنم؟
+        </div>
+      </div>
+
+      <div class="ai-quick-prompts">
+        <button type="button" class="ai-prompt-chip" data-prompt="چطور لینک اشتراک والهالا گارد رو روی آیفون وصل کنم؟">اتصال در آیفون</button>
+        <button type="button" class="ai-prompt-chip" data-prompt="تفاوت V2Ray و WireGuard در والهالا گارد چیه؟">تفاوت V2Ray و WireGuard</button>
+        <button type="button" class="ai-prompt-chip" data-prompt="چه خدمات سخت‌افزاری و دیجیتال ارائه می‌دید؟">لیست خدمات</button>
+      </div>
+
+      <form class="ai-input-row" id="aiForm">
+        <input type="text" id="aiInput" placeholder="سوالت رو اینجا بنویس..." autocomplete="off" required />
+        <button type="submit" class="ai-send-btn" id="aiSendBtn" aria-label="ارسال پیام">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+        </button>
+      </form>
+    `;
+    document.body.appendChild(drawer);
+  } else {
+    drawer.classList.add("ai-drawer");
+    drawer.id = drawer.id || "aiDrawer";
+    if (!drawer.classList.contains("open")) {
+      drawer.hidden = true;
+      drawer.setAttribute("aria-hidden", "true");
+    }
+  }
+}
+
 /* ---------- شفاف‌سازی خودکار پس‌زمینه سفید لوگو ---------- */
 function makeLogoTransparent(imgEl) {
   if (!imgEl || imgEl.tagName !== "IMG" || imgEl.dataset.transparentDone === "true") return;
@@ -241,7 +575,6 @@ function initAcademyAccordion() {
     return group;
   };
 
-  // ۱. استخراج دسته‌بندی‌ها از دکمه‌های فیلتر موجود در HTML (بجز دکمه "همه")
   filterButtons.forEach((btn) => {
     const key = (btn.dataset.filter || btn.dataset.category || "").trim().toLowerCase();
     const label = btn.textContent.trim();
@@ -250,7 +583,6 @@ function initAcademyAccordion() {
     }
   });
 
-  // ۲. قرار دادن هر مقاله زیر دسته‌بندی متناظر خودش بدون کپی یا حذف محتوا
   cards.forEach((card) => {
     const rawCats = (
       card.dataset.category ||
@@ -289,7 +621,6 @@ function initAcademyAccordion() {
   const nonEmptyGroups = groups.filter((g) => g.items.length > 0);
   if (!nonEmptyGroups.length) return;
 
-  // ۳. ساخت ساختار مینیمال بدون کادر (کلیک روی دسته => باز شدن جزئیات زیر آن)
   const accordion = document.createElement("div");
   accordion.className = "academy-accordion";
 
@@ -356,7 +687,6 @@ function toggleAcademyGroup(groupEl, forceOpen) {
   const isOpen = groupEl.classList.contains("is-open");
   const nextState = typeof forceOpen === "boolean" ? forceOpen : !isOpen;
 
-  // بستن سایر دسته‌بندی‌ها برای حفظ نظم و مینیمال بودن صفحه
   if (nextState) {
     document.querySelectorAll(".academy-group.is-open").forEach((other) => {
       if (other !== groupEl) {
@@ -378,7 +708,7 @@ let chatHistory = [];
 let searchIndex = [];
 let activeSearchIdx = -1;
 
-/* ---------- کنترل باز و بسته کردن پنل دستیار هوشمند ---------- */
+/* ---------- کنترل باز و بسته کردن پنل والهالا بات ---------- */
 function setAiDrawerState(forceOpen) {
   const aiDrawer = document.getElementById("aiDrawer") || document.querySelector(".ai-drawer");
   const aiFab = document.getElementById("aiFab") || document.querySelector(".ai-fab");
@@ -426,7 +756,7 @@ async function sendToValhallaAI(userText) {
   if (sendBtn) sendBtn.disabled = true;
 
   const systemInstruction =
-    "تو دستیار هوشمند رسمی سایت والهالا تک‌ورلد (Valhalla Tech World) هستی. دقیق، کوتاه، محترمانه و به زبان فارسی پاسخ بده. کانال تلگرام: @valhala_tw، پشتیبانی: @Valhalla_Guard، ربات اشتراک والهالا گارد: @ValhallaGuard_bot، اینستاگرام: @Valhala_tw.";
+    "تو والهالا بات، دستیار هوشمند رسمی سایت والهالا تک‌ورلد (Valhalla Tech World) هستی. دقیق، کوتاه، محترمانه و به زبان فارسی پاسخ بده. کانال تلگرام: @valhala_tw، پشتیبانی: @Valhalla_Guard، ربات اشتراک والهالا گارد: @ValhallaGuard_bot، اینستاگرام: @Valhala_tw.";
 
   chatHistory.push({ role: "user", parts: [{ text: userText }] });
 
@@ -737,7 +1067,6 @@ function navigateToSearchResult(btn) {
     const el = document.getElementById(targetId);
     if (!el) return;
 
-    // اگر آیتم داخل یک دسته‌بندی بسته بود، ابتدا دسته‌بندی را باز کن
     const parentGroup = el.closest(".academy-group");
     if (parentGroup) {
       toggleAcademyGroup(parentGroup, true);
@@ -752,18 +1081,17 @@ function navigateToSearchResult(btn) {
   }, 60);
 }
 
-/* ---------- Event Delegation سراسری ---------- */
+/* ---------- Event Delegation سراسری برای تمام کلیدها و تب‌ها ---------- */
 document.addEventListener("click", (e) => {
-  // ۱. کلیک روی دسته‌بندی آکادمی (باز/بسته شدن جزئیات زیر آن)
+  // ۱. دسته‌بندی‌های بازشونده آکادمی
   const academyTrigger = e.target.closest(".academy-group-trigger");
   if (academyTrigger) {
     e.preventDefault();
-    const groupEl = academyTrigger.closest(".academy-group");
-    toggleAcademyGroup(groupEl);
+    toggleAcademyGroup(academyTrigger.closest(".academy-group"));
     return;
   }
 
-  // ۲. دکمه‌های دستیار هوشمند
+  // ۲. کلیدهای باز/بسته کردن والهالا بات
   const aiTrigger = e.target.closest("#navAiBtn, #aiFab, #mobileAiBtn, [data-ai-open], .ai-fab");
   if (aiTrigger) {
     e.preventDefault();
@@ -777,7 +1105,7 @@ document.addEventListener("click", (e) => {
     return;
   }
 
-  // ۳. بستن پنل دستیار هوشمند
+  // ۳. بستن پنل والهالا بات
   if (e.target.closest("#aiCloseBtn, [data-ai-close]")) {
     e.preventDefault();
     setAiDrawerState(false);
@@ -792,7 +1120,7 @@ document.addEventListener("click", (e) => {
     return;
   }
 
-  // ۵. سوالات آماده داخل چت AI
+  // ۵. سوالات آماده داخل چت
   const promptChip = e.target.closest(".ai-prompt-chip");
   if (promptChip) {
     const prompt = promptChip.dataset.prompt || promptChip.textContent.trim();
@@ -861,7 +1189,7 @@ document.addEventListener("click", (e) => {
     return;
   }
 
-  // ۹. نمای راهنمای VPN و بازگشت به صفحه اصلی
+  // ۹. جابه‌جایی به نمای راهنمای VPN و بازگشت به صفحه اصلی
   const vpnLink = e.target.closest('.vpn-tab, [data-open-view="vpn-guide"], a[href="#vpn-guide"]');
   if (vpnLink) {
     const vpnView = document.getElementById("vpn-guide") || document.querySelector('[data-view="vpn-guide"]');
@@ -916,14 +1244,23 @@ document.addEventListener("click", (e) => {
   }
 });
 
+/* ---------- ارسال فرم چت با Event Delegation (سازگار با پنل داینامیک) ---------- */
+document.addEventListener("submit", (e) => {
+  const aiForm = e.target.closest("#aiForm, .ai-input-row");
+  if (!aiForm) return;
+  e.preventDefault();
+  const input = document.getElementById("aiInput") || aiForm.querySelector("input");
+  const val = input?.value.trim();
+  if (val) sendToValhallaAI(val);
+});
+
 /* ---------- راه‌اندازی اولیه ---------- */
 function initValhallaApp() {
   document.querySelectorAll(".brand-logo").forEach((img) => makeLogoTransparent(img));
 
-  // تبدیل دسته‌بندی‌ها به آکاردئون بدون کادر (سبک توییک آکادمی)
+  syncPodcastPlayerTheme();
+  ensureValhallaBotUI();
   initAcademyAccordion();
-
-  // ساخت ایندکس جست‌وجوی سریع پس از مرتب‌سازی دسته‌بندی‌ها
   buildSearchIndex();
 
   const searchInput = document.querySelector(".quick-search input");
@@ -966,7 +1303,6 @@ function initValhallaApp() {
     }
   });
 
-  // بارگذاری تنبل فایل‌های PDF هنگام باز شدن
   document.querySelectorAll(".pdf-reader").forEach((details) => {
     details.addEventListener("toggle", () => {
       if (!details.open) return;
@@ -975,15 +1311,6 @@ function initValhallaApp() {
         iframe.setAttribute("src", iframe.dataset.src);
       }
     });
-  });
-
-  // فرم ارسال پیام در دستیار هوشمند
-  const aiForm = document.getElementById("aiForm") || document.querySelector(".ai-input-row");
-  aiForm?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const input = document.getElementById("aiInput") || aiForm.querySelector("input");
-    const val = input?.value.trim();
-    if (val) sendToValhallaAI(val);
   });
 
   renderVpnGuidePanel();
