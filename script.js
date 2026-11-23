@@ -1,5 +1,6 @@
 /* =========================================================
    Valhalla Tech World — Complete App Script
+   Includes Tweak-Academy Style Expandable Categories
    ========================================================= */
 
 const WORKER_URL = "https://valhalla-gemini-proxy.knjhgbtbp9.workers.dev";
@@ -138,7 +139,7 @@ const VPN_GUIDES = {
   }
 };
 
-/* ---------- شفاف‌سازی خودکار پس‌زمینه سفید لوگو (در صورت فایل JPG/PNG) ---------- */
+/* ---------- شفاف‌سازی خودکار پس‌زمینه سفید لوگو ---------- */
 function makeLogoTransparent(imgEl) {
   if (!imgEl || imgEl.tagName !== "IMG" || imgEl.dataset.transparentDone === "true") return;
   const src = imgEl.getAttribute("src") || "";
@@ -159,7 +160,6 @@ function makeLogoTransparent(imgEl) {
       const imageData = ctx.getImageData(0, 0, w, h);
       const data = imageData.data;
 
-      // اگر گوشه‌های تصویر از قبل شفاف هستند، نیازی به پردازش نیست
       if (data[3] < 20 && data[(w - 1) * 4 + 3] < 20) {
         imgEl.dataset.transparentDone = "true";
         return;
@@ -207,7 +207,7 @@ function makeLogoTransparent(imgEl) {
       imgEl.dataset.transparentDone = "true";
       imgEl.src = canvas.toDataURL("image/png");
     } catch {
-      // جلوگیری از خطا در محیط لوکال file://
+      // بدون خطا در اجرای لوکال
     }
   };
 
@@ -216,6 +216,158 @@ function makeLogoTransparent(imgEl) {
   } else {
     imgEl.addEventListener("load", process, { once: true });
   }
+}
+
+/* ---------- تبدیل خودکار دسته‌بندی‌های آکادمی به لیست بازشونده (سبک توییک آکادمی) ---------- */
+function initAcademyAccordion() {
+  const grid = document.querySelector(".academy-grid");
+  if (!grid || document.querySelector(".academy-accordion")) return;
+
+  const cards = Array.from(grid.querySelectorAll(".academy-card"));
+  if (!cards.length) return;
+
+  const filtersWrap = document.querySelector(".academy-filters");
+  const filterButtons = filtersWrap ? Array.from(filtersWrap.querySelectorAll(".academy-filter")) : [];
+
+  const groups = [];
+  const groupMap = new Map();
+
+  const registerGroup = (key, title) => {
+    const cleanKey = key.trim().toLowerCase();
+    if (!cleanKey || groupMap.has(cleanKey)) return groupMap.get(cleanKey);
+    const group = { key: cleanKey, title: title.trim(), items: [] };
+    groups.push(group);
+    groupMap.set(cleanKey, group);
+    return group;
+  };
+
+  // ۱. استخراج دسته‌بندی‌ها از دکمه‌های فیلتر موجود در HTML (بجز دکمه "همه")
+  filterButtons.forEach((btn) => {
+    const key = (btn.dataset.filter || btn.dataset.category || "").trim().toLowerCase();
+    const label = btn.textContent.trim();
+    if (key && key !== "all") {
+      registerGroup(key, label);
+    }
+  });
+
+  // ۲. قرار دادن هر مقاله زیر دسته‌بندی متناظر خودش بدون کپی یا حذف محتوا
+  cards.forEach((card) => {
+    const rawCats = (
+      card.dataset.category ||
+      card.dataset.filter ||
+      card.dataset.type ||
+      card.dataset.tags ||
+      ""
+    )
+      .trim()
+      .toLowerCase();
+
+    const tokens = rawCats.split(/[\s,]+/).filter(Boolean);
+    let targetGroup = null;
+
+    if (groups.length > 0) {
+      for (const token of tokens) {
+        if (groupMap.has(token)) {
+          targetGroup = groupMap.get(token);
+          break;
+        }
+      }
+      if (!targetGroup) {
+        targetGroup = groups.find((g) => rawCats.includes(g.key));
+      }
+    }
+
+    if (!targetGroup) {
+      const typeLabel = card.querySelector(".academy-type")?.textContent.trim() || "سایر آموزش‌ها";
+      const fallbackKey = rawCats || typeLabel.toLowerCase();
+      targetGroup = registerGroup(fallbackKey, typeLabel);
+    }
+
+    targetGroup.items.push(card);
+  });
+
+  const nonEmptyGroups = groups.filter((g) => g.items.length > 0);
+  if (!nonEmptyGroups.length) return;
+
+  // ۳. ساخت ساختار مینیمال بدون کادر (کلیک روی دسته => باز شدن جزئیات زیر آن)
+  const accordion = document.createElement("div");
+  accordion.className = "academy-accordion";
+
+  nonEmptyGroups.forEach((group, idx) => {
+    const numStr = String(idx + 1).padStart(2, "0");
+    const panelId = `academy-group-panel-${idx + 1}`;
+    const faCount = group.items.length.toLocaleString("fa-IR");
+
+    const groupEl = document.createElement("div");
+    groupEl.className = "academy-group";
+    groupEl.dataset.groupKey = group.key;
+
+    const trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = "academy-group-trigger";
+    trigger.setAttribute("aria-expanded", "false");
+    trigger.setAttribute("aria-controls", panelId);
+    trigger.innerHTML = `
+      <span class="academy-group-right">
+        <span class="academy-group-index">${numStr}</span>
+        <span class="academy-group-meta">
+          <span class="academy-group-title">${group.title}</span>
+          <span class="academy-group-subtitle">برای مشاهده مطالب و جزئیات این بخش کلیک کنید</span>
+        </span>
+      </span>
+      <span class="academy-group-left">
+        <span class="academy-group-count">${faCount} مورد</span>
+        <span class="academy-group-chevron" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </span>
+      </span>
+    `;
+
+    const panel = document.createElement("div");
+    panel.className = "academy-group-panel";
+    panel.id = panelId;
+
+    const panelInner = document.createElement("div");
+    panelInner.className = "academy-group-panel-inner";
+
+    const itemsWrap = document.createElement("div");
+    itemsWrap.className = "academy-group-items";
+
+    group.items.forEach((card) => {
+      card.hidden = false;
+      itemsWrap.appendChild(card);
+    });
+
+    panelInner.appendChild(itemsWrap);
+    panel.appendChild(panelInner);
+    groupEl.appendChild(trigger);
+    groupEl.appendChild(panel);
+    accordion.appendChild(groupEl);
+  });
+
+  grid.parentNode.insertBefore(accordion, grid);
+  grid.classList.add("is-replaced");
+  filtersWrap?.classList.add("is-replaced");
+}
+
+function toggleAcademyGroup(groupEl, forceOpen) {
+  if (!groupEl) return;
+  const trigger = groupEl.querySelector(".academy-group-trigger");
+  const isOpen = groupEl.classList.contains("is-open");
+  const nextState = typeof forceOpen === "boolean" ? forceOpen : !isOpen;
+
+  // بستن سایر دسته‌بندی‌ها برای حفظ نظم و مینیمال بودن صفحه
+  if (nextState) {
+    document.querySelectorAll(".academy-group.is-open").forEach((other) => {
+      if (other !== groupEl) {
+        other.classList.remove("is-open");
+        other.querySelector(".academy-group-trigger")?.setAttribute("aria-expanded", "false");
+      }
+    });
+  }
+
+  groupEl.classList.toggle("is-open", nextState);
+  trigger?.setAttribute("aria-expanded", String(nextState));
 }
 
 /* ---------- وضعیت سراسری اپلیکیشن ---------- */
@@ -251,7 +403,7 @@ function setAiDrawerState(forceOpen) {
   }
 }
 
-/* ---------- ارسال پیام به دستیار هوشمند (Cloudflare Worker) ---------- */
+/* ---------- ارتباط با Cloudflare Worker دستیار هوشمند ---------- */
 function appendAiMessage(text, role) {
   const container = document.getElementById("aiMessages") || document.querySelector(".ai-messages");
   if (!container) return null;
@@ -364,7 +516,7 @@ function switchSiteView(viewName, scrollTargetId = null) {
   }
 }
 
-/* ---------- رندر پنل راهنمای VPN (اگر داینامیک باشد یا پنل آماده داشته باشد) ---------- */
+/* ---------- رندر پنل راهنمای VPN ---------- */
 function renderVpnGuidePanel() {
   const preRenderedPanels = document.querySelectorAll("[data-guide-service][data-guide-platform]");
   if (preRenderedPanels.length > 0) {
@@ -491,36 +643,6 @@ function activateSimTab(tabBtn) {
   });
 }
 
-/* ---------- فیلتر کردن مقالات ---------- */
-function applyAcademyFilter(filterBtn) {
-  const buttons = document.querySelectorAll(".academy-filter");
-  buttons.forEach((btn) => {
-    const active = btn === filterBtn;
-    btn.classList.toggle("is-active", active);
-    btn.setAttribute("aria-pressed", String(active));
-  });
-
-  const filterValue = (filterBtn.dataset.filter || filterBtn.dataset.category || "all").toLowerCase();
-  const cards = document.querySelectorAll(".academy-card");
-
-  cards.forEach((card) => {
-    if (filterValue === "all") {
-      card.hidden = false;
-      return;
-    }
-    const cardCats = (
-      card.dataset.category ||
-      card.dataset.filter ||
-      card.dataset.type ||
-      card.dataset.tags ||
-      ""
-    ).toLowerCase();
-
-    const list = cardCats.split(/[\s,]+/).filter(Boolean);
-    card.hidden = !list.includes(filterValue) && !cardCats.includes(filterValue);
-  });
-}
-
 /* ---------- جست‌وجوی سریع ---------- */
 function buildSearchIndex() {
   searchIndex = [];
@@ -537,16 +659,12 @@ function buildSearchIndex() {
     }
 
     const inVpnView = Boolean(el.closest("#vpn-guide, [data-view='vpn-guide']"));
-    const href = el.tagName === "A" ? el.getAttribute("href") : null;
-
     searchIndex.push({
       id: el.id,
       title,
       desc,
       haystack: `${title} ${desc}`.toLowerCase(),
-      inVpnView,
-      href,
-      element: el
+      inVpnView
     });
   });
 }
@@ -618,15 +736,34 @@ function navigateToSearchResult(btn) {
   setTimeout(() => {
     const el = document.getElementById(targetId);
     if (!el) return;
+
+    // اگر آیتم داخل یک دسته‌بندی بسته بود، ابتدا دسته‌بندی را باز کن
+    const parentGroup = el.closest(".academy-group");
+    if (parentGroup) {
+      toggleAcademyGroup(parentGroup, true);
+    }
+
     if (el.hidden) el.hidden = false;
     if (el.tagName === "DETAILS") el.open = true;
-    el.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    setTimeout(() => {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, parentGroup ? 220 : 20);
   }, 60);
 }
 
-/* ---------- Event Delegation سراسری برای تمام تعاملات ---------- */
+/* ---------- Event Delegation سراسری ---------- */
 document.addEventListener("click", (e) => {
-  // ۱. دکمه‌های دستیار هوشمند (هدر، دکمه شناور، منوی موبایل)
+  // ۱. کلیک روی دسته‌بندی آکادمی (باز/بسته شدن جزئیات زیر آن)
+  const academyTrigger = e.target.closest(".academy-group-trigger");
+  if (academyTrigger) {
+    e.preventDefault();
+    const groupEl = academyTrigger.closest(".academy-group");
+    toggleAcademyGroup(groupEl);
+    return;
+  }
+
+  // ۲. دکمه‌های دستیار هوشمند
   const aiTrigger = e.target.closest("#navAiBtn, #aiFab, #mobileAiBtn, [data-ai-open], .ai-fab");
   if (aiTrigger) {
     e.preventDefault();
@@ -640,14 +777,14 @@ document.addEventListener("click", (e) => {
     return;
   }
 
-  // ۲. بستن پنل دستیار هوشمند
+  // ۳. بستن پنل دستیار هوشمند
   if (e.target.closest("#aiCloseBtn, [data-ai-close]")) {
     e.preventDefault();
     setAiDrawerState(false);
     return;
   }
 
-  // ۳. تغییر اسکین ربات سه‌بعدی
+  // ۴. تغییر اسکین ربات سه‌بعدی
   if (e.target.closest("#switchSkinBtn, [data-switch-skin]")) {
     currentSkinIndex = (currentSkinIndex + 1) % BOT_SKINS.length;
     const viewer = document.getElementById("valhallaBotViewer") || document.querySelector("model-viewer");
@@ -655,7 +792,7 @@ document.addEventListener("click", (e) => {
     return;
   }
 
-  // ۴. سوالات آماده داخل چت AI
+  // ۵. سوالات آماده داخل چت AI
   const promptChip = e.target.closest(".ai-prompt-chip");
   if (promptChip) {
     const prompt = promptChip.dataset.prompt || promptChip.textContent.trim();
@@ -663,7 +800,7 @@ document.addEventListener("click", (e) => {
     return;
   }
 
-  // ۵. منوی موبایل
+  // ۶. منوی موبایل
   const mobileToggle = e.target.closest("#mobileToggle, .mobile-toggle");
   if (mobileToggle) {
     const mobileMenu = document.getElementById("mobileMenu") || document.querySelector(".mobile-menu");
@@ -676,7 +813,6 @@ document.addEventListener("click", (e) => {
     return;
   }
 
-  // بستن منوی موبایل پس از کلیک روی لینک
   if (e.target.closest(".mobile-link")) {
     const mobileMenu = document.getElementById("mobileMenu") || document.querySelector(".mobile-menu");
     const toggle = document.getElementById("mobileToggle") || document.querySelector(".mobile-toggle");
@@ -687,9 +823,14 @@ document.addEventListener("click", (e) => {
     toggle?.setAttribute("aria-expanded", "false");
   }
 
-  // ۶. باز و بسته کردن جست‌وجوی سریع
+  // ۷. جست‌وجوی سریع
   const searchToggle = e.target.closest("#searchToggle, [data-search-toggle], .btn-icon");
-  if (searchToggle && (searchToggle.id === "searchToggle" || searchToggle.hasAttribute("data-search-toggle") || searchToggle.getAttribute("aria-controls")?.includes("search"))) {
+  if (
+    searchToggle &&
+    (searchToggle.id === "searchToggle" ||
+      searchToggle.hasAttribute("data-search-toggle") ||
+      searchToggle.getAttribute("aria-controls")?.includes("search"))
+  ) {
     e.preventDefault();
     toggleQuickSearch();
     return;
@@ -707,13 +848,12 @@ document.addEventListener("click", (e) => {
     return;
   }
 
-  // بستن جست‌وجو با کلیک بیرون آن
   const quickSearch = document.getElementById("quickSearch") || document.querySelector(".quick-search");
   if (quickSearch && !quickSearch.hidden && !e.target.closest(".quick-search, #searchToggle, [data-search-toggle], .btn-icon")) {
     toggleQuickSearch(false);
   }
 
-  // ۷. تب‌های سیم‌کارت فیزیکی
+  // ۸. تب‌های سیم‌کارت فیزیکی
   const simTab = e.target.closest(".sim-tab");
   if (simTab) {
     e.preventDefault();
@@ -721,15 +861,7 @@ document.addEventListener("click", (e) => {
     return;
   }
 
-  // ۸. فیلتر مقالات
-  const filterBtn = e.target.closest(".academy-filter");
-  if (filterBtn) {
-    e.preventDefault();
-    applyAcademyFilter(filterBtn);
-    return;
-  }
-
-  // ۹. جابه‌جایی به نمای راهنمای VPN یا بازگشت به صفحه اصلی
+  // ۹. نمای راهنمای VPN و بازگشت به صفحه اصلی
   const vpnLink = e.target.closest('.vpn-tab, [data-open-view="vpn-guide"], a[href="#vpn-guide"]');
   if (vpnLink) {
     const vpnView = document.getElementById("vpn-guide") || document.querySelector('[data-view="vpn-guide"]');
@@ -758,7 +890,7 @@ document.addEventListener("click", (e) => {
     }
   }
 
-  // ۱۰. انتخاب سرویس (V2Ray / WireGuard) در راهنمای VPN
+  // ۱۰. انتخاب سرویس (V2Ray / WireGuard)
   const serviceCard = e.target.closest(".service-card[data-service]");
   if (serviceCard) {
     document.querySelectorAll(".service-card[data-service]").forEach((c) => {
@@ -786,13 +918,14 @@ document.addEventListener("click", (e) => {
 
 /* ---------- راه‌اندازی اولیه ---------- */
 function initValhallaApp() {
-  // شفاف‌سازی خودکار لوگوی هدر و فوتر در صورت نیاز
   document.querySelectorAll(".brand-logo").forEach((img) => makeLogoTransparent(img));
 
-  // ایندکس جست‌وجوی سریع
+  // تبدیل دسته‌بندی‌ها به آکاردئون بدون کادر (سبک توییک آکادمی)
+  initAcademyAccordion();
+
+  // ساخت ایندکس جست‌وجوی سریع پس از مرتب‌سازی دسته‌بندی‌ها
   buildSearchIndex();
 
-  // ورودی جست‌وجوی سریع و کنترل کیبورد
   const searchInput = document.querySelector(".quick-search input");
   searchInput?.addEventListener("input", (e) => {
     renderSearchResults(e.target.value);
@@ -826,7 +959,6 @@ function initValhallaApp() {
     });
   });
 
-  // بستن پنل‌ها با کلید Escape
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       toggleQuickSearch(false);
@@ -834,7 +966,7 @@ function initValhallaApp() {
     }
   });
 
-  // بارگذاری تنبل iframe فایل‌های PDF هنگام باز شدن <details class="pdf-reader">
+  // بارگذاری تنبل فایل‌های PDF هنگام باز شدن
   document.querySelectorAll(".pdf-reader").forEach((details) => {
     details.addEventListener("toggle", () => {
       if (!details.open) return;
@@ -854,7 +986,6 @@ function initValhallaApp() {
     if (val) sendToValhallaAI(val);
   });
 
-  // مقداردهی اولیه راهنمای VPN و بررسی Hash آدرس
   renderVpnGuidePanel();
   if (window.location.hash === "#vpn-guide") {
     switchSiteView("vpn-guide");
