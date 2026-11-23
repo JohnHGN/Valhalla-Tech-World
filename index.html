@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>والهالا تک‌ورلد | اکوسیستم فناوری، امنیت و خدمات دیجیتال</title>
-  <meta name="description" content="والهالا تک‌ورلد — سرویس اتصال پایدار والهالا گارد، راهنمای اتصال، خدمات دیجیتال، تعمیرات و مشاوره تخصصی سخت‌افزار و نرم‌افزار." />
+  <meta name="description" content="والهالا تک‌ورلد — سرویس اتصال پایدار والهالا گارد، راهنمای اتصال و دانلود اپ، سیم‌کارت بین‌المللی فیزیکی و مجازی، آکادمی و خدمات سخت‌افزار." />
   <meta name="theme-color" content="#07090d" />
-  <link rel="icon" href="valhalla-logo.jpg" type="image/jpeg" />
+  <link rel="icon" href="assets/valhalla-logo.jpg" type="image/jpeg" />
 
-  <!-- فونت فارسی Vazirmatn و فونت لاتین Inter -->
+  <!-- فونت فارسی Vazirmatn و لاتین Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -16,19 +16,19 @@
   <!-- Model Viewer برای دستیار سه‌بعدی والهالا -->
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 
-  <link rel="stylesheet" href="styles.css?v=2" />
+  <link rel="stylesheet" href="styles.css?v=3" />
 </head>
 <body>
-  <!-- پس‌زمینه محیطی مینیمال -->
   <div class="bg-grid" aria-hidden="true"></div>
   <div class="bg-glow" aria-hidden="true"></div>
 
-  <!-- نوار ناوبری چسبان (لوگوی ترنسپرنت در گوشه سمت راست بالا) -->
+  <!-- هدر چسبان با لوگوی ترنسپرنت در گوشه بالا سمت راست -->
   <header class="navbar" id="navbar">
     <div class="nav-inner">
       <a href="#top" class="brand" aria-label="صفحه اصلی والهالا تک‌ورلد">
         <img
-          src="valhalla-logo.jpg"
+          src="assets/valhalla-logo.jpg"
+          data-fallback-src="valhalla-logo.jpg"
           alt="لوگوی والهالا تک‌ورلد"
           class="brand-logo"
           id="brandLogoImg"
@@ -42,9 +42,10 @@
 
       <nav class="nav-links" aria-label="منوی اصلی">
         <a href="#guard">والهالا گارد</a>
-        <a href="#compare">عملکرد واقعی</a>
         <a href="#guide">راهنمای اتصال</a>
-        <a href="#services">خدمات و ابزارها</a>
+        <a href="#sim-cards">سیم‌کارت و شماره</a>
+        <a href="#academy">مقالات و فایل‌ها</a>
+        <a href="#services">خدمات</a>
         <a href="#faq">سوالات پرتکرار</a>
       </nav>
 
@@ -68,10 +69,10 @@
     <div class="mobile-menu" id="mobileMenu">
       <div class="container mobile-menu-inner">
         <a href="#guard" class="mobile-link">والهالا گارد</a>
-        <a href="#compare" class="mobile-link">عملکرد واقعی</a>
-        <a href="#guide" class="mobile-link">راهنمای اتصال</a>
-        <a href="#services" class="mobile-link">خدمات و ابزارها</a>
-        <a href="#community" class="mobile-link">کامیونیتی و آموزش</a>
+        <a href="#guide" class="mobile-link">راهنمای اتصال و دانلود اپ</a>
+        <a href="#sim-cards" class="mobile-link">سیم‌کارت فیزیکی و مجازی</a>
+        <a href="#academy" class="mobile-link">مقالات، PDF و پادکست</a>
+        <a href="#services" class="mobile-link">خدمات سخت‌افزار و دیجیتال</a>
         <a href="#faq" class="mobile-link">سوالات پرتکرار</a>
         <div class="mobile-menu-actions">
           <button type="button" class="btn btn-ghost" id="mobileAiBtn">
@@ -100,7 +101,7 @@
         </h1>
 
         <p class="hero-desc">
-          اینترنت آزاد و بدون قطعی با والهالا گارد، راهنمای قدم‌به‌قدم تمام دستگاه‌ها، خدمات دیجیتال و پشتیبانی تخصصی سخت‌افزار — ساده، شفاف و یک‌پارچه.
+          اینترنت آزاد و بدون قطعی با والهالا گارد، راهنمای کامل و لینک دانلود اپلیکیشن‌ها، سیم‌کارت‌های بین‌المللی فیزیکی و مجازی و آکادمی تخصصی فناوری — ساده، شفاف و یک‌پارچه.
         </p>
 
         <div class="hero-cta">
@@ -109,7 +110,7 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
           </a>
           <a href="#guide" class="btn btn-outline btn-lg">
-            راهنمای سریع اتصال
+            راهنمای اتصال و دانلود اپ
           </a>
         </div>
 
@@ -120,41 +121,41 @@
             <span>والهالا گارد</span>
           </a>
           <a href="#guide" class="quick-pill">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-            <span>راهنمای V2Ray و WireGuard</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>دانلود اپ و راهنمای اتصال</span>
+          </a>
+          <a href="#sim-cards" class="quick-pill">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+            <span>سیم‌کارت فیزیکی و مجازی</span>
+          </a>
+          <a href="#academy" class="quick-pill">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            <span>مقالات، PDF و پادکست</span>
           </a>
           <a href="#services" class="quick-pill">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
-            <span>سخت‌افزار و سیستم</span>
-          </a>
-          <a href="#services" class="quick-pill">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-            <span>اکانت و سیم‌کارت</span>
-          </a>
-          <a href="#community" class="quick-pill">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-            <span>آکادمی و کانال</span>
+            <span>سخت‌افزار و خدمات</span>
           </a>
         </div>
       </div>
     </section>
 
-    <!-- بخش ۲: ویترین محصول شاخص و تب‌های قابلیت -->
+    <!-- بخش ۲: ویترین اکوسیستم والهالا -->
     <section class="section" id="guard">
       <div class="container">
         <div class="section-head">
           <span class="section-label">VALHALLA ECOSYSTEM</span>
           <h2 class="section-title">همه چیزهایی که برای تجربه بی‌دردسر لازم داری</h2>
           <p class="section-sub">
-            به جای سرچ و آزمون‌وخطا بین ده‌ها کانال و سرویس نامطمئن، هرچیزی که نیاز داری با پشتیبانی مستقیم اینجاست.
+            از سرویس اتصال اختصاصی تا سیم‌کارت بین‌المللی، آموزش‌های کاربردی و تعمیرات تخصصی — همه یک‌جا با پشتیبانی مستقیم.
           </p>
         </div>
 
         <div class="feature-tabs" role="tablist" aria-label="بخش‌های اکوسیستم والهالا">
           <button type="button" class="feature-tab active" role="tab" aria-selected="true" data-tab="guard">والهالا گارد</button>
           <button type="button" class="feature-tab" role="tab" aria-selected="false" data-tab="apps">اپلیکیشن و اتصال</button>
-          <button type="button" class="feature-tab" role="tab" aria-selected="false" data-tab="digital">اکانت و سیم‌کارت</button>
-          <button type="button" class="feature-tab" role="tab" aria-selected="false" data-tab="hardware">سخت‌افزار و بهینه‌سازی</button>
+          <button type="button" class="feature-tab" role="tab" aria-selected="false" data-tab="digital">سیم‌کارت و اکانت</button>
+          <button type="button" class="feature-tab" role="tab" aria-selected="false" data-tab="hardware">سخت‌افزار و سیستم</button>
         </div>
 
         <div class="showcase-card">
@@ -164,8 +165,344 @@
       </div>
     </section>
 
-    <!-- بخش ۳: ویجت مقایسه عملکرد قبل و بعد -->
-    <section class="section section-alt" id="compare">
+    <!-- بخش ۳: راهنمای کامل اتصال در هر دستگاه + لینک دانلود و آموزش اختصاصی هر برنامه -->
+    <section class="section section-alt" id="guide">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-label">CONNECTION GUIDE & DOWNLOADS</span>
+          <h2 class="section-title">راهنمای اتصال و دانلود اپلیکیشن‌ها</h2>
+          <p class="section-sub">
+            ابتدا سیستم‌عامل دستگاه و سپس برنامه دلخواهت رو انتخاب کن تا لینک دانلود رسمی و آموزش قدم‌به‌قدم همون برنامه برات باز بشه.
+          </p>
+        </div>
+
+        <!-- مرحله ۱: انتخاب سیستم‌عامل -->
+        <div class="platform-tabs" id="platformTabs" role="tablist" aria-label="انتخاب سیستم‌عامل">
+          <button type="button" class="platform-tab active" data-os="android">اندروید (Android)</button>
+          <button type="button" class="platform-tab" data-os="ios">آیفون و آیپد (iOS)</button>
+          <button type="button" class="platform-tab" data-os="windows">ویندوز (Windows)</button>
+          <button type="button" class="platform-tab" data-os="macos">مک‌او‌اس (macOS)</button>
+        </div>
+
+        <div class="guide-box">
+          <!-- مرحله ۲: انتخاب برنامه + لینک دانلود مستقیم -->
+          <div class="guide-toolbar">
+            <div class="app-selector-wrap">
+              <span class="guide-label">انتخاب برنامه:</span>
+              <div class="app-tabs" id="appTabs"></div>
+            </div>
+            <div class="app-downloads" id="appDownloads"></div>
+          </div>
+
+          <!-- مشخصات خلاصه برنامه انتخاب‌شده -->
+          <div class="app-meta-bar" id="appMetaBar"></div>
+
+          <!-- مرحله ۳: گام‌های دقیق اتصال اختصاصی همان برنامه -->
+          <div class="steps-grid" id="stepsGrid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- بخش ۴: سیم‌کارت‌های بین‌المللی فیزیکی و مجازی (eSIM + شماره مجازی) -->
+    <section class="section" id="sim-cards">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-label">INTERNATIONAL SIM & eSIM</span>
+          <h2 class="section-title">سیم‌کارت‌های بین‌المللی فیزیکی و مجازی</h2>
+          <p class="section-sub">
+            دسترسی پایدار به پیامک‌های بانکی، احراز هویت بین‌المللی، تلگرام و سرویس‌های هوش مصنوعی با مالکیت امن و راهنمای کامل نگهداری.
+          </p>
+        </div>
+
+        <div class="sim-tabs" role="tablist" aria-label="نوع سیم‌کارت">
+          <button type="button" class="sim-tab active" data-sim-view="physical">سیم‌کارت‌های فیزیکی بین‌المللی</button>
+          <button type="button" class="sim-tab" data-sim-view="virtual">سیم‌کارت مجازی (eSIM) و شماره مجازی</button>
+        </div>
+
+        <!-- نمای ۱: سیم‌کارت‌های فیزیکی با کارت‌های گرافیکی هم‌رنگ تم سایت -->
+        <div class="sim-panel active" id="simPhysicalPanel">
+          <div class="sim-grid">
+            <!-- ۱. Cellfie گرجستان -->
+            <article class="sim-card">
+              <div class="sim-visual-wrap">
+                <svg class="sim-chip-svg" viewBox="0 0 320 190" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="کارت سیم‌کارت Cellfie گرجستان">
+                  <defs>
+                    <linearGradient id="simBgGe" x1="0" y1="0" x2="320" y2="190" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stop-color="#0d1b22"/>
+                      <stop offset="100%" stop-color="#081016"/>
+                    </linearGradient>
+                    <linearGradient id="simAccentGe" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#2dd4bf"/>
+                      <stop offset="100%" stop-color="#06b6d4"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M18 6H268L314 52V172C314 178.6 308.6 184 302 184H18C11.4 184 6 178.6 6 172V18C6 11.4 11.4 6 18 6Z" fill="url(#simBgGe)" stroke="rgba(45,212,191,0.45)" stroke-width="1.5"/>
+                  <circle cx="270" cy="140" r="65" fill="rgba(20,184,166,0.09)"/>
+                  <!-- چیپ طلایی-تک -->
+                  <rect x="28" y="64" width="54" height="42" rx="8" fill="rgba(45,212,191,0.16)" stroke="#2dd4bf" stroke-width="1.3"/>
+                  <path d="M46 64V106M64 64V106M28 78H82M28 92H82" stroke="rgba(45,212,191,0.55)" stroke-width="1"/>
+                  <text x="28" y="40" fill="#2dd4bf" font-family="Inter, sans-serif" font-size="11" font-weight="700" letter-spacing="1.8">GEORGIA • +995</text>
+                  <text x="290" y="94" text-anchor="end" fill="#f3f6fa" font-family="Inter, sans-serif" font-size="24" font-weight="800">CELLFIE</text>
+                  <text x="290" y="114" text-anchor="end" fill="#9aa6b8" font-family="Inter, sans-serif" font-size="11">Physical Roaming SIM</text>
+                  <rect x="28" y="136" width="110" height="24" rx="12" fill="rgba(20,184,166,0.14)" stroke="rgba(45,212,191,0.4)"/>
+                  <text x="83" y="152" text-anchor="middle" fill="#2dd4bf" font-family="Inter, sans-serif" font-size="11" font-weight="600">*110*00#</text>
+                </svg>
+              </div>
+              <div class="sim-body">
+                <div class="sim-title-row">
+                  <h3>سیم‌کارت فیزیکی Cellfie (گرجستان)</h3>
+                  <span class="sim-badge">اقتصادی و محبوب</span>
+                </div>
+                <p class="sim-desc">
+                  گزینه‌ای بسیار به‌صرفه و پایدار با آنتن‌دهی مستقیم در ایران و دریافت رایگان پیامک‌های احراز هویت بین‌المللی بدون نیاز به فیلترشکن.
+                </p>
+                <ul class="sim-specs">
+                  <li><strong>کد استعلام شماره و اعتبار:</strong> <code dir="ltr">*110*00#</code></li>
+                  <li><strong>شرط نگهداری دائمی:</strong> نیاز به شارژ دوره‌ای هر <strong>۸۵ روز</strong> یک‌بار</li>
+                  <li><strong>آنتن‌دهی در ایران:</strong> رومینگ فعال + دریافت پیامک رایگان</li>
+                  <li><strong>کاربردها:</strong> تلگرام، واتساپ، پی‌پال، سرویس‌های هوش مصنوعی و شبکه‌های اجتماعی</li>
+                </ul>
+                <a href="https://t.me/Valhalla_Guard" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-full">سفارش و استعلام قیمت Cellfie</a>
+              </div>
+            </article>
+
+            <!-- ۲. Eety اتریش -->
+            <article class="sim-card">
+              <div class="sim-visual-wrap">
+                <svg class="sim-chip-svg" viewBox="0 0 320 190" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="کارت سیم‌کارت Eety اتریش">
+                  <defs>
+                    <linearGradient id="simBgAt" x1="0" y1="0" x2="320" y2="190" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stop-color="#0f1b24"/>
+                      <stop offset="100%" stop-color="#081018"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M18 6H268L314 52V172C314 178.6 308.6 184 302 184H18C11.4 184 6 178.6 6 172V18C6 11.4 11.4 6 18 6Z" fill="url(#simBgAt)" stroke="rgba(6,182,212,0.5)" stroke-width="1.5"/>
+                  <circle cx="270" cy="140" r="65" fill="rgba(6,182,212,0.1)"/>
+                  <rect x="28" y="64" width="54" height="42" rx="8" fill="rgba(6,182,212,0.16)" stroke="#22d3ee" stroke-width="1.3"/>
+                  <path d="M46 64V106M64 64V106M28 78H82M28 92H82" stroke="rgba(34,211,238,0.55)" stroke-width="1"/>
+                  <text x="28" y="40" fill="#22d3ee" font-family="Inter, sans-serif" font-size="11" font-weight="700" letter-spacing="1.8">AUSTRIA • +43</text>
+                  <text x="290" y="94" text-anchor="end" fill="#f3f6fa" font-family="Inter, sans-serif" font-size="24" font-weight="800">EETY</text>
+                  <text x="290" y="114" text-anchor="end" fill="#9aa6b8" font-family="Inter, sans-serif" font-size="11">EU Registered SIM</text>
+                  <rect x="28" y="136" width="110" height="24" rx="12" fill="rgba(6,182,212,0.14)" stroke="rgba(34,211,238,0.4)"/>
+                  <text x="83" y="152" text-anchor="middle" fill="#22d3ee" font-family="Inter, sans-serif" font-size="11" font-weight="600">*149#</text>
+                </svg>
+              </div>
+              <div class="sim-body">
+                <div class="sim-title-row">
+                  <h3>سیم‌کارت فیزیکی Eety (اتریش)</h3>
+                  <span class="sim-badge">ثبت رسمی به نام</span>
+                </div>
+                <p class="sim-desc">
+                  سیم‌کارت اروپایی با اعتبار بالا که به نام شخص و با پاسپورت رجیستر می‌شود؛ بهترین انتخاب برای حساب‌های حساس و بلندمدت.
+                </p>
+                <ul class="sim-specs">
+                  <li><strong>کد استعلام و مدیریت:</strong> <code dir="ltr">*149#</code></li>
+                  <li><strong>ثبت مالکیت:</strong> رجیستر قانونی و اختصاصی با <strong>پاسپورت</strong></li>
+                  <li><strong>نگهداری خط:</strong> شارژ یا فعالیت دوره‌ای جهت حفظ مالکیت دائمی</li>
+                  <li><strong>کاربردها:</strong> صرافی‌ها، حساب‌های بانکی بین‌المللی، پی‌پال و سفرهای اروپایی</li>
+                </ul>
+                <a href="https://t.me/Valhalla_Guard" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-full">سفارش و استعلام قیمت Eety</a>
+              </div>
+            </article>
+
+            <!-- ۳. Vodafone انگلستان -->
+            <article class="sim-card">
+              <div class="sim-visual-wrap">
+                <svg class="sim-chip-svg" viewBox="0 0 320 190" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="کارت سیم‌کارت Vodafone انگلستان">
+                  <defs>
+                    <linearGradient id="simBgUk" x1="0" y1="0" x2="320" y2="190" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stop-color="#111b22"/>
+                      <stop offset="100%" stop-color="#090f15"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M18 6H268L314 52V172C314 178.6 308.6 184 302 184H18C11.4 184 6 178.6 6 172V18C6 11.4 11.4 6 18 6Z" fill="url(#simBgUk)" stroke="rgba(20,184,166,0.55)" stroke-width="1.5"/>
+                  <circle cx="270" cy="140" r="65" fill="rgba(20,184,166,0.12)"/>
+                  <rect x="28" y="64" width="54" height="42" rx="8" fill="rgba(20,184,166,0.18)" stroke="#2dd4bf" stroke-width="1.3"/>
+                  <path d="M46 64V106M64 64V106M28 78H82M28 92H82" stroke="rgba(45,212,191,0.55)" stroke-width="1"/>
+                  <text x="28" y="40" fill="#2dd4bf" font-family="Inter, sans-serif" font-size="11" font-weight="700" letter-spacing="1.8">UK • +44</text>
+                  <text x="290" y="94" text-anchor="end" fill="#f3f6fa" font-family="Inter, sans-serif" font-size="22" font-weight="800">VODAFONE</text>
+                  <text x="290" y="114" text-anchor="end" fill="#9aa6b8" font-family="Inter, sans-serif" font-size="11">Sealed Pack • £5 Credit</text>
+                  <rect x="28" y="136" width="122" height="24" rx="12" fill="rgba(20,184,166,0.14)" stroke="rgba(45,212,191,0.4)"/>
+                  <text x="89" y="152" text-anchor="middle" fill="#2dd4bf" font-family="Inter, sans-serif" font-size="11" font-weight="600">£5 Start-up</text>
+                </svg>
+              </div>
+              <div class="sim-body">
+                <div class="sim-title-row">
+                  <h3>سیم‌کارت فیزیکی Vodafone (انگلستان)</h3>
+                  <span class="sim-badge">پرچم‌دار +44</span>
+                </div>
+                <p class="sim-desc">
+                  معتبرترین پیش‌شماره جهان (+44)؛ ارسال به‌صورت پلمپ آکبند با ۵ پوند شارژ اولیه برای راه‌اندازی و سازگار با سخت‌گیرترین پلتفرم‌ها.
+                </p>
+                <ul class="sim-specs">
+                  <li><strong>وضعیت تحویل:</strong> پلمپ آکبند همراه با <strong>£5 شارژ اولیه</strong></li>
+                  <li><strong>اعتبار بین‌المللی:</strong> بالاترین نرخ پذیرش در پلتفرم‌های مالی و بانکی</li>
+                  <li><strong>نگهداری خط:</strong> حفظ دائمی با شارژ یا فعالیت دوره‌ای</li>
+                  <li><strong>کاربردها:</strong> اپل‌آیدی، استرایپ، وایز، تلگرام، ChatGPT و حساب‌های بیزینسی</li>
+                </ul>
+                <a href="https://t.me/Valhalla_Guard" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-full">سفارش و استعلام قیمت Vodafone</a>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- نمای ۲: سیم‌کارت مجازی (eSIM) و شماره مجازی (+۱۶۰ کشور) -->
+        <div class="sim-panel" id="simVirtualPanel">
+          <div class="virtual-grid">
+            <!-- کارت ۱: سیم‌کارت مجازی eSIM -->
+            <article class="virtual-card">
+              <div class="virtual-head">
+                <div class="virtual-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="2" width="16" height="20" rx="3"/><path d="M8 7h8"/><path d="M8 11h8"/><path d="M8 15h4"/></svg>
+                </div>
+                <div>
+                  <span class="sim-badge">بدون نیاز به ارسال فیزیکی</span>
+                  <h3>سیم‌کارت مجازی بین‌المللی (eSIM)</h3>
+                </div>
+              </div>
+              <p class="sim-desc">
+                نسل جدید سیم‌کارت دیجیتال که بدون نیاز به اسلات فیزیکی و تنها با اسکن یک <strong>QR Code</strong> در چند دقیقه روی گوشی شما فعال می‌شود.
+              </p>
+              <ul class="sim-specs">
+                <li><strong>تحویل آنی و دیجیتال:</strong> فعال‌سازی فوری از طریق QR Code بدون انتظار پست</li>
+                <li><strong>استفاده هم‌زمان:</strong> امکان فعال بودن کنار سیم‌کارت ایران روی گوشی‌های Dual SIM / eSIM</li>
+                <li><strong>دستگاه‌های سازگار:</strong> آیفون (XS به بالا)، سامسونگ سری S/Z/Note جدید، گوگل پیکسل و آیپدهای جدید</li>
+                <li><strong>کاربرد اصلی:</strong> اینترنت پرسرعت مسافرتی در خارج از کشور بدون هزینه سنگین رومینگ + پلن‌های دیتای جهانی و منطقه‌ای</li>
+              </ul>
+              <div class="virtual-note">
+                قبل از سفارش، اگر مطمئن نیستی گوشی‌ات از eSIM پشتیبانی می‌کنه یا نه، مدل گوشی رو به پشتیبانی بگو تا بررسی کنیم.
+              </div>
+              <a href="https://t.me/Valhalla_Guard" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-full">مشاوره و سفارش eSIM</a>
+            </article>
+
+            <!-- کارت ۲: شماره مجازی اختصاصی +۱۶۰ کشور -->
+            <article class="virtual-card">
+              <div class="virtual-head">
+                <div class="virtual-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                </div>
+                <div>
+                  <span class="sim-badge">پوشش بیش از ۱۶۰ کشور</span>
+                  <h3>شماره مجازی اختصاصی (موقت و دائمی)</h3>
+                </div>
+              </div>
+              <p class="sim-desc">
+                سریع‌ترین راه برای وریفای و ساخت اکانت در سرویس‌های جهانی بدون افشای شماره شخصی، با ضمانت دریافت کد فعال‌سازی.
+              </p>
+              <ul class="sim-specs">
+                <li><strong>شماره مجازی یک‌بارمصرف:</strong> تحویل فوری و اقتصادی برای وریفای سریع تلگرام، ChatGPT، Claude، واتساپ، گوگل و اینستاگرام</li>
+                <li><strong>شماره مجازی اجاره‌ای / دائمی:</strong> اختصاصی برای دریافت نامحدود پیامک در بازه ماهانه یا طولانی‌مدت با قابلیت تمدید</li>
+                <li><strong>انتخاب کشور دلخواه:</strong> آمریکا، انگلستان، کانادا، آلمان، هلند، ترکیه و بیش از ۱۵۵ کشور دیگر</li>
+                <li><strong>ضمانت تحویل کد:</strong> در صورت عدم دریافت پیامک فعال‌سازی، شماره رایگان تعویض یا هزینه بازگشت داده می‌شود</li>
+              </ul>
+              <div class="virtual-note">
+                برای اکانت‌های حساس و بلندمدت (مثل اپل‌آیدی یا صرافی) توصیه می‌کنیم از سیم‌کارت فیزیکی یا شماره دائمی اختصاصی استفاده کنی.
+              </div>
+              <a href="https://t.me/Valhalla_Guard" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-full">دریافت شماره مجازی از پشتیبانی</a>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- بخش ۵: آکادمی والهالا (مقالات کانال، فایل‌های PDF و پادکست‌ها) -->
+    <section class="section section-alt" id="academy">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-label">VALHALLA ACADEMY</span>
+          <h2 class="section-title">مقالات آموزشی، فایل‌های PDF و پادکست‌ها</h2>
+          <p class="section-sub">
+            آرشیو دسته‌بندی‌شده آموزش‌های کاربردی کانال تلگرام <a href="https://t.me/valhala_tw" target="_blank" rel="noopener noreferrer" class="inline-link">@valhala_tw</a>، جزوه‌های قابل دانلود و پادکست‌های والهالا.
+          </p>
+        </div>
+
+        <div class="academy-tabs" role="tablist" aria-label="بخش‌های آکادمی والهالا">
+          <button type="button" class="academy-tab active" data-academy="articles">مقالات کانال</button>
+          <button type="button" class="academy-tab" data-academy="pdfs">جزوه‌ها و PDFها</button>
+          <button type="button" class="academy-tab" data-academy="podcasts">پادکست‌های والهالا</button>
+        </div>
+
+        <!-- تب ۱: مقالات کانال تلگرام -->
+        <div class="academy-panel active" id="academyArticles">
+          <div class="article-filters" id="articleFilters">
+            <button type="button" class="chip active" data-cat="all">همه موضوعات</button>
+            <button type="button" class="chip" data-cat="ai">هوش مصنوعی</button>
+            <button type="button" class="chip" data-cat="os">ویندوز و مک</button>
+            <button type="button" class="chip" data-cat="hardware">سخت‌افزار و SSD</button>
+            <button type="button" class="chip" data-cat="network">شبکه و وای‌فای</button>
+          </div>
+          <div class="articles-grid" id="articlesGrid"></div>
+          <div class="academy-footer-cta">
+            <a href="https://t.me/valhala_tw" target="_blank" rel="noopener noreferrer" class="btn btn-outline">
+              مشاهده تمام مقالات در کانال تلگرام @valhala_tw ←
+            </a>
+          </div>
+        </div>
+
+        <!-- تب ۲: فایل‌های PDF (مشاهده آنلاین و دانلود مستقیم) -->
+        <div class="academy-panel" id="academyPdfs">
+          <div class="pdfs-grid">
+            <article class="pdf-card">
+              <div class="pdf-badge-row">
+                <span class="pdf-type">PDF • ۶ صفحه</span>
+                <span class="sim-badge">هوش مصنوعی</span>
+              </div>
+              <h3>آموزش جامع پرامپت‌نویسی و کار حرفه‌ای با ChatGPT (بخش ۱)</h3>
+              <p>
+                راهنمای عملی برای نوشتن پرامپت‌های دقیق و ساختاری، تکنیک‌های نقش‌دهی و گرفتن خروجی حرفه‌ای از مدل‌های هوش مصنوعی.
+              </p>
+              <div class="pdf-actions">
+                <a href="assets/ChatGPT_Valhalla_Part1.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">مشاهده آنلاین PDF</a>
+                <a href="assets/ChatGPT_Valhalla_Part1.pdf" download class="btn btn-outline btn-sm">دانلود مستقیم</a>
+              </div>
+            </article>
+
+            <article class="pdf-card">
+              <div class="pdf-badge-row">
+                <span class="pdf-type">PDF • راهنمای سریع</span>
+                <span class="sim-badge">macOS</span>
+              </div>
+              <h3>راهنمای کامل میان‌برها و کلیدهای مخفی کیبورد macOS</h3>
+              <p>
+                مجموعه کاربردی‌ترین شورت‌کات‌های مک‌بوک برای افزایش سرعت کار، مدیریت پنجره‌ها، تایپ نمادهای مخفی و کار حرفه‌ای با سیستم‌عامل مک.
+              </p>
+              <div class="pdf-actions">
+                <a href="assets/Valhalla_Mac_Shortcuts_Guide.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">مشاهده آنلاین PDF</a>
+                <a href="assets/Valhalla_Mac_Shortcuts_Guide.pdf" download class="btn btn-outline btn-sm">دانلود مستقیم</a>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <!-- تب ۳: پادکست‌های والهالا با پلیر صوتی اختصاصی -->
+        <div class="academy-panel" id="academyPodcasts">
+          <div class="podcast-player-shell">
+            <div class="podcast-now-playing">
+              <div>
+                <span class="section-label" style="margin-bottom:4px;">VALHALLA AUDIO PLAYER</span>
+                <h3 id="podcastCurrentTitle">یک اپیزود را برای پخش انتخاب کن</h3>
+                <p id="podcastCurrentDesc">فایل‌های صوتی از پوشه audio-player پخش می‌شوند و نسخه کامل تمام اپیزودها در کانال تلگرام والهالا در دسترس است.</p>
+              </div>
+              <div class="podcast-status-pill" id="podcastStatus">آماده پخش</div>
+            </div>
+
+            <audio id="valhallaAudio" controls preload="metadata" class="custom-audio-el"></audio>
+            <div class="podcast-alert" id="podcastAlert" style="display:none;"></div>
+
+            <div class="podcast-list" id="podcastList"></div>
+
+            <div class="academy-footer-cta" style="margin-top:20px;">
+              <a href="https://t.me/valhala_tw" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+                شنیدن آرشیو کامل پادکست‌ها در کانال @valhala_tw
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- بخش ۶: مقایسه عملکرد قبل و بعد -->
+    <section class="section" id="compare">
       <div class="container">
         <div class="section-head">
           <span class="section-label">REAL PERFORMANCE</span>
@@ -198,32 +535,7 @@
       </div>
     </section>
 
-    <!-- بخش ۴: راهنمای ۳ مرحله‌ای اتصال -->
-    <section class="section" id="guide">
-      <div class="container">
-        <div class="section-head">
-          <span class="section-label">QUICK SETUP GUIDE</span>
-          <h2 class="section-title">اتصال در کمتر از یک دقیقه، فقط در ۳ قدم</h2>
-          <p class="section-sub">
-            دستگاه خودت رو انتخاب کن تا اپلیکیشن پیشنهادی و مراحل دقیق اتصال V2Ray و WireGuard برات نمایش داده بشه.
-          </p>
-        </div>
-
-        <div class="platform-tabs" id="platformTabs" role="tablist" aria-label="انتخاب سیستم‌عامل">
-          <button type="button" class="platform-tab active" data-os="android">اندروید (Android)</button>
-          <button type="button" class="platform-tab" data-os="ios">آیفون و آیپد (iOS)</button>
-          <button type="button" class="platform-tab" data-os="windows">ویندوز (Windows)</button>
-          <button type="button" class="platform-tab" data-os="macos">مک‌او‌اس (macOS)</button>
-        </div>
-
-        <div class="guide-box">
-          <div class="guide-apps-bar" id="guideAppsBar"></div>
-          <div class="steps-grid" id="stepsGrid"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- بخش ۵: خدمات و ابزارهای والهالا -->
+    <!-- بخش ۷: خدمات تخصصی والهالا -->
     <section class="section section-alt" id="services">
       <div class="container">
         <div class="section-head">
@@ -243,18 +555,6 @@
             <p>لینک اشتراک اختصاصی با آپدیت خودکار کانفیگ‌ها، سرورهای پرسرعت V2Ray و WireGuard و پشتیبانی ۲۴ ساعته.</p>
             <a href="https://t.me/ValhallaGuard_bot" target="_blank" rel="noopener noreferrer" class="card-link">
               <span>ورود به ربات</span>
-              <span aria-hidden="true">←</span>
-            </a>
-          </article>
-
-          <article class="service-card">
-            <div class="service-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
-            </div>
-            <h3>سیم‌کارت بین‌المللی و شماره مجازی</h3>
-            <p>ارائه سیم‌کارت‌های فیزیکی بین‌المللی و شماره‌های مجازی مطمئن برای وریفای سرویس‌ها و اکانت‌های جهانی.</p>
-            <a href="https://t.me/Valhalla_Guard" target="_blank" rel="noopener noreferrer" class="card-link">
-              <span>سفارش و استعلام</span>
               <span aria-hidden="true">←</span>
             </a>
           </article>
@@ -297,57 +597,31 @@
 
           <article class="service-card">
             <div class="service-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+            </div>
+            <h3>سیم‌کارت فیزیکی و eSIM</h3>
+            <p>ارائه سیم‌کارت‌های گرجستان، اتریش و انگلستان به‌همراه eSIM مسافرتی و شماره مجازی بیش از ۱۶۰ کشور.</p>
+            <a href="#sim-cards" class="card-link">
+              <span>مشاهده جزئیات</span>
+              <span aria-hidden="true">←</span>
+            </a>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
             </div>
-            <h3>آکادمی و راهنماهای والهالا</h3>
-            <p>آموزش‌های کاربردی ویندوز، مک، ابزارهای هوش مصنوعی، امنیت دیجیتال و ترفندهای نرم‌افزاری در کانال والهالا.</p>
+            <h3>کانال و آکادمی والهالا</h3>
+            <p>آموزش‌های کاربردی ویندوز، مک، ابزارهای هوش مصنوعی، فایل‌های PDF و پادکست‌های اختصاصی در کانال تلگرام.</p>
             <a href="https://t.me/valhala_tw" target="_blank" rel="noopener noreferrer" class="card-link">
-              <span>مشاهده آموزش‌ها</span>
+              <span>عضویت در کانال</span>
               <span aria-hidden="true">←</span>
             </a>
           </article>
         </div>
-      </div>
-    </section>
 
-    <!-- بخش ۶: نظرات کاربران و کامیونیتی -->
-    <section class="section" id="community">
-      <div class="container">
-        <div class="section-head">
-          <span class="section-label">COMMUNITY</span>
-          <h2 class="section-title">تجربه کاربران والهالا</h2>
-          <p class="section-sub">
-            شفافیت، پاسخ‌گویی سریع و کیفیت پایدار؛ چیزی که اعضای کامیونیتی والهالا به خاطرش کنار ما موندن.
-          </p>
-        </div>
-
-        <div class="reviews-grid">
-          <blockquote class="review-card">
-            <p>«از وقتی لینک اشتراک اختصاصی والهالا گارد رو گرفتم دیگه درگیر پیدا کردن کانفیگ جدید نیستم؛ فقط رفرش می‌کنم و همیشه وصله.»</p>
-            <footer>
-              <strong>امیرحسین</strong>
-              <span>والهالا گارد • ویندوز و آیفون</span>
-            </footer>
-          </blockquote>
-
-          <blockquote class="review-card">
-            <p>«پشتیبانی سریع و راهنماهای دقیقش واقعاً کار راه‌اندازه. برای اپل‌آیدی و تنظیمات مک‌بوک دقیقاً همون چیزی بود که می‌خواستم.»</p>
-            <footer>
-              <strong>سارا</strong>
-              <span>خدمات دیجیتال • macOS</span>
-            </footer>
-          </blockquote>
-
-          <blockquote class="review-card">
-            <p>«پینگ بازی‌هام نسبت به قبل خیلی ثابت‌تر شده و موقع استریم و کار با ابزارهای هوش مصنوعی هیچ افت سرعتی ندارم.»</p>
-            <footer>
-              <strong>محمدرضا</strong>
-              <span>پروفایل گیمینگ • PC</span>
-            </footer>
-          </blockquote>
-        </div>
-
-        <div class="community-banner">
+        <!-- بنر کامیونیتی -->
+        <div class="community-banner" style="margin-top:34px;">
           <div class="community-text">
             <h3>به کامیونیتی والهالا تک‌ورلد بپیوند</h3>
             <p>آخرین آپدیت‌های اتصال، آموزش‌های کاربردی ویندوز و مک و ابزارهای روز تکنولوژی را مستقیم دنبال کن.</p>
@@ -361,8 +635,8 @@
       </div>
     </section>
 
-    <!-- بخش ۷: سوال‌های پرتکرار -->
-    <section class="section section-alt" id="faq">
+    <!-- بخش ۸: سوال‌های پرتکرار -->
+    <section class="section" id="faq">
       <div class="container container-narrow">
         <div class="section-head">
           <span class="section-label">FAQ</span>
@@ -383,11 +657,11 @@
 
           <div class="faq-item">
             <button type="button" class="faq-q" aria-expanded="false">
-              <span>والهالا گارد روی چه دستگاه‌هایی قابل استفاده‌ست؟</span>
+              <span>تفاوت سیم‌کارت فیزیکی، eSIM و شماره مجازی چیه؟</span>
               <span class="faq-plus" aria-hidden="true">+</span>
             </button>
             <div class="faq-a">
-              <p>روی تمام سیستم‌عامل‌های محبوب شامل اندروید، iOS (آیفون و آیپد)، ویندوز و مک‌او‌اس (حتی مک‌های اپل سیلیکون) کاملاً سازگاره و راهنمای نصب هرکدوم در بخش راهنمای اتصال همین صفحه قرار داده شده.</p>
+              <p><strong>سیم‌کارت فیزیکی</strong> (گرجستان، اتریش، انگلستان) مثل سیم‌کارت معمولی داخل گوشی قرار می‌گیره و برای احراز هویت دائمی و حساب‌های حساس عالیه. <strong>eSIM</strong> نسخه دیجیتال بدون کارت فیزیکیه که با QR Code نصب می‌شه و برای اینترنت سفر و گوشی‌های جدید عالیه. <strong>شماره مجازی</strong> هم سریع‌ترین و ارزان‌ترین گزینه برای وریفای اکانت‌هاست.</p>
             </div>
           </div>
 
@@ -398,16 +672,6 @@
             </button>
             <div class="faq-a">
               <p>هم می‌تونی همین‌جا از <strong>دستیار هوشمند والهالا</strong> (دکمه پایین صفحه) سوال بپرسی و هم مستقیماً در تلگرام به پشتیبانی <strong>@Valhalla_Guard</strong> پیام بدی تا سریعاً مشکلت بررسی و حل بشه.</p>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button type="button" class="faq-q" aria-expanded="false">
-              <span>خدمات سخت‌افزاری، اپل‌آیدی و سیم‌کارت بین‌المللی چطور ثبت می‌شن؟</span>
-              <span class="faq-plus" aria-hidden="true">+</span>
-            </button>
-            <div class="faq-a">
-              <p>برای تمام خدمات دیجیتال، مشاوره خرید سیستم یا هماهنگی تعمیرات لپ‌تاپ و PC، کافیه از طریق اکانت پشتیبانی تلگرام <strong>@Valhalla_Guard</strong> پیام بدی تا شرایط، تعرفه و زمان تحویل دقیق بهت اعلام بشه.</p>
             </div>
           </div>
 
@@ -431,24 +695,29 @@
       <div class="footer-grid">
         <div class="footer-brand-col">
           <a href="#top" class="brand">
-            <img src="valhalla-logo.jpg" alt="لوگوی والهالا" class="brand-logo footer-logo-img" />
+            <img
+              src="assets/valhalla-logo.jpg"
+              data-fallback-src="valhalla-logo.jpg"
+              alt="لوگوی والهالا"
+              class="brand-logo footer-logo-img"
+            />
             <div class="brand-text">
               <span class="brand-name">والهالا تک‌ورلد</span>
               <span class="brand-sub">VALHALLA TECH WORLD</span>
             </div>
           </a>
           <p class="footer-tagline">
-            مرجع اتصال پایدار، آموزش‌های کاربردی فناوری، خدمات دیجیتال و پشتیبانی تخصصی سخت‌افزار و نرم‌افزار.
+            مرجع اتصال پایدار، آموزش‌های کاربردی فناوری، سیم‌کارت بین‌المللی و پشتیبانی تخصصی سخت‌افزار و نرم‌افزار.
           </p>
         </div>
 
         <div class="footer-col">
-          <h4>محصول‌ها</h4>
+          <h4>دسترسی سریع</h4>
           <ul>
             <li><a href="#guard">والهالا گارد</a></li>
-            <li><a href="https://t.me/ValhallaGuard_bot" target="_blank" rel="noopener noreferrer">ربات اشتراک گارد</a></li>
-            <li><a href="#guide">راهنمای اتصال</a></li>
-            <li><a href="#compare">تست و مقایسه عملکرد</a></li>
+            <li><a href="#guide">راهنمای اتصال و دانلود</a></li>
+            <li><a href="#sim-cards">سیم‌کارت فیزیکی و مجازی</a></li>
+            <li><a href="#academy">مقالات، PDF و پادکست</a></li>
           </ul>
         </div>
 
@@ -456,7 +725,7 @@
           <h4>خدمات</h4>
           <ul>
             <li><a href="#services">اپل‌آیدی و اکانت پرمیوم</a></li>
-            <li><a href="#services">سیم‌کارت بین‌المللی</a></li>
+            <li><a href="#sim-cards">شماره مجازی +۱۶۰ کشور</a></li>
             <li><a href="#services">تعمیرات لپ‌تاپ و PC</a></li>
             <li><a href="#services">مشاوره خرید سیستم</a></li>
           </ul>
@@ -465,10 +734,10 @@
         <div class="footer-col">
           <h4>والهالا</h4>
           <ul>
-            <li><a href="https://t.me/valhala_tw" target="_blank" rel="noopener noreferrer">کانال تلگرام</a></li>
-            <li><a href="https://instagram.com/Valhala_tw" target="_blank" rel="noopener noreferrer">اینستاگرام</a></li>
-            <li><a href="https://t.me/Valhalla_Guard" target="_blank" rel="noopener noreferrer">پشتیبانی مستقیم</a></li>
-            <li><a href="#faq">سوالات پرتکرار</a></li>
+            <li><a href="https://t.me/valhala_tw" target="_blank" rel="noopener noreferrer">کانال تلگرام @valhala_tw</a></li>
+            <li><a href="https://instagram.com/Valhala_tw" target="_blank" rel="noopener noreferrer">اینستاگرام @Valhala_tw</a></li>
+            <li><a href="https://t.me/Valhalla_Guard" target="_blank" rel="noopener noreferrer">پشتیبانی @Valhalla_Guard</a></li>
+            <li><a href="https://t.me/ValhallaGuard_bot" target="_blank" rel="noopener noreferrer">ربات گارد</a></li>
           </ul>
         </div>
       </div>
@@ -494,7 +763,7 @@
   <aside class="ai-drawer" id="aiDrawer" aria-hidden="true">
     <div class="ai-header">
       <div class="ai-header-info">
-        <div class="ai-avatar-wrap" id="aiAvatarWrap">
+        <div class="ai-avatar-wrap">
           <model-viewer
             id="valhallaBotViewer"
             src="valhalla-bot.glb"
@@ -524,14 +793,14 @@
 
     <div class="ai-messages" id="aiMessages">
       <div class="ai-msg bot">
-        سلام! من دستیار هوشمند <strong>والهالا تک‌ورلد</strong> هستم. درباره راهنمای اتصال والهالا گارد، خدمات دیجیتال یا سوالات فنی سیستم چطور می‌تونم کمکت کنم؟
+        سلام! من دستیار هوشمند <strong>والهالا تک‌ورلد</strong> هستم. درباره راهنمای اتصال والهالا گارد، سیم‌کارت بین‌المللی یا سوالات فنی سیستم چطور می‌تونم کمکت کنم؟
       </div>
     </div>
 
     <div class="ai-quick-prompts">
       <button type="button" class="ai-prompt-chip" data-prompt="چطور لینک اشتراک والهالا گارد رو روی آیفون وصل کنم؟">اتصال در آیفون</button>
-      <button type="button" class="ai-prompt-chip" data-prompt="تفاوت V2Ray و WireGuard در والهالا گارد چیه؟">تفاوت V2Ray و WireGuard</button>
-      <button type="button" class="ai-prompt-chip" data-prompt="چه خدمات سخت‌افزاری و دیجیتال ارائه می‌دید؟">لیست خدمات</button>
+      <button type="button" class="ai-prompt-chip" data-prompt="فرق سیم‌کارت گرجستان، اتریش و انگلستان چیه؟">مقایسه سیم‌کارت‌ها</button>
+      <button type="button" class="ai-prompt-chip" data-prompt="برای ویندوز کدوم برنامه بهتره؟">برنامه ویندوز</button>
     </div>
 
     <form class="ai-input-row" id="aiForm">
@@ -542,6 +811,6 @@
     </form>
   </aside>
 
-  <script src="script.js?v=2"></script>
+  <script src="script.js?v=3"></script>
 </body>
 </html>
